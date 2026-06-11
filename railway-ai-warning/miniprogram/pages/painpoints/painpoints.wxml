@@ -1,0 +1,361 @@
+﻿<view class="page-container dark-theme">
+  <!-- 自定义导航栏 -->
+  <view class="custom-nav">
+    <view class="nav-status-bar" style="height: {{statusBarHeight}}px"></view>
+    <view class="nav-content" style="height: {{navBarHeight}}px">
+      <view class="nav-left" bindtap="navBack" wx:if="{{showBack}}">
+        <text class="nav-back-icon">‹</text>
+      </view>
+      <view class="nav-center">
+        <text class="nav-title">行业痛点</text>
+      </view>
+      <view class="nav-right"></view>
+    </view>
+  </view>
+
+  <!-- 滚动内容区 -->
+  <scroll-view class="page-scroll" scroll-y type="list" enhanced show-scrollbar="{{false}}">
+    <!-- 动态背景层 -->
+    <view class="ambient-bg">
+      <view class="glow-orb orb-1"></view>
+      <view class="glow-orb orb-2"></view>
+      <view class="grid-pattern"></view>
+    </view>
+
+    <!-- 页面头部 -->
+    <view class="page-header">
+      <view class="header-content">
+        <view class="badge">沧澜之患</view>
+        <text class="header-title">传统预警三大盲区</text>
+        <text class="header-desc">22・7甘肃暴雨 / 25・8榆中山洪案例剖析</text>
+        <view class="header-stats">
+          <view class="h-stat">
+            <text class="h-value">35%</text>
+            <text class="h-label">雷达盲区</text>
+          </view>
+          <view class="h-stat">
+            <text class="h-value">45min</text>
+            <text class="h-label">预警延迟</text>
+          </view>
+          <view class="h-stat">
+            <text class="h-value">1200万</text>
+            <text class="h-label">年均损失</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 痛点卡片区域 -->
+    <view class="pain-cards-section">
+      <view class="section-label">核心痛点</view>
+      
+      <!-- 观测盲区 -->
+      <view class="pain-card observation {{expanded.observation ? 'expanded' : ''}}" 
+            bindtap="expandCard" 
+            data-type="observation">
+        <view class="card-accent"></view>
+        <view class="card-header">
+          <view class="icon-wrapper">
+            <image class="card-icon-img" src="/images/resources/tsrc_radar_dl.jpg" mode="aspectFill"></image>
+            <view class="icon-overlay">👁️</view>
+          </view>
+          <view class="card-title-group">
+            <text class="card-title">观测盲区</text>
+            <text class="card-subtitle">看不见的风险</text>
+          </view>
+          <view class="expand-btn">
+            <view class="expand-arrow {{expanded.observation ? 'rotated' : ''}}">
+              <text class="arrow-icon">▼</text>
+            </view>
+          </view>
+        </view>
+        
+        <view class="card-body" style="{{expanded.observation ? 'max-height: 1000rpx; opacity: 1;' : 'max-height: 0; opacity: 0;'}}">
+          <view class="problem-grid">
+            <view class="problem-item">
+              <view class="problem-icon">📡</view>
+              <view class="problem-content">
+                <text class="problem-title">雷达遮挡</text>
+                <text class="problem-desc">山脉阻挡导致探测盲区占比达35%</text>
+              </view>
+            </view>
+            <view class="problem-item">
+              <view class="problem-icon">📍</view>
+              <view class="problem-content">
+                <text class="problem-title">站点稀疏</text>
+                <text class="problem-desc">山区气象站点覆盖不足20%</text>
+              </view>
+            </view>
+            <view class="problem-item">
+              <view class="problem-icon">🛰️</view>
+              <view class="problem-content">
+                <text class="problem-title">时效性差</text>
+                <text class="problem-desc">卫星遥感无法满足短临预警需求</text>
+              </view>
+            </view>
+          </view>
+          
+          <view class="case-panel">
+            <image class="case-bg" src="/images/resources/nw_precip_extreme_trend.jpg" mode="aspectFill"></image>
+            <view class="case-overlay"></view>
+            <view class="case-content">
+              <view class="case-badge">典型案例</view>
+              <text class="case-name">22・7甘肃暴雨</text>
+              <text class="case-desc">暴雨中心位于雷达探测盲区，预警延迟45分钟，导致线路积水严重，列车停运6小时。</text>
+              <view class="case-tags">
+                <text class="tag">雷达盲区</text>
+                <text class="tag">预警延迟</text>
+                <text class="tag">线路积水</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 预报盲区 -->
+      <view class="pain-card forecast {{expanded.forecast ? 'expanded' : ''}}" 
+            bindtap="expandCard" 
+            data-type="forecast">
+        <view class="card-accent"></view>
+        <view class="card-header">
+          <view class="icon-wrapper">
+            <image class="card-icon-img" src="/images/resources/railway_debris_simulation.jpg" mode="aspectFill"></image>
+            <view class="icon-overlay">📉</view>
+          </view>
+          <view class="card-title-group">
+            <text class="card-title">预报盲区</text>
+            <text class="card-subtitle">算不准的灾害</text>
+          </view>
+          <view class="expand-btn">
+            <view class="expand-arrow {{expanded.forecast ? 'rotated' : ''}}">
+              <text class="arrow-icon">▼</text>
+            </view>
+          </view>
+        </view>
+        
+        <view class="card-body" style="{{expanded.forecast ? 'max-height: 1000rpx; opacity: 1;' : 'max-height: 0; opacity: 0;'}}">
+          <view class="problem-grid">
+            <view class="problem-item">
+              <view class="problem-icon">🗺️</view>
+              <view class="problem-content">
+                <text class="problem-title">分辨率低</text>
+                <text class="problem-desc">数值预报模式山区地形刻画不足</text>
+              </view>
+            </view>
+            <view class="problem-item">
+              <view class="problem-icon">⏰</view>
+              <view class="problem-content">
+                <text class="problem-title">时效短暂</text>
+                <text class="problem-desc">短临预报仅2-3小时，无法满足运营</text>
+              </view>
+            </view>
+            <view class="problem-item">
+              <view class="problem-icon">🎯</view>
+              <view class="problem-content">
+                <text class="problem-title">命中率低</text>
+                <text class="problem-desc">强降水命中率仅67%，空报率28%</text>
+              </view>
+            </view>
+          </view>
+
+          <view class="comparison-panel">
+            <text class="panel-title">准确率对比</text>
+            <view class="comparison-bars">
+              <view class="comp-row">
+                <text class="comp-label">传统模式</text>
+                <view class="comp-bar-bg">
+                  <view class="comp-bar-fill traditional" style="width: 67%"></view>
+                </view>
+                <text class="comp-value low">67%</text>
+              </view>
+              <view class="comp-row">
+                <text class="comp-label">LoongClaw</text>
+                <view class="comp-bar-bg">
+                  <view class="comp-bar-fill openclaw" style="width: 92%"></view>
+                </view>
+                <text class="comp-value high">92%</text>
+              </view>
+            </view>
+            <view class="improvement-badge">
+              <text class="imp-text">提升37%</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 决策盲区 -->
+      <view class="pain-card decision {{expanded.decision ? 'expanded' : ''}}" 
+            bindtap="expandCard" 
+            data-type="decision">
+        <view class="card-accent"></view>
+        <view class="card-header">
+          <view class="icon-wrapper">
+            <image class="card-icon-img" src="/images/resources/radar_beam_blind.png" mode="aspectFill"></image>
+            <view class="icon-overlay">⏱️</view>
+          </view>
+          <view class="card-title-group">
+            <text class="card-title">决策盲区</text>
+            <text class="card-subtitle">来不及的响应</text>
+          </view>
+          <view class="expand-btn">
+            <view class="expand-arrow {{expanded.decision ? 'rotated' : ''}}">
+              <text class="arrow-icon">▼</text>
+            </view>
+          </view>
+        </view>
+        
+        <view class="card-body" style="{{expanded.decision ? 'max-height: 1000rpx; opacity: 1;' : 'max-height: 0; opacity: 0;'}}">
+          <view class="problem-grid">
+            <view class="problem-item">
+              <view class="problem-icon">📢</view>
+              <view class="problem-content">
+                <text class="problem-title">传递延迟</text>
+                <text class="problem-desc">预警信息链条长，平均延迟30分钟</text>
+              </view>
+            </view>
+            <view class="problem-item">
+              <view class="problem-icon">🏝️</view>
+              <view class="problem-content">
+                <text class="problem-title">数据孤岛</text>
+                <text class="problem-desc">多源数据缺乏统一决策平台</text>
+              </view>
+            </view>
+            <view class="problem-item">
+              <view class="problem-icon">👤</view>
+              <view class="problem-content">
+                <text class="problem-title">人工效率</text>
+                <text class="problem-desc">人工研判无法应对突发灾害</text>
+              </view>
+            </view>
+          </view>
+
+          <view class="timeline-panel">
+            <text class="panel-title">响应时效对比</text>
+            <view class="timeline-comparison">
+              <view class="timeline-item traditional">
+                <view class="timeline-icon">🐌</view>
+                <view class="timeline-track">
+                  <view class="timeline-segments">
+                    <view class="segment" style="width: 30%"></view>
+                    <view class="segment gap" style="width: 5%"></view>
+                    <view class="segment" style="width: 40%"></view>
+                    <view class="segment gap" style="width: 5%"></view>
+                    <view class="segment" style="width: 20%"></view>
+                  </view>
+                  <view class="timeline-labels">
+                    <text class="t-label">采集</text>
+                    <text class="t-label">分析</text>
+                    <text class="t-label">决策</text>
+                  </view>
+                </view>
+                <view class="timeline-value">45min</view>
+              </view>
+              
+              <view class="timeline-vs">VS</view>
+              
+              <view class="timeline-item openclaw">
+                <view class="timeline-icon">⚡</view>
+                <view class="timeline-track">
+                  <view class="timeline-bar-single"></view>
+                  <view class="timeline-labels">
+                    <text class="t-label single">AI一体化决策</text>
+                  </view>
+                </view>
+                <view class="timeline-value fast">5min</view>
+              </view>
+            </view>
+            <view class="speedup-badge">
+              <text class="speed-text">提速9倍</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 灾害案例 -->
+    <view class="section cases-section">
+      <view class="section-header">
+        <text class="section-title">灾害案例</text>
+        <text class="section-subtitle">真实事件复盘</text>
+      </view>
+      
+      <scroll-view class="cases-scroll" scroll-x enable-flex>
+        <view class="cases-wrapper">
+          <view class="case-card-large" bindtap="previewImage" data-url="/images/resources/railway_debris_simulation.jpg">
+            <image class="case-large-img" src="/images/resources/railway_debris_simulation.jpg" mode="aspectFill"></image>
+            <view class="case-large-overlay">
+              <view class="case-large-tag red">观测盲区</view>
+              <text class="case-large-title">22・7甘肃暴雨</text>
+              <text class="case-large-desc">暴雨中心位于雷达盲区，预警延迟45分钟</text>
+              <view class="case-large-stats">
+                <view class="lg-stat">
+                  <text class="lg-value">6h</text>
+                  <text class="lg-label">列车停运</text>
+                </view>
+                <view class="lg-stat">
+                  <text class="lg-value">1200万</text>
+                  <text class="lg-label">经济损失</text>
+                </view>
+              </view>
+            </view>
+          </view>
+          
+          <view class="case-card-large" bindtap="previewImage" data-url="/images/resources/nw_precip_extreme_trend.jpg">
+            <image class="case-large-img" src="/images/resources/nw_precip_extreme_trend.jpg" mode="aspectFill"></image>
+            <view class="case-large-overlay">
+              <view class="case-large-tag orange">预报盲区</view>
+              <text class="case-large-title">25・8榆中山洪</text>
+              <text class="case-large-desc">山洪暴发前2小时才发出预警</text>
+              <view class="case-large-stats">
+                <view class="lg-stat">
+                  <text class="lg-value">2h</text>
+                  <text class="lg-label">预警时效</text>
+                </view>
+                <view class="lg-stat">
+                  <text class="lg-value">3km</text>
+                  <text class="lg-label">线路受损</text>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 解决方案引导 -->
+    <view class="section solution-section">
+      <view class="solution-card">
+        <image class="solution-bg" src="/images/resources/metnet2_pipeline.png" mode="aspectFill"></image>
+        <view class="solution-overlay"></view>
+        <view class="solution-content">
+          <view class="solution-badge">
+            <text class="sol-badge-text">智能解决方案</text>
+          </view>
+          <text class="solution-title">如何解决这些痛点？</text>
+          <text class="solution-desc">LoongClaw四大专家协同，构建空天地一体化预警体系，让灾害无处遁形</text>
+          <view class="solution-features">
+            <view class="feat-item">
+              <text class="feat-icon">🛰️</text>
+              <text class="feat-text">空天感知</text>
+            </view>
+            <view class="feat-item">
+              <text class="feat-icon">🤖</text>
+              <text class="feat-text">AI决策</text>
+            </view>
+            <view class="feat-item">
+              <text class="feat-icon">⚡</text>
+              <text class="feat-text">秒级响应</text>
+            </view>
+          </view>
+          <button class="btn btn-primary" bindtap="viewSolution">
+            <text class="btn-text">查看解决方案</text>
+            <text class="btn-arrow">→</text>
+          </button>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部安全区 -->
+    <view class="safe-area-bottom"></view>
+  </scroll-view>
+</view>

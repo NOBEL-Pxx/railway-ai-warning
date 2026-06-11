@@ -1,0 +1,8 @@
+{
+  "navigationStyle": "custom",
+  "disableScroll": true,
+  "usingComponents": {},
+  "backgroundColor": "#000000",
+  "backgroundTextStyle": "dark",
+  "initialRenderingCache": "static"
+}

@@ -1,0 +1,25 @@
+/* 进度条样式 */
+.progress-bar {
+  display: flex;
+  align-items: center;
+}
+
+.progress-track {
+  flex: 1;
+  border-radius: 100rpx;
+  overflow: hidden;
+}
+
+.progress-fill {
+  border-radius: 100rpx;
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  margin-left: 16rpx;
+  font-size: 24rpx;
+  font-weight: 600;
+  color: #1D2129;
+  min-width: 60rpx;
+  text-align: right;
+}

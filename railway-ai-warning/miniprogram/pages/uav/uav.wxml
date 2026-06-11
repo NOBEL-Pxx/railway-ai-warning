@@ -1,0 +1,315 @@
+﻿<view class="page-container starfield-theme">
+  <!-- 星空背景层 -->
+  <view class="starfield-bg">
+    <view class="nebula-layer nebula-1"></view>
+    <view class="nebula-layer nebula-2"></view>
+    <view class="nebula-layer nebula-3"></view>
+    <view class="stars-layer">
+      <view class="star star-1"></view>
+      <view class="star star-2"></view>
+      <view class="star star-3"></view>
+      <view class="star star-4"></view>
+      <view class="star star-5"></view>
+      <view class="star star-6"></view>
+      <view class="star star-7"></view>
+      <view class="star star-8"></view>
+      <view class="star star-9"></view>
+      <view class="star star-10"></view>
+      <view class="star star-11"></view>
+      <view class="star star-12"></view>
+      <view class="star star-13"></view>
+      <view class="star star-14"></view>
+      <view class="star star-15"></view>
+      <view class="star star-16"></view>
+      <view class="star star-17"></view>
+      <view class="star star-18"></view>
+      <view class="star star-19"></view>
+      <view class="star star-20"></view>
+      <view class="star star-21"></view>
+      <view class="star star-22"></view>
+      <view class="star star-23"></view>
+      <view class="star star-24"></view>
+      <view class="star star-25"></view>
+      <view class="star star-26"></view>
+      <view class="star star-27"></view>
+      <view class="star star-28"></view>
+      <view class="star star-29"></view>
+      <view class="star star-30"></view>
+    </view>
+    <view class="milky-way"></view>
+    <view class="shooting-star shooting-1"></view>
+    <view class="shooting-star shooting-2"></view>
+    <view class="shooting-star shooting-3"></view>
+  </view>
+
+  <!-- 页面头部 -->
+  <view class="page-header">
+    <view class="header-content">
+      <text class="header-badge">观天之法</text>
+      <text class="header-title">垂起固定翼无人机集群</text>
+      <text class="header-desc">机动补盲 · 分钟级部署 · 秒级回传</text>
+    </view>
+  </view>
+
+  <!-- 无人机3D展示卡片 -->
+  <view class="section uav-showcase">
+    <view class="uav-container">
+      <view class="uav-model">
+        <image class="uav-image" src="/images/resources/uav_geophysics_remote.jpg" mode="aspectFit" lazy-load="true"></image>
+        <view class="tech-badge">Y3 架构</view>
+        <view class="rotation-hint">
+          <view class="hint-circle">
+            <text class="hint-icon">↻</text>
+          </view>
+          <text class="hint-text">360° 查看</text>
+        </view>
+      </view>
+      <view class="uav-specs">
+        <view class="spec-item">
+          <text class="spec-value">120<span class="unit">min</span></text>
+          <text class="spec-label">续航时间</text>
+        </view>
+        <view class="spec-divider"></view>
+        <view class="spec-item">
+          <text class="spec-value">50<span class="unit">km</span></text>
+          <text class="spec-label">控制半径</text>
+        </view>
+        <view class="spec-divider"></view>
+        <view class="spec-item">
+          <text class="spec-value">80<span class="unit">km/h</span></text>
+          <text class="spec-label">巡航速度</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 核心能力卡片组 -->
+  <view class="section">
+    <view class="section-header">
+      <view class="title-decoration"></view>
+      <text class="section-title">核心能力</text>
+    </view>
+    <view class="capability-list">
+      <view class="capability-card" hover-class="capability-hover" hover-stay-time="200">
+        <view class="cap-icon-wrapper">
+          <view class="cap-icon-bg"></view>
+          <text class="cap-icon">🎯</text>
+        </view>
+        <view class="cap-content">
+          <text class="cap-title">机动补盲</text>
+          <text class="cap-desc">快速部署至雷达盲区，填补观测空白，实现无缝覆盖</text>
+        </view>
+        <view class="cap-arrow">›</view>
+      </view>
+      <view class="capability-card" hover-class="capability-hover" hover-stay-time="200">
+        <view class="cap-icon-wrapper">
+          <view class="cap-icon-bg bg-2"></view>
+          <text class="cap-icon">⚡</text>
+        </view>
+        <view class="cap-content">
+          <text class="cap-title">分钟级部署</text>
+          <text class="cap-desc">垂起设计，无需跑道，5分钟完成部署响应</text>
+        </view>
+        <view class="cap-arrow">›</view>
+      </view>
+      <view class="capability-card" hover-class="capability-hover" hover-stay-time="200">
+        <view class="cap-icon-wrapper">
+          <view class="cap-icon-bg bg-3"></view>
+          <text class="cap-icon">📡</text>
+        </view>
+        <view class="cap-content">
+          <text class="cap-title">秒级回传</text>
+          <text class="cap-desc">5G实时传输，数据延迟小于3秒，即时决策</text>
+        </view>
+        <view class="cap-arrow">›</view>
+      </view>
+      <view class="capability-card" hover-class="capability-hover" hover-stay-time="200">
+        <view class="cap-icon-wrapper">
+          <view class="cap-icon-bg bg-4"></view>
+          <text class="cap-icon">🌐</text>
+        </view>
+        <view class="cap-content">
+          <text class="cap-title">集群协同</text>
+          <text class="cap-desc">多机编队协同，智能任务分配，大范围区域覆盖</text>
+        </view>
+        <view class="cap-arrow">›</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 载荷配置网格 -->
+  <view class="section">
+    <view class="section-header">
+      <view class="title-decoration"></view>
+      <text class="section-title">载荷配置</text>
+    </view>
+    <view class="payload-grid">
+      <view class="payload-card" hover-class="payload-hover">
+        <view class="payload-image-wrapper">
+          <image class="payload-image" src="/images/resources/sa_convlstm_unit.jpg" mode="aspectFill" lazy-load="true"></image>
+          <view class="payload-overlay"></view>
+        </view>
+        <text class="payload-name">多光谱相机</text>
+        <text class="payload-spec">4K/60fps HDR</text>
+      </view>
+      <view class="payload-card" hover-class="payload-hover">
+        <view class="payload-image-wrapper">
+          <image class="payload-image" src="/images/resources/sda_tr_attention.png" mode="aspectFill" lazy-load="true"></image>
+          <view class="payload-overlay"></view>
+        </view>
+        <text class="payload-name">红外热像仪</text>
+        <text class="payload-spec">640×512 热成像</text>
+      </view>
+      <view class="payload-card" hover-class="payload-hover">
+        <view class="payload-image-wrapper">
+          <image class="payload-image" src="/images/resources/scs_cn_runoff.png" mode="aspectFill" lazy-load="true"></image>
+          <view class="payload-overlay"></view>
+        </view>
+        <text class="payload-name">气象传感器</text>
+        <text class="payload-spec">六要素监测</text>
+      </view>
+      <view class="payload-card" hover-class="payload-hover">
+        <view class="payload-image-wrapper">
+          <image class="payload-image" src="/images/resources/radar_cappi_product.jpg" mode="aspectFill" lazy-load="true"></image>
+          <view class="payload-overlay"></view>
+        </view>
+        <text class="payload-name">激光雷达</text>
+        <text class="payload-spec">100m 测距精度</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 应用场景时间轴 -->
+  <view class="section">
+    <view class="section-header">
+      <view class="title-decoration"></view>
+      <text class="section-title">应急响应流程</text>
+    </view>
+    <view class="scenario-timeline">
+      <view class="scenario-item">
+        <view class="scenario-node">
+          <view class="node-dot"></view>
+          <view class="node-ring"></view>
+        </view>
+        <view class="scenario-card">
+          <view class="scenario-header">
+            <text class="scenario-time">T+0min</text>
+            <view class="scenario-badge">预警</view>
+          </view>
+          <text class="scenario-title">灾害预警触发</text>
+          <text class="scenario-desc">智能系统识别高风险区域，自动调度无人机集群待命</text>
+        </view>
+      </view>
+      <view class="scenario-item">
+        <view class="scenario-node">
+          <view class="node-dot"></view>
+        </view>
+        <view class="scenario-card">
+          <view class="scenario-header">
+            <text class="scenario-time">T+5min</text>
+            <view class="scenario-badge badge-orange">部署</view>
+          </view>
+          <text class="scenario-title">快速部署起飞</text>
+          <text class="scenario-desc">垂直起降设计，无需跑道准备，即刻升空响应</text>
+        </view>
+      </view>
+      <view class="scenario-item">
+        <view class="scenario-node">
+          <view class="node-dot"></view>
+        </view>
+        <view class="scenario-card">
+          <view class="scenario-header">
+            <text class="scenario-time">T+10min</text>
+            <view class="scenario-badge badge-blue">采集</view>
+          </view>
+          <text class="scenario-title">现场数据采集</text>
+          <text class="scenario-desc">多载荷同步工作，多维度实时获取现场环境数据</text>
+        </view>
+      </view>
+      <view class="scenario-item">
+        <view class="scenario-node">
+          <view class="node-dot"></view>
+        </view>
+        <view class="scenario-card scenario-card-last">
+          <view class="scenario-header">
+            <text class="scenario-time">T+15min</text>
+            <view class="scenario-badge badge-green">分析</view>
+          </view>
+          <text class="scenario-title">数据回传分析</text>
+          <text class="scenario-desc">5G实时传输链路，云端AI即时分析生成决策报告</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 集群管理系统 -->
+  <view class="section">
+    <view class="section-header">
+      <view class="title-decoration"></view>
+      <text class="section-title">集群管理系统</text>
+    </view>
+    <view class="fleet-card">
+      <view class="fleet-stats">
+        <view class="fleet-stat">
+          <text class="stat-number">12</text>
+          <text class="stat-label">在役无人机</text>
+          <view class="stat-bar">
+            <view class="stat-bar-fill" style="width: 100%;"></view>
+          </view>
+        </view>
+        <view class="fleet-stat">
+          <text class="stat-number">8</text>
+          <text class="stat-label">待命机组</text>
+          <view class="stat-bar">
+            <view class="stat-bar-fill fill-2" style="width: 66%;"></view>
+          </view>
+        </view>
+        <view class="fleet-stat">
+          <text class="stat-number">98%</text>
+          <text class="stat-label">出动率</text>
+          <view class="stat-bar">
+            <view class="stat-bar-fill fill-3" style="width: 98%;"></view>
+          </view>
+        </view>
+      </view>
+      <view class="fleet-map-container">
+        <image class="fleet-map" src="/images/resources/space_air_ground_arch.webp" mode="aspectFill" lazy-load="true"></image>
+        <view class="map-overlay"></view>
+        <view class="drone-markers">
+          <view class="marker active" style="left: 20%; top: 35%;">
+            <view class="marker-pulse"></view>
+            <view class="marker-tooltip">UAV-01 巡检中</view>
+          </view>
+          <view class="marker" style="left: 45%; top: 25%;">
+            <view class="marker-tooltip">UAV-03 待命</view>
+          </view>
+          <view class="marker" style="left: 60%; top: 55%;">
+            <view class="marker-tooltip">UAV-05 待命</view>
+          </view>
+          <view class="marker active" style="left: 75%; top: 40%;">
+            <view class="marker-pulse"></view>
+            <view class="marker-tooltip">UAV-02 巡检中</view>
+          </view>
+          <view class="marker" style="left: 35%; top: 65%;">
+            <view class="marker-tooltip">UAV-04 充电中</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部操作区 -->
+  <view class="section action-section">
+    <view class="tech-preview">
+      <text class="preview-text">查看完整技术方案文档</text>
+      <text class="preview-sub">含技术参数、部署手册、维护指南</text>
+    </view>
+    <button class="btn btn-primary" bindtap="viewTech" hover-class="btn-hover">
+      <text class="btn-text">查看技术方案</text>
+      <text class="btn-icon">→</text>
+    </button>
+  </view>
+
+  <!-- 安全区域 -->
+  <view class="safe-area-bottom"></view>
+</view>

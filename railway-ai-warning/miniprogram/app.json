@@ -1,0 +1,92 @@
+{
+  "pages": [
+    "pages/launch/launch",
+    "pages/home/home",
+    "pages/overview/overview",
+    "pages/painpoints/painpoints",
+    "pages/tech/tech",
+    "pages/openclaw/openclaw",
+    "pages/uav/uav",
+    "pages/achievement/achievement",
+    "pages/business/business",
+    "pages/team/team",
+    "pages/vision/vision",
+    "pages/contact/contact"
+  ],
+  "window": {
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#165DFF",
+    "navigationBarTitleText": "智驭苍穹·守路安澜",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#F8F9FA",
+    "enablePullDownRefresh": true,
+    "onReachBottomDistance": 50
+  },
+  "tabBar": {
+    "color": "#86909C",
+    "selectedColor": "#165DFF",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "首页",
+        "iconPath": "images/tab_home.png",
+        "selectedIconPath": "images/tab_home_active.png"
+      },
+      {
+        "pagePath": "pages/tech/tech",
+        "text": "技术",
+        "iconPath": "images/tab_tech.png",
+        "selectedIconPath": "images/tab_tech_active.png"
+      },
+      {
+        "pagePath": "pages/achievement/achievement",
+        "text": "成果",
+        "iconPath": "images/tab_achievement.png",
+        "selectedIconPath": "images/tab_achievement_active.png"
+      },
+      {
+        "pagePath": "pages/contact/contact",
+        "text": "联系",
+        "iconPath": "images/tab_contact.png",
+        "selectedIconPath": "images/tab_contact_active.png"
+      }
+    ]
+  },
+  "usingComponents": {
+    "glass-card": "/components/glass-card/glass-card",
+    "chart": "/components/chart/chart",
+    "data-card": "/components/data-card/data-card",
+    "timeline": "/components/timeline/timeline",
+    "progress-ring": "/components/progress-ring/progress-ring"
+  },
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents",
+  "darkmode": true,
+  "themeLocation": "theme.json",
+  "requiredBackgroundModes": ["audio", "location"],
+  "permission": {
+    "scope.userLocation": {
+      "desc": "您的位置信息将用于展示附近铁路线路信息"
+    }
+  },
+  "plugins": {},
+  "preloadRule": {
+    "pages/home/home": {
+      "network": "all",
+      "packages": []
+    }
+  },
+  "resizable": false,
+  "useExtendedLib": {
+    "weui": true
+  },
+  "entranceDeclare": {
+    "locationMessage": {
+      "path": "pages/home/home",
+      "query": "from=locationMessage"
+    }
+  },
+  "componentFramework": "glass-easel"
+}

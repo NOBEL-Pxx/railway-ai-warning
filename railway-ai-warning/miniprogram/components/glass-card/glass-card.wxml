@@ -1,0 +1,16 @@
+<view class="glass-card {{gradient}} {{isPressed ? 'pressed' : ''}}" 
+      bindtap="onTap" 
+      bindtouchstart="onTouchStart" 
+      bindtouchend="onTouchEnd">
+  <view class="card-shine"></view>
+  <view class="card-content">
+    <view class="card-header" wx:if="{{icon || title}}">
+      <image wx:if="{{icon}}" class="card-icon" src="{{icon}}" mode="aspectFit"/>
+      <view class="card-title-wrapper">
+        <text wx:if="{{title}}" class="card-title">{{title}}</text>
+        <text wx:if="{{subtitle}}" class="card-subtitle">{{subtitle}}</text>
+      </view>
+    </view>
+    <slot></slot>
+  </view>
+</view>

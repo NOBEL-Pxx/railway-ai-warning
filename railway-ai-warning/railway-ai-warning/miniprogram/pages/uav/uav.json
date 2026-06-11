@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "空天感知平台",
+  "navigationBarBackgroundColor": "#87CEEB",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#F8F9FA",
+  "enablePullDownRefresh": false,
+  "usingComponents": {}
+}

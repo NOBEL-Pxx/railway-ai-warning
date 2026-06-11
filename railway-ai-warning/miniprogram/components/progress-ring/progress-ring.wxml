@@ -1,0 +1,24 @@
+<view class="progress-ring" style="width: {{size}}rpx; height: {{size}}rpx;">
+  <svg class="ring-svg" viewBox="0 0 {{size}} {{size}}">
+    <circle class="ring-bg"
+            cx="{{size/2}}" 
+            cy="{{size/2}}" 
+            r="{{(size-strokeWidth)/2}}"
+            stroke="{{bgColor}}"
+            stroke-width="{{strokeWidth}}"
+            fill="none"/>
+    <circle class="ring-progress"
+            cx="{{size/2}}" 
+            cy="{{size/2}}" 
+            r="{{(size-strokeWidth)/2}}"
+            stroke="{{color}}"
+            stroke-width="{{strokeWidth}}"
+            fill="none"
+            stroke-linecap="round"
+            stroke-dasharray="{{circumference}}"
+            stroke-dashoffset="{{offset}}"/>
+  </svg>
+  <view class="ring-text" wx:if="{{showText}}">
+    <text class="percent">{{percent}}%</text>
+  </view>
+</view>

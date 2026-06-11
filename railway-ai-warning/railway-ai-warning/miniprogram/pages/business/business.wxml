@@ -1,0 +1,246 @@
+<view class="page-container">
+  <!-- 页面头部 -->
+  <view class="page-header gradient-purple">
+    <view class="header-content">
+      <text class="header-subtitle">经纬之略</text>
+      <text class="header-title">三级盈利火箭</text>
+      <text class="header-desc">硬件 + SaaS + 数据运营</text>
+    </view>
+  </view>
+
+  <!-- 盈利模式 -->
+  <view class="section">
+    <view class="section-title">盈利模式</view>
+    <view class="rocket-container">
+      <view class="rocket-level level-1 {{activeLevel === 1 ? 'active' : ''}}" bindtap="selectLevel" data-level="1">
+        <view class="level-header">
+          <view class="level-icon">🚀</view>
+          <view class="level-info">
+            <text class="level-name">第一级：硬件装备</text>
+            <text class="level-desc">无人机系统销售</text>
+          </view>
+          <view class="level-arrow">▼</view>
+        </view>
+        <view class="level-detail {{activeLevel === 1 ? 'show' : ''}}">
+          <view class="detail-item">
+            <text class="detail-label">产品</text>
+            <text class="detail-value">Y3垂起固定翼无人机集群</text>
+          </view>
+          <view class="detail-item">
+            <text class="detail-label">定价</text>
+            <text class="detail-value">80-150万/套</text>
+          </view>
+          <view class="detail-item">
+            <text class="detail-label">目标客户</text>
+            <text class="detail-value">铁路局、工务段</text>
+          </view>
+          <view class="detail-item">
+            <text class="detail-label">市场规模</text>
+            <text class="detail-value">50亿/年</text>
+          </view>
+        </view>
+      </view>
+      
+      <view class="rocket-level level-2 {{activeLevel === 2 ? 'active' : ''}}" bindtap="selectLevel" data-level="2">
+        <view class="level-header">
+          <view class="level-icon">☁️</view>
+          <view class="level-info">
+            <text class="level-name">第二级：SaaS订阅</text>
+            <text class="level-desc">预警平台服务</text>
+          </view>
+          <view class="level-arrow">▼</view>
+        </view>
+        <view class="level-detail {{activeLevel === 2 ? 'show' : ''}}">
+          <view class="detail-item">
+            <text class="detail-label">产品</text>
+            <text class="detail-value">LoongClaw预警云平台</text>
+          </view>
+          <view class="detail-item">
+            <text class="detail-label">定价</text>
+            <text class="detail-value">20-50万/年/线路</text>
+          </view>
+          <view class="detail-item">
+            <text class="detail-label">目标客户</text>
+            <text class="detail-value">铁路局、地铁公司</text>
+          </view>
+          <view class="detail-item">
+            <text class="detail-label">市场规模</text>
+            <text class="detail-value">100亿/年</text>
+          </view>
+        </view>
+      </view>
+      
+      <view class="rocket-level level-3 {{activeLevel === 3 ? 'active' : ''}}" bindtap="selectLevel" data-level="3">
+        <view class="level-header">
+          <view class="level-icon">📊</view>
+          <view class="level-info">
+            <text class="level-name">第三级：数据运营</text>
+            <text class="level-desc">API与增值服务</text>
+          </view>
+          <view class="level-arrow">▼</view>
+        </view>
+        <view class="level-detail {{activeLevel === 3 ? 'show' : ''}}">
+          <view class="detail-item">
+            <text class="detail-label">产品</text>
+            <text class="detail-value">风险数据API、保险服务</text>
+          </view>
+          <view class="detail-item">
+            <text class="detail-label">定价</text>
+            <text class="detail-value">按调用量/保单抽成</text>
+          </view>
+          <view class="detail-item">
+            <text class="detail-label">目标客户</text>
+            <text class="detail-value">保险公司、物流企业</text>
+          </view>
+          <view class="detail-item">
+            <text class="detail-label">市场规模</text>
+            <text class="detail-value">200亿/年</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 市场规模 -->
+  <view class="section">
+    <view class="section-title">市场规模</view>
+    <view class="market-card">
+      <view class="market-chart">
+        <view class="market-circle tam">
+          <view class="circle-inner">
+            <text class="circle-value">350亿</text>
+            <text class="circle-label">TAM</text>
+          </view>
+        </view>
+        <view class="market-circle sam">
+          <view class="circle-inner">
+            <text class="circle-value">150亿</text>
+            <text class="circle-label">SAM</text>
+          </view>
+        </view>
+        <view class="market-circle som">
+          <view class="circle-inner">
+            <text class="circle-value">5亿</text>
+            <text class="circle-label">SOM</text>
+          </view>
+        </view>
+      </view>
+      <view class="market-legend">
+        <view class="legend-item">
+          <view class="legend-dot tam"></view>
+          <text class="legend-text">TAM：全球铁路防灾市场</text>
+        </view>
+        <view class="legend-item">
+          <view class="legend-dot sam"></view>
+          <text class="legend-text">SAM：中国铁路防灾市场</text>
+        </view>
+        <view class="legend-item">
+          <view class="legend-dot som"></view>
+          <text class="legend-text">SOM：目标可服务市场</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 客户画像 -->
+  <view class="section">
+    <view class="section-title">目标客户</view>
+    <view class="customer-grid">
+      <view class="customer-card">
+        <view class="customer-icon">🚄</view>
+        <text class="customer-name">铁路局</text>
+        <text class="customer-desc">18个铁路局集团，核心客户</text>
+        <view class="customer-tag primary">核心</view>
+      </view>
+      <view class="customer-card">
+        <view class="customer-icon">🚇</view>
+        <text class="customer-name">地铁公司</text>
+        <text class="customer-desc">50+城市地铁运营公司</text>
+        <view class="customer-tag">重要</view>
+      </view>
+      <view class="customer-card">
+        <view class="customer-icon">🏛️</view>
+        <text class="customer-name">政府部门</text>
+        <text class="customer-desc">应急管理、气象部门</text>
+        <view class="customer-tag">拓展</view>
+      </view>
+      <view class="customer-card">
+        <view class="customer-icon">🏢</view>
+        <text class="customer-name">保险公司</text>
+        <text class="customer-desc">铁路保险、灾害保险</text>
+        <view class="customer-tag">潜在</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 竞争优势 -->
+  <view class="section">
+    <view class="section-title">竞争优势</view>
+    <view class="advantage-list">
+      <view class="adv-item">
+        <view class="adv-number">01</view>
+        <view class="adv-content">
+          <text class="adv-title">技术领先</text>
+          <text class="adv-desc">LoongClaw引擎精度领先行业15%以上</text>
+        </view>
+      </view>
+      <view class="adv-item">
+        <view class="adv-number">02</view>
+        <view class="adv-content">
+          <text class="adv-title">端到端方案</text>
+          <text class="adv-desc">硬件+软件+服务一体化交付</text>
+        </view>
+      </view>
+      <view class="adv-item">
+        <view class="adv-number">03</view>
+        <view class="adv-content">
+          <text class="adv-title">行业认证</text>
+          <text class="adv-desc">通过铁路行业权威检测认证</text>
+        </view>
+      </view>
+      <view class="adv-item">
+        <view class="adv-number">04</view>
+        <view class="adv-content">
+          <text class="adv-title">团队优势</text>
+          <text class="adv-desc">兰大大气科学+计算机跨学科团队</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 发展规划 -->
+  <view class="section">
+    <view class="section-title">发展规划</view>
+    <view class="timeline">
+      <view class="timeline-item">
+        <view class="timeline-year">2024</view>
+        <view class="timeline-content">
+          <text class="timeline-title">产品验证期</text>
+          <text class="timeline-desc">完成3个铁路局试点部署，验证产品可靠性</text>
+        </view>
+      </view>
+      <view class="timeline-item">
+        <view class="timeline-year">2025</view>
+        <view class="timeline-content">
+          <text class="timeline-title">市场拓展期</text>
+          <text class="timeline-desc">覆盖10个铁路局，实现营收5000万</text>
+        </view>
+      </view>
+      <view class="timeline-item">
+        <view class="timeline-year">2026</view>
+        <view class="timeline-content">
+          <text class="timeline-title">规模化期</text>
+          <text class="timeline-desc">全国推广，拓展海外市场，营收2亿</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部按钮 -->
+  <view class="section action-section">
+    <button class="btn btn-primary" bindtap="viewTeam">认识我们的团队</button>
+  </view>
+
+  <!-- 安全区域 -->
+  <view class="safe-area-bottom"></view>
+</view>

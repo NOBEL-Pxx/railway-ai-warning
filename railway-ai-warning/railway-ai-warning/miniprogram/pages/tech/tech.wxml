@@ -1,0 +1,245 @@
+<view class="page-container">
+  <!-- 页面头部 -->
+  <view class="page-header gradient-primary">
+    <view class="header-content">
+      <text class="header-subtitle">昆仑之构</text>
+      <text class="header-title">四层技术架构</text>
+      <text class="header-desc">空天地一体化智能预警体系</text>
+    </view>
+  </view>
+
+  <!-- 架构图 -->
+  <view class="section architecture-section">
+    <view class="architecture-container">
+      <!-- 连接线 -->
+      <view class="connection-lines">
+        <view class="line line-1 {{activeLayer >= 1 ? 'active' : ''}}"></view>
+        <view class="line line-2 {{activeLayer >= 2 ? 'active' : ''}}"></view>
+        <view class="line line-3 {{activeLayer >= 3 ? 'active' : ''}}"></view>
+      </view>
+      
+      <!-- 层级卡片 -->
+      <view class="layer-cards">
+        <view class="layer-card {{activeLayer === 3 ? 'active' : ''}}" 
+              bindtap="selectLayer" 
+              data-layer="3"
+              style="animation-delay: 0s;">
+          <view class="layer-icon">
+            <text class="icon">🌐</text>
+          </view>
+          <view class="layer-info">
+            <text class="layer-name">孪生可视层</text>
+            <text class="layer-desc">Digital Twin Visualization</text>
+          </view>
+          <view class="layer-number">04</view>
+        </view>
+        
+        <view class="layer-card {{activeLayer === 2 ? 'active' : ''}}" 
+              bindtap="selectLayer" 
+              data-layer="2"
+              style="animation-delay: 0.1s;">
+          <view class="layer-icon">
+            <text class="icon">☁️</text>
+          </view>
+          <view class="layer-info">
+            <text class="layer-name">云端推演层</text>
+            <text class="layer-desc">Cloud Inference Layer</text>
+          </view>
+          <view class="layer-number">03</view>
+        </view>
+        
+        <view class="layer-card {{activeLayer === 1 ? 'active' : ''}}" 
+              bindtap="selectLayer" 
+              data-layer="1"
+              style="animation-delay: 0.2s;">
+          <view class="layer-icon">
+            <text class="icon">⚙️</text>
+          </view>
+          <view class="layer-info">
+            <text class="layer-name">边缘计算层</text>
+            <text class="layer-desc">Edge Computing Layer</text>
+          </view>
+          <view class="layer-number">02</view>
+        </view>
+        
+        <view class="layer-card {{activeLayer === 0 ? 'active' : ''}}" 
+              bindtap="selectLayer" 
+              data-layer="0"
+              style="animation-delay: 0.3s;">
+          <view class="layer-icon">
+            <text class="icon">📡</text>
+          </view>
+          <view class="layer-info">
+            <text class="layer-name">空天感知层</text>
+            <text class="layer-desc">Space-Air Sensing Layer</text>
+          </view>
+          <view class="layer-number">01</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 层级详情 -->
+  <view class="section detail-section" wx:if="{{activeLayer !== -1}}">
+    <view class="detail-card">
+      <view class="detail-header">
+        <view class="detail-icon">
+          <text class="icon">{{layerDetails[activeLayer].icon}}</text>
+        </view>
+        <view class="detail-title-group">
+          <text class="detail-title">{{layerDetails[activeLayer].name}}</text>
+          <text class="detail-subtitle">{{layerDetails[activeLayer].enName}}</text>
+        </view>
+      </view>
+      
+      <view class="detail-content">
+        <text class="detail-desc">{{layerDetails[activeLayer].description}}</text>
+        
+        <view class="component-list">
+          <view class="component-title">核心组件</view>
+          <view class="component-item" wx:for="{{layerDetails[activeLayer].components}}" wx:key="index">
+            <view class="component-dot"></view>
+            <text class="component-name">{{item.name}}</text>
+            <text class="component-desc">{{item.desc}}</text>
+          </view>
+        </view>
+        
+        <view class="tech-tags">
+          <view class="tech-tag" wx:for="{{layerDetails[activeLayer].techs}}" wx:key="index">
+            {{item}}
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 数据流图 -->
+  <view class="section">
+    <view class="section-title">数据流转</view>
+    <view class="dataflow-card">
+      <view class="flow-steps">
+        <view class="flow-step">
+          <view class="step-icon">
+            <text class="icon">📡</text>
+          </view>
+          <text class="step-name">感知</text>
+          <text class="step-time">< 1min</text>
+        </view>
+        <view class="flow-arrow">→</view>
+        <view class="flow-step">
+          <view class="step-icon">
+            <text class="icon">⚙️</text>
+          </view>
+          <text class="step-name">处理</text>
+          <text class="step-time">< 2min</text>
+        </view>
+        <view class="flow-arrow">→</view>
+        <view class="flow-step">
+          <view class="step-icon">
+            <text class="icon">🧠</text>
+          </view>
+          <text class="step-name">推演</text>
+          <text class="step-time">< 3min</text>
+        </view>
+        <view class="flow-arrow">→</view>
+        <view class="flow-step">
+          <view class="step-icon">
+            <text class="icon">📢</text>
+          </view>
+          <text class="step-name">预警</text>
+          <text class="step-time">< 1min</text>
+        </view>
+      </view>
+      <view class="flow-total">
+        <text class="total-label">全流程响应</text>
+        <text class="total-value">≤ 5分钟</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 核心技术 -->
+  <view class="section">
+    <view class="section-title">核心技术栈</view>
+    <view class="tech-stack">
+      <view class="tech-category">
+        <text class="category-name">AI/ML</text>
+        <view class="tech-items">
+          <view class="tech-item">PyTorch</view>
+          <view class="tech-item">TensorFlow</view>
+          <view class="tech-item">Mamba</view>
+          <view class="tech-item">Swin Transformer</view>
+        </view>
+      </view>
+      <view class="tech-category">
+        <text class="category-name">气象模型</text>
+        <view class="tech-items">
+          <view class="tech-item">WRF</view>
+          <view class="tech-item">COTREC</view>
+          <view class="tech-item">XGBoost</view>
+          <view class="tech-item">GRAPES</view>
+        </view>
+      </view>
+      <view class="tech-category">
+        <text class="category-name">云计算</text>
+        <view class="tech-items">
+          <view class="tech-item">Kubernetes</view>
+          <view class="tech-item">Docker</view>
+          <view class="tech-item">Kafka</view>
+          <view class="tech-item">Flink</view>
+        </view>
+      </view>
+      <view class="tech-category">
+        <text class="category-name">可视化</text>
+        <view class="tech-items">
+          <view class="tech-item">Three.js</view>
+          <view class="tech-item">Cesium</view>
+          <view class="tech-item">WebGL</view>
+          <view class="tech-item">Mapbox</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 架构优势 -->
+  <view class="section">
+    <view class="section-title">架构优势</view>
+    <view class="advantage-grid">
+      <view class="adv-item">
+        <view class="adv-icon">
+          <text class="icon">🔄</text>
+        </view>
+        <text class="adv-title">端到端</text>
+        <text class="adv-desc">感知-处理-推演-展示全流程自动化</text>
+      </view>
+      <view class="adv-item">
+        <view class="adv-icon">
+          <text class="icon">⚡</text>
+        </view>
+        <text class="adv-title">低延迟</text>
+        <text class="adv-desc">分钟级响应，秒级数据回传</text>
+      </view>
+      <view class="adv-item">
+        <view class="adv-icon">
+          <text class="icon">📈</text>
+        </view>
+        <text class="adv-title">高扩展</text>
+        <text class="adv-desc">云原生架构，弹性伸缩</text>
+      </view>
+      <view class="adv-item">
+        <view class="adv-icon">
+          <text class="icon">🔒</text>
+        </view>
+        <text class="adv-title">高可靠</text>
+        <text class="adv-desc">多副本备份，故障自动切换</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部按钮 -->
+  <view class="section action-section">
+    <button class="btn btn-primary" bindtap="viewLoongClaw">了解LoongClaw引擎</button>
+  </view>
+
+  <!-- 安全区域 -->
+  <view class="safe-area-bottom"></view>
+</view>

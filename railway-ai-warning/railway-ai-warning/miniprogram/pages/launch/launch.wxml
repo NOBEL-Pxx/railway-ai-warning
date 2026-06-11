@@ -1,0 +1,67 @@
+<view class="launch-container {{fadeOut ? 'fade-out' : ''}}">
+  <!-- 动态背景 -->
+  <view class="bg-gradient">
+    <view class="bg-orb orb-1"></view>
+    <view class="bg-orb orb-2"></view>
+    <view class="bg-orb orb-3"></view>
+    <view class="bg-grid"></view>
+  </view>
+  
+  <!-- 主要内容 -->
+  <view class="content {{showContent ? 'show' : ''}}">
+    <!-- Logo区域 -->
+    <view class="logo-section">
+      <view class="logo-ring ring-1"></view>
+      <view class="logo-ring ring-2"></view>
+      <view class="logo-ring ring-3"></view>
+      <view class="logo-core">
+        <image class="logo-icon" src="https://picsum.photos/200/200?random=logo" mode="aspectFit"></image>
+      </view>
+      <view class="pulse-ring"></view>
+    </view>
+    
+    <!-- 标题区域 -->
+    <view class="title-section">
+      <text class="main-title">智驭苍穹・守路安澜</text>
+      <view class="title-underline"></view>
+      <text class="sub-title">空天地多模态铁路短临致灾风险孪生预警系统</text>
+    </view>
+    
+    <!-- 技术标签 -->
+    <view class="tech-tags">
+      <view class="tag-item" style="animation-delay: 0.1s;">
+        <text class="tag-icon">AI</text>
+        <text class="tag-text">人工智能</text>
+      </view>
+      <view class="tag-item" style="animation-delay: 0.2s;">
+        <text class="tag-icon">🛰</text>
+        <text class="tag-text">卫星遥感</text>
+      </view>
+      <view class="tag-item" style="animation-delay: 0.3s;">
+        <text class="tag-icon">🚄</text>
+        <text class="tag-text">铁路防灾</text>
+      </view>
+      <view class="tag-item" style="animation-delay: 0.4s;">
+        <text class="tag-icon">🚁</text>
+        <text class="tag-text">低空巡检</text>
+      </view>
+    </view>
+    
+    <!-- 底部信息 -->
+    <view class="footer-section">
+      <view class="team-info">
+        <text class="team-name">智驭苍穹团队</text>
+        <text class="divider">|</text>
+        <text class="school">兰州大学</text>
+      </view>
+      <text class="advisor">指导老师：胡淑娟 教授</text>
+      <view class="loading-bar">
+        <view class="loading-progress" style="width: {{loadingProgress}}%;"></view>
+      </view>
+      <text class="loading-text">{{loadingText}}</text>
+    </view>
+  </view>
+  
+  <!-- 版本信息 -->
+  <view class="version">V 2.0.0</view>
+</view>

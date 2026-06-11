@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "社会价值与愿景",
+  "navigationBarBackgroundColor": "#0a0a0f",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#0a0a0f",
+  "enablePullDownRefresh": false,
+  "usingComponents": {}
+}

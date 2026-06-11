@@ -1,0 +1,130 @@
+<view class="page-container dark-theme">
+  <!-- 页面头部 -->
+  <view class="page-header">
+    <view class="header-bg">
+      <view class="stars"></view>
+      <view class="glow-orb"></view>
+    </view>
+    <view class="header-content">
+      <text class="header-title">守护每一条铁路</text>
+      <text class="header-desc">让天有可测风云，路有预知安澜</text>
+    </view>
+  </view>
+
+  <!-- 核心价值 -->
+  <view class="section">
+    <view class="value-cards">
+      <view class="value-card">
+        <view class="value-icon">🛡️</view>
+        <text class="value-title">防灾减灾</text>
+        <text class="value-desc">提前预警，守护生命财产安全</text>
+      </view>
+      <view class="value-card">
+        <view class="value-icon">🚄</view>
+        <text class="value-title">交通强国</text>
+        <text class="value-desc">保障铁路安全高效运营</text>
+      </view>
+      <view class="value-card">
+        <view class="value-icon">🌍</view>
+        <text class="value-title">技术输出</text>
+        <text class="value-desc">一带一路，惠及全球铁路</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 社会价值 -->
+  <view class="section">
+    <view class="section-title">社会价值</view>
+    <view class="impact-list">
+      <view class="impact-item">
+        <view class="impact-number">1000+</view>
+        <view class="impact-content">
+          <text class="impact-title">万公里铁路守护</text>
+          <text class="impact-desc">覆盖全国主要铁路干线</text>
+        </view>
+      </view>
+      <view class="impact-item">
+        <view class="impact-number">10万+</view>
+        <view class="impact-content">
+          <text class="impact-title">列车安全护航</text>
+          <text class="impact-desc">每日保障列车安全运行</text>
+        </view>
+      </view>
+      <view class="impact-item">
+        <view class="impact-number">1亿+</view>
+        <view class="impact-content">
+          <text class="impact-title">旅客平安出行</text>
+          <text class="impact-desc">守护亿万旅客生命安全</text>
+        </view>
+      </view>
+      <view class="impact-item">
+        <view class="impact-number">100亿</view>
+        <view class="impact-content">
+          <text class="impact-title">经济损失避免</text>
+          <text class="impact-desc">减少灾害造成的经济损失</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 发展愿景 -->
+  <view class="section">
+    <view class="section-title">发展愿景</view>
+    <view class="vision-timeline">
+      <view class="vision-item">
+        <view class="vision-year">2024</view>
+        <view class="vision-content">
+          <text class="vision-title">立足西北</text>
+          <text class="vision-desc">完成兰州铁路局试点部署，验证产品可靠性</text>
+        </view>
+      </view>
+      <view class="vision-item">
+        <view class="vision-year">2025</view>
+        <view class="vision-content">
+          <text class="vision-title">辐射全国</text>
+          <text class="vision-desc">覆盖全国重点铁路干线，服务18个铁路局</text>
+        </view>
+      </view>
+      <view class="vision-item">
+        <view class="vision-year">2027</view>
+        <view class="vision-content">
+          <text class="vision-title">走向国际</text>
+          <text class="vision-desc">服务一带一路沿线国家，输出中国技术</text>
+        </view>
+      </view>
+      <view class="vision-item">
+        <view class="vision-year">2030</view>
+        <view class="vision-content">
+          <text class="vision-title">全球领先</text>
+          <text class="vision-desc">成为全球铁路防灾预警领域领导者</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 使命宣言 -->
+  <view class="section">
+    <view class="mission-card">
+      <view class="quote-mark">"</view>
+      <text class="mission-text">以科技创新守护铁路安全，让人类出行更加安心</text>
+      <view class="mission-signature">—— 智驭苍穹团队</view>
+    </view>
+  </view>
+
+  <!-- Slogan -->
+  <view class="section slogan-section">
+    <view class="slogan-card">
+      <text class="slogan-line1">天有可测风云</text>
+      <view class="slogan-divider"></view>
+      <text class="slogan-line2">路有预知安澜</text>
+    </view>
+  </view>
+
+  <!-- 底部按钮 -->
+  <view class="section action-section">
+    <button class="btn btn-primary" bindtap="contactUs">联系我们</button>
+  </view>
+
+  <!-- 安全区域 -->
+  <view class="safe-area-bottom"></view>
+</view>

@@ -1,0 +1,150 @@
+﻿<view class="page-container starfield-theme">
+  <!-- 星空背景层 -->
+  <view class="starfield-bg">
+    <view class="nebula-layer nebula-1"></view>
+    <view class="nebula-layer nebula-2"></view>
+    <view class="nebula-layer nebula-3"></view>
+    <view class="stars-layer">
+      <view class="star star-1"></view>
+      <view class="star star-2"></view>
+      <view class="star star-3"></view>
+      <view class="star star-4"></view>
+      <view class="star star-5"></view>
+      <view class="star star-6"></view>
+      <view class="star star-7"></view>
+      <view class="star star-8"></view>
+      <view class="star star-9"></view>
+      <view class="star star-10"></view>
+    </view>
+    <view class="milky-way"></view>
+  </view>
+
+  <!-- 返回按钮 -->
+  <view class="back-btn" bindtap="goBack">
+    <text class="back-arrow">←</text>
+  </view>
+
+  <!-- Hero区域 -->
+  <view class="hero-section stellar-hero">
+    <swiper class="hero-swiper" indicator-dots="{{true}}" autoplay="{{true}}" interval="{{5000}}" duration="{{800}}" circular="{{true}}" indicator-color="rgba(255,255,255,0.3)" indicator-active-color="#00D4FF">
+      <swiper-item>
+        <image class="hero-image" src="/images/1.jpg" mode="aspectFill"></image>
+        <view class="image-stellar-overlay"></view>
+      </swiper-item>
+      <swiper-item>
+        <image class="hero-image" src="/images/2.jpg" mode="aspectFill"></image>
+        <view class="image-stellar-overlay"></view>
+      </swiper-item>
+      <swiper-item>
+        <image class="hero-image" src="/images/3.jpg" mode="aspectFill"></image>
+        <view class="image-stellar-overlay"></view>
+      </swiper-item>
+    </swiper>
+    <view class="hero-vignette"></view>
+    <view class="hero-content">
+      <view class="hero-badge stellar-badge">
+        <view class="badge-glow stellar-glow"></view>
+        <text class="badge-text">PROJECT OVERVIEW</text>
+      </view>
+      <view class="hero-title-wrapper">
+        <text class="hero-title stellar-title">项目概况</text>
+        <view class="title-underline stellar-line"></view>
+      </view>
+      <text class="hero-subtitle stellar-subtitle">{{positioning}}</text>
+    </view>
+  </view>
+
+  <!-- 核心价值 -->
+  <view class="section stellar-section">
+    <view class="section-header">
+      <view class="title-wrapper">
+        <text class="section-title stellar-section-title">核心价值</text>
+        <view class="title-line stellar-line-accent"></view>
+      </view>
+      <text class="section-subtitle stellar-section-sub">四大核心能力</text>
+    </view>
+    <view class="value-grid">
+      <view class="value-card stellar-card" wx:for="{{coreValues}}" wx:key="index">
+        <view class="card-shine"></view>
+        <view class="value-emoji">{{item.icon}}</view>
+        <text class="value-title stellar-card-title">{{item.title}}</text>
+        <text class="value-desc-main stellar-card-desc">{{item.desc}}</text>
+        <text class="value-detail stellar-news-summary">{{item.detail}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 解决方案 -->
+  <view class="section stellar-section">
+    <view class="section-header">
+      <view class="title-wrapper">
+        <text class="section-title stellar-section-title">技术方案</text>
+        <view class="title-line stellar-line-accent"></view>
+      </view>
+    </view>
+    <view class="solution-list">
+      <view class="solution-card stellar-card" wx:for="{{solutions}}" wx:key="index" bindtap="viewSolutionDetail" data-index="{{index}}">
+        <view class="card-shine"></view>
+        <view class="solution-number stellar-value">{{'0' + (index + 1)}}</view>
+        <view class="solution-info">
+          <text class="solution-title stellar-card-title">{{item.title}}</text>
+          <text class="solution-desc stellar-news-summary">{{item.desc}}</text>
+          <view class="solution-tags">
+            <text class="sol-tag stellar-tag" wx:for="{{item.features}}" wx:for-item="feature" wx:key="*this">{{feature}}</text>
+          </view>
+        </view>
+        <view class="solution-arrow stellar-arrow">
+          <text class="arrow">→</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 核心优势 -->
+  <view class="section stellar-section">
+    <view class="section-header">
+      <view class="title-wrapper">
+        <text class="section-title stellar-section-title">核心优势</text>
+        <view class="title-line stellar-line-accent"></view>
+      </view>
+    </view>
+    <view class="advantage-grid">
+      <view class="adv-card stellar-card" wx:for="{{advantages}}" wx:key="index" bindtap="viewAdvantageDetail" data-index="{{index}}">
+        <view class="card-shine"></view>
+        <text class="adv-number stellar-value">{{item.number}}</text>
+        <text class="adv-title stellar-card-title">{{item.title}}</text>
+        <text class="adv-desc stellar-news-summary">{{item.desc}}</text>
+        <view class="adv-badge {{item.highlight ? 'highlight' : ''}}" wx:if="{{item.highlight}}">核心</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 数据统计 -->
+  <view class="section stats-section stellar-section">
+    <view class="stats-grid">
+      <view class="stat-item" wx:for="{{stats}}" wx:key="index">
+        <text class="stat-number stellar-value">{{item.value}}</text>
+        <text class="stat-label stellar-label">{{item.label}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部操作 -->
+  <view class="section action-section stellar-section">
+    <view class="action-card stellar-card">
+      <text class="action-title stellar-card-title">想了解更多技术细节？</text>
+      <text class="action-desc stellar-news-summary">查看完整技术架构与系统设计</text>
+      <button class="action-btn stellar-fab-primary" bindtap="viewTechDetail">
+        <text class="btn-icon">🔍</text>
+        <text class="btn-text">查看技术架构</text>
+      </button>
+      <button class="action-btn secondary stellar-fab-secondary" bindtap="bookDemo">
+        <text class="btn-icon">📅</text>
+        <text class="btn-text">预约演示</text>
+      </button>
+    </view>
+  </view>
+
+  <!-- 底部安全区域 -->
+  <view class="safe-area-bottom"></view>
+</view>

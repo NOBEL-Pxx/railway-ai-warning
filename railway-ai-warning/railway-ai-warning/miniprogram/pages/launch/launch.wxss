@@ -1,0 +1,361 @@
+/* 启动页样式 - 苹果风发布会级设计 */
+page {
+  background: #000000;
+}
+
+.launch-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+}
+
+.launch-container.fade-out {
+  animation: fadeOut 0.8s ease-out forwards;
+}
+
+/* 动态背景 */
+.bg-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.bg-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80rpx);
+  opacity: 0.6;
+  animation: float 8s ease-in-out infinite;
+}
+
+.orb-1 {
+  width: 600rpx;
+  height: 600rpx;
+  background: radial-gradient(circle, rgba(22, 93, 255, 0.4) 0%, transparent 70%);
+  top: -200rpx;
+  right: -200rpx;
+  animation-delay: 0s;
+}
+
+.orb-2 {
+  width: 500rpx;
+  height: 500rpx;
+  background: radial-gradient(circle, rgba(123, 97, 255, 0.3) 0%, transparent 70%);
+  bottom: -150rpx;
+  left: -150rpx;
+  animation-delay: -3s;
+}
+
+.orb-3 {
+  width: 400rpx;
+  height: 400rpx;
+  background: radial-gradient(circle, rgba(0, 212, 255, 0.25) 0%, transparent 70%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation-delay: -5s;
+}
+
+.bg-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.03) 1rpx, transparent 1rpx),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1rpx, transparent 1rpx);
+  background-size: 60rpx 60rpx;
+  opacity: 0.5;
+}
+
+/* 内容区域 */
+.content {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60rpx;
+  opacity: 0;
+  transform: translateY(40rpx);
+  transition: all 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.content.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Logo区域 */
+.logo-section {
+  position: relative;
+  width: 280rpx;
+  height: 280rpx;
+  margin-bottom: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 2rpx solid rgba(22, 93, 255, 0.3);
+}
+
+.ring-1 {
+  width: 100%;
+  height: 100%;
+  animation: pulse-ring 3s ease-out infinite;
+}
+
+.ring-2 {
+  width: 80%;
+  height: 80%;
+  border-color: rgba(123, 97, 255, 0.4);
+  animation: pulse-ring 3s ease-out infinite 0.5s;
+}
+
+.ring-3 {
+  width: 60%;
+  height: 60%;
+  border-color: rgba(0, 212, 255, 0.5);
+  animation: pulse-ring 3s ease-out infinite 1s;
+}
+
+.logo-core {
+  width: 180rpx;
+  height: 180rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(22, 93, 255, 0.2) 0%, rgba(123, 97, 255, 0.2) 100%);
+  backdrop-filter: blur(20rpx);
+  -webkit-backdrop-filter: blur(20rpx);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    0 0 60rpx rgba(22, 93, 255, 0.4),
+    inset 0 0 40rpx rgba(255, 255, 255, 0.1);
+  animation: float 4s ease-in-out infinite;
+}
+
+.logo-icon {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+}
+
+.pulse-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 4rpx solid rgba(22, 93, 255, 0.6);
+  animation: ripple 2s ease-out infinite;
+}
+
+/* 标题区域 */
+.title-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 48rpx;
+}
+
+.main-title {
+  font-size: 56rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+  letter-spacing: 8rpx;
+  text-shadow: 0 4rpx 20rpx rgba(22, 93, 255, 0.5);
+  background: linear-gradient(135deg, #FFFFFF 0%, #a8c5ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.title-underline {
+  width: 120rpx;
+  height: 4rpx;
+  background: linear-gradient(90deg, transparent, #165DFF, transparent);
+  margin: 24rpx 0;
+  animation: expandWidth 1s ease-out 0.5s forwards;
+  opacity: 0;
+}
+
+.sub-title {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  line-height: 1.6;
+  max-width: 560rpx;
+}
+
+/* 技术标签 */
+.tech-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16rpx;
+  margin-bottom: 80rpx;
+}
+
+.tag-item {
+  display: flex;
+  align-items: center;
+  padding: 12rpx 24rpx;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20rpx);
+  -webkit-backdrop-filter: blur(20rpx);
+  border-radius: 32rpx;
+  border: 1rpx solid rgba(255, 255, 255, 0.15);
+  opacity: 0;
+  transform: translateY(20rpx);
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.tag-icon {
+  font-size: 24rpx;
+  margin-right: 8rpx;
+  font-weight: 600;
+  color: #165DFF;
+}
+
+.tag-text {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* 底部信息 */
+.footer-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.team-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.team-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #FFFFFF;
+}
+
+.divider {
+  margin: 0 16rpx;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.school {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.advisor {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 40rpx;
+}
+
+.loading-bar {
+  width: 200rpx;
+  height: 4rpx;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2rpx;
+  overflow: hidden;
+  margin-bottom: 16rpx;
+}
+
+.loading-progress {
+  height: 100%;
+  background: linear-gradient(90deg, #165DFF, #7B61FF);
+  border-radius: 2rpx;
+  transition: width 0.3s ease-out;
+}
+
+.loading-text {
+  font-size: 20rpx;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* 版本信息 */
+.version {
+  position: absolute;
+  bottom: 40rpx;
+  right: 40rpx;
+  font-size: 20rpx;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* 动画定义 */
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+@keyframes expandWidth {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  to {
+    width: 120rpx;
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

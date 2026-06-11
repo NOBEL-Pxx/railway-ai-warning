@@ -1,0 +1,5 @@
+<view class="glass-card {{className}}" style="{{style}}">
+  <view class="card-content">
+    <slot></slot>
+  </view>
+</view>

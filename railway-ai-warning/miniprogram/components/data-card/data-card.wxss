@@ -1,0 +1,81 @@
+/* 数据卡片样式 */
+.data-card {
+  display: flex;
+  align-items: center;
+  background: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 28rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+
+.data-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.04);
+}
+
+.data-icon-wrapper {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 24rpx;
+}
+
+.data-icon {
+  width: 48rpx;
+  height: 48rpx;
+}
+
+.data-content {
+  flex: 1;
+}
+
+.data-title {
+  display: block;
+  font-size: 24rpx;
+  color: #86909C;
+  margin-bottom: 8rpx;
+}
+
+.data-value-wrapper {
+  display: flex;
+  align-items: baseline;
+}
+
+.data-value {
+  font-size: 40rpx;
+  font-weight: 800;
+}
+
+.data-unit {
+  font-size: 24rpx;
+  color: #86909C;
+  margin-left: 8rpx;
+}
+
+.data-trend {
+  display: flex;
+  align-items: center;
+  margin-top: 8rpx;
+}
+
+.trend-icon {
+  font-size: 20rpx;
+  margin-right: 4rpx;
+}
+
+.trend-icon.up {
+  color: #00CC99;
+}
+
+.trend-icon.down {
+  color: #FF4D4F;
+}
+
+.trend-value {
+  font-size: 22rpx;
+  color: #86909C;
+}

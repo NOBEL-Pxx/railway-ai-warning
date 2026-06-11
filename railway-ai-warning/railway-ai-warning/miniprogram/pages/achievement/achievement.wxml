@@ -1,0 +1,233 @@
+<view class="page-container">
+  <!-- 页面头部 -->
+  <view class="page-header gradient-success">
+    <view class="header-content">
+      <text class="header-subtitle">星火之证</text>
+      <text class="header-title">成果验证</text>
+      <text class="header-desc">模型精度突破与实战检验</text>
+    </view>
+  </view>
+
+  <!-- 核心指标卡片 -->
+  <view class="section metrics-section">
+    <view class="metrics-grid">
+      <view class="metric-card highlight">
+        <view class="metric-trend up">↑ 15%</view>
+        <text class="metric-value">0.82</text>
+        <text class="metric-label">强降水命中率</text>
+        <view class="metric-bar">
+          <view class="bar-fill" style="width: 82%;"></view>
+        </view>
+      </view>
+      <view class="metric-card">
+        <view class="metric-trend down">↓ 35%</view>
+        <text class="metric-value">0.18</text>
+        <text class="metric-label">空报率</text>
+        <view class="metric-bar">
+          <view class="bar-fill low" style="width: 18%;"></view>
+        </view>
+      </view>
+      <view class="metric-card">
+        <view class="metric-trend up">↑ 12%</view>
+        <text class="metric-value">76.5%</text>
+        <text class="metric-label">灾害回溯吻合度</text>
+        <view class="metric-bar">
+          <view class="bar-fill" style="width: 76.5%;"></view>
+        </view>
+      </view>
+      <view class="metric-card">
+        <view class="metric-trend up">↑ 20%</view>
+        <text class="metric-value">0.71</text>
+        <text class="metric-label">TS评分</text>
+        <view class="metric-bar">
+          <view class="bar-fill" style="width: 71%;"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 对比图表 -->
+  <view class="section">
+    <view class="section-title">与传统方法对比</view>
+    <view class="chart-card">
+      <view class="chart-header">
+        <view class="legend-item">
+          <view class="legend-dot traditional"></view>
+          <text class="legend-text">传统方法</text>
+        </view>
+        <view class="legend-item">
+          <view class="legend-dot openclaw"></view>
+          <text class="legend-text">LoongClaw</text>
+        </view>
+      </view>
+      <view class="comparison-chart">
+        <view class="chart-row">
+          <text class="row-label">命中率</text>
+          <view class="row-bars">
+            <view class="bar traditional" style="width: 67%;">0.67</view>
+            <view class="bar openclaw" style="width: 82%;">0.82</view>
+          </view>
+        </view>
+        <view class="chart-row">
+          <text class="row-label">TS评分</text>
+          <view class="row-bars">
+            <view class="bar traditional" style="width: 56%;">0.56</view>
+            <view class="bar openclaw" style="width: 71%;">0.71</view>
+          </view>
+        </view>
+        <view class="chart-row">
+          <text class="row-label">空报率</text>
+          <view class="row-bars">
+            <view class="bar traditional" style="width: 28%;">0.28</view>
+            <view class="bar openclaw low" style="width: 18%;">0.18</view>
+          </view>
+        </view>
+        <view class="chart-row">
+          <text class="row-label">响应时间</text>
+          <view class="row-bars">
+            <view class="bar traditional" style="width: 90%;">45min</view>
+            <view class="bar openclaw" style="width: 10%;">5min</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 时间序列图表 -->
+  <view class="section">
+    <view class="section-title">预报精度时间序列</view>
+    <view class="chart-card">
+      <view class="time-series-chart">
+        <view class="chart-y-axis">
+          <text class="y-label">1.0</text>
+          <text class="y-label">0.8</text>
+          <text class="y-label">0.6</text>
+          <text class="y-label">0.4</text>
+          <text class="y-label">0.2</text>
+          <text class="y-label">0</text>
+        </view>
+        <view class="chart-area">
+          <view class="grid-lines">
+            <view class="grid-line"></view>
+            <view class="grid-line"></view>
+            <view class="grid-line"></view>
+            <view class="grid-line"></view>
+            <view class="grid-line"></view>
+          </view>
+          <view class="line-traditional"></view>
+          <view class="line-openclaw"></view>
+          <view class="data-points">
+            <view class="point traditional" style="left: 10%; bottom: 67%;"></view>
+            <view class="point traditional" style="left: 30%; bottom: 65%;"></view>
+            <view class="point traditional" style="left: 50%; bottom: 68%;"></view>
+            <view class="point traditional" style="left: 70%; bottom: 64%;"></view>
+            <view class="point traditional" style="left: 90%; bottom: 66%;"></view>
+            <view class="point openclaw" style="left: 10%; bottom: 80%;"></view>
+            <view class="point openclaw" style="left: 30%; bottom: 82%;"></view>
+            <view class="point openclaw" style="left: 50%; bottom: 81%;"></view>
+            <view class="point openclaw" style="left: 70%; bottom: 83%;"></view>
+            <view class="point openclaw" style="left: 90%; bottom: 82%;"></view>
+          </view>
+        </view>
+      </view>
+      <view class="chart-x-axis">
+        <text class="x-label">1h</text>
+        <text class="x-label">3h</text>
+        <text class="x-label">6h</text>
+        <text class="x-label">12h</text>
+        <text class="x-label">24h</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 实战案例 -->
+  <view class="section">
+    <view class="section-title">实战验证案例</view>
+    <view class="case-list">
+      <view class="case-card">
+        <view class="case-header">
+          <view class="case-icon">🌧️</view>
+          <view class="case-info">
+            <text class="case-name">2024年7月甘肃暴雨</text>
+            <text class="case-date">2024.07.15 - 2024.07.18</text>
+          </view>
+          <view class="case-result success">成功预警</view>
+        </view>
+        <view class="case-stats">
+          <view class="stat">
+            <text class="stat-value">6h</text>
+            <text class="stat-label">提前预警</text>
+          </view>
+          <view class="stat">
+            <text class="stat-value">0.85</text>
+            <text class="stat-label">预报命中率</text>
+          </view>
+          <view class="stat">
+            <text class="stat-value">0</text>
+            <text class="stat-label">伤亡事故</text>
+          </view>
+        </view>
+      </view>
+      
+      <view class="case-card">
+        <view class="case-header">
+          <view class="case-icon">💨</view>
+          <view class="case-info">
+            <text class="case-name">2024年3月横风预警</text>
+            <text class="case-date">2024.03.22</text>
+          </view>
+          <view class="case-result success">成功预警</view>
+        </view>
+        <view class="case-stats">
+          <view class="stat">
+            <text class="stat-value">2h</text>
+            <text class="stat-label">提前预警</text>
+          </view>
+          <view class="stat">
+            <text class="stat-value">0.88</text>
+            <text class="stat-label">风速预报精度</text>
+          </view>
+          <view class="stat">
+            <text class="stat-value">3</text>
+            <text class="stat-label">列车限速</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 认证与荣誉 -->
+  <view class="section">
+    <view class="section-title">认证与荣誉</view>
+    <view class="honor-grid">
+      <view class="honor-card">
+        <view class="honor-icon">🏆</view>
+        <text class="honor-title">铁路行业认证</text>
+        <text class="honor-desc">通过中国铁路科学研究院权威检测</text>
+      </view>
+      <view class="honor-card">
+        <view class="honor-icon">📜</view>
+        <text class="honor-title">软件著作权</text>
+        <text class="honor-desc">获得3项核心软件著作权登记</text>
+      </view>
+      <view class="honor-card">
+        <view class="honor-icon">🔬</view>
+        <text class="honor-title">学术论文</text>
+        <text class="honor-desc">发表SCI/EI论文5篇</text>
+      </view>
+      <view class="honor-card">
+        <view class="honor-icon">🏅</view>
+        <text class="honor-title">竞赛获奖</text>
+        <text class="honor-desc">挑战杯/互联网+省级金奖</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部按钮 -->
+  <view class="section action-section">
+    <button class="btn btn-primary" bindtap="viewBusiness">了解商业模式</button>
+  </view>
+
+  <!-- 安全区域 -->
+  <view class="safe-area-bottom"></view>
+</view>
