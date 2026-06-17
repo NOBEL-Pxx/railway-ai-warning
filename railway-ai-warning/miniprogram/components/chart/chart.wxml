@@ -1,6 +1,0 @@
-<view class="chart-container" style="width: {{width}}rpx; height: {{height}}rpx;">
-  <view class="chart-title" wx:if="{{title}}">{{title}}</view>
-  <view class="chart-body">
-    <slot></slot>
-  </view>
-</view>

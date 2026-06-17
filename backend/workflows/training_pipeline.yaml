@@ -1,0 +1,19 @@
+# 模型训练流程
+name: training_pipeline
+description: 模型训练与评估流程
+
+steps:
+  - name: 检查数据准备
+    skill: check_data
+    
+  - name: 训练模型
+    skill: train_model
+    
+  - name: 评估指标
+    skill: evaluate_metrics
+    
+  - name: 绘制预报图
+    skill: plot_forecast
+    
+  - name: 保存结果
+    skill: save_results

@@ -1,0 +1,2318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <title>LoongClaw 监测中心 | 空天地多模态实时融合监测系统</title>
+    <meta name="description" content="LoongClaw监测中心 — 空天地多模态实时融合监测大屏，天基/空基/地基全维度态势感知。">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Orbitron:wght@400;700;900&family=Roboto+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --space-black: #050508;
+            --nebula-blue: #1a1f3d;
+            --cosmic-purple: #2d1b4e;
+            --star-white: #e0e7ff;
+            --cyan-glow: #00d4ff;
+            --gold-accent: #ffd700;
+            
+            /* 多模态大屏变量 */
+            --primary-hue: 180;
+            --secondary-hue: 280;
+            --accent-hue: 45;
+            --success-hue: 150;
+            --warning-hue: 45;
+            --error-hue: 0;
+            
+            --primary: hsl(var(--primary-hue), 100%, 50%);
+            --secondary: hsl(var(--secondary-hue), 100%, 65%);
+            --accent: hsl(var(--accent-hue), 100%, 55%);
+            --success: hsl(var(--success-hue), 100%, 55%);
+            --warning: hsl(var(--warning-hue), 100%, 55%);
+            --error: hsl(var(--error-hue), 100%, 60%);
+            
+            --bg-darkest: #020203;
+            --bg-panel: rgba(10, 10, 20, 0.92);
+            --bg-elevated: rgba(20, 20, 35, 0.95);
+            --border-prominent: rgba(0, 212, 255, 0.3);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: var(--bg-darkest);
+            color: var(--star-white);
+            overflow: hidden;
+        }
+        
+        .font-orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--space-black);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 212, 255, 0.3);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 212, 255, 0.6);
+        }
+
+        /* ==================== 多模态监测大屏样式 ==================== */
+        #monitor-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9997;
+            background: var(--bg-darkest);
+            display: grid;
+            opacity: 1;
+            grid-template-columns: 280px 1fr 320px;
+            grid-template-rows: 60px 1fr 180px;
+            grid-template-areas: 
+                "header header header"
+                "left center right"
+                "bottom bottom bottom";
+            gap: 12px;
+            padding: 12px;
+        }
+
+        /* 大屏头部 */
+        .monitor-header {
+            grid-area: header;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-prominent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            backdrop-filter: blur(20px);
+            position: relative;
+        }
+
+        .monitor-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), var(--secondary), transparent);
+        }
+
+        .monitor-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .monitor-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--cyan-glow), #8b5cf6);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .monitor-title-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2em;
+            background: linear-gradient(90deg, var(--cyan-glow), #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .monitor-status-bar {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .monitor-status-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75em;
+            padding: 4px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            border: 1px solid var(--border-subtle);
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .monitor-status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #27c93f;
+            box-shadow: 0 0 8px #27c93f;
+            animation: pulse-dot 2s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .monitor-close-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 95, 86, 0.2);
+            border: 1px solid rgba(255, 95, 86, 0.5);
+            color: #ff5f56;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+        }
+
+        .monitor-close-btn:hover {
+            background: rgba(255, 95, 86, 0.4);
+            box-shadow: 0 0 20px rgba(255, 95, 86, 0.5);
+            transform: rotate(90deg);
+        }
+
+        /* 左侧面板 */
+        .monitor-left {
+            grid-area: left;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            min-height: 0;
+            max-height: 100%;
+            padding-right: 4px;
+        }
+
+        .monitor-left::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .monitor-left::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+
+        .monitor-left::-webkit-scrollbar-thumb {
+            background: rgba(0, 212, 255, 0.4);
+            border-radius: 3px;
+        }
+
+        .monitor-left::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 212, 255, 0.7);
+        }
+
+        .monitor-left .modality-card {
+            flex-shrink: 0;
+        }
+
+        /* 中央面板 */
+        .monitor-center {
+            grid-area: center;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow: hidden;
+        }
+
+        /* 右侧面板 */
+        .monitor-right {
+            grid-area: right;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            min-height: 0;
+            max-height: 100%;
+            padding-right: 4px;
+        }
+
+        .monitor-right::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .monitor-right::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+
+        .monitor-right::-webkit-scrollbar-thumb {
+            background: rgba(0, 212, 255, 0.4);
+            border-radius: 3px;
+        }
+
+        .monitor-right::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 212, 255, 0.7);
+        }
+
+        .monitor-right .monitor-panel,
+        .monitor-right .fusion-status {
+            flex-shrink: 0;
+        }
+
+        /* 底部面板 */
+        .monitor-bottom {
+            grid-area: bottom;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 12px;
+        }
+
+        /* 通用面板卡片 */
+        .monitor-panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-prominent);
+            border-radius: 12px;
+            padding: 16px;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .monitor-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--cyan-glow), transparent);
+            opacity: 0.6;
+        }
+
+        .panel-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8em;
+            color: var(--cyan-glow);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        /* 模态卡片 */
+        .modality-card {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            border: 1px solid var(--border-subtle);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modality-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--cyan-glow);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .modality-card:hover {
+            border-color: var(--border-prominent);
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateX(3px);
+        }
+
+        .modality-card:hover::before {
+            opacity: 1;
+        }
+
+        .modality-card.active {
+            background: rgba(0, 212, 255, 0.08);
+            border-color: rgba(0, 212, 255, 0.4);
+        }
+
+        .modality-card.active::before {
+            opacity: 1;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .card-title {
+            font-size: 0.85em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .confidence-badge {
+            font-size: 0.75em;
+            padding: 2px 10px;
+            border-radius: 20px;
+            background: rgba(6, 255, 165, 0.15);
+            color: var(--success);
+            font-weight: 700;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .card-content {
+            font-size: 0.8em;
+            color: rgba(224, 231, 255, 0.7);
+            margin-bottom: 8px;
+        }
+
+        .feature-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+
+        .tag {
+            font-size: 0.7em;
+            padding: 2px 8px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 4px;
+            color: rgba(224, 231, 255, 0.6);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .tag.highlight {
+            background: rgba(0, 212, 255, 0.2);
+            color: var(--cyan-glow);
+            border-color: var(--cyan-glow);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cyan-glow), #27c93f);
+            width: 0%;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: progressShimmer 2s infinite;
+        }
+
+        @keyframes progressShimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* 3D Canvas容器 */
+        .canvas-container {
+            position: relative;
+            flex: 1;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+            overflow: hidden;
+            min-height: 300px;
+        }
+
+        /* 注意力热力图 */
+        .attention-grid {
+            display: grid;
+            grid-template-columns: repeat(16, 1fr);
+            grid-template-rows: repeat(16, 1fr);
+            gap: 1px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+            overflow: hidden;
+            height: 200px;
+        }
+
+        .attention-cell {
+            background: rgba(0, 0, 0, 0.8);
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .attention-cell:hover {
+            transform: scale(1.3);
+            z-index: 10;
+            box-shadow: 0 0 8px rgba(0, 212, 255, 0.5);
+        }
+
+        /* 相似度矩阵 */
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: auto repeat(5, 1fr);
+            gap: 2px;
+            font-size: 0.7em;
+        }
+
+        .matrix-cell {
+            padding: 6px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+            font-family: 'Roboto Mono', monospace;
+            transition: all 0.3s;
+        }
+
+        .matrix-cell.header {
+            background: rgba(0, 212, 255, 0.15);
+            color: var(--cyan-glow);
+            font-weight: 600;
+        }
+
+        .matrix-cell.high { 
+            background: rgba(6, 255, 165, 0.2); 
+            color: var(--success);
+            animation: highPulse 2s infinite;
+        }
+
+        @keyframes highPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(6, 255, 165, 0.4); }
+            50% { box-shadow: 0 0 8px 2px rgba(6, 255, 165, 0.2); }
+        }
+
+        .matrix-cell.medium { background: rgba(255, 190, 11, 0.2); color: var(--warning); }
+        .matrix-cell.low { background: rgba(255, 0, 110, 0.1); color: #ff006e; opacity: 0.8; }
+
+        /* 日志区域 */
+        .log-section {
+            padding: 12px;
+            overflow-y: auto;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.75em;
+            line-height: 1.6;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            flex: 1;
+            min-height: 220px;
+            max-height: 300px;
+        }
+
+        .log-section::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .log-section::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+
+        .log-section::-webkit-scrollbar-thumb {
+            background: rgba(0, 212, 255, 0.4);
+            border-radius: 3px;
+        }
+
+        .log-section::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 212, 255, 0.7);
+        }
+
+        .log-entry {
+            margin: 2px 0;
+            padding: 2px 0;
+            border-left: 2px solid transparent;
+            padding-left: 8px;
+            opacity: 0;
+            animation: fadeIn 0.3s forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .log-entry.info { border-left-color: var(--cyan-glow); color: var(--star-white); }
+        .log-entry.success { border-left-color: var(--success); color: var(--success); }
+        .log-entry.warning { border-left-color: var(--warning); color: var(--warning); }
+        .log-entry.error { border-left-color: var(--error); color: var(--error); }
+
+        .log-time {
+            color: rgba(224, 231, 255, 0.5);
+            font-size: 0.9em;
+            margin-right: 6px;
+        }
+
+        /* 统计项 */
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8em;
+            padding: 4px 0;
+        }
+
+        .stat-label {
+            color: rgba(224, 231, 255, 0.7);
+        }
+
+        .stat-value {
+            color: var(--cyan-glow);
+            font-weight: 700;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        /* 融合状态 */
+        .fusion-status {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(139, 92, 246, 0.1));
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .fusion-status:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 212, 255, 0.2);
+        }
+
+        .fusion-score {
+            font-size: 2.5em;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--cyan-glow), #27c93f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .fusion-label {
+            font-size: 0.75em;
+            color: rgba(224, 231, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 8px;
+        }
+
+        /* 底部图表卡片 */
+        .bottom-chart {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-prominent);
+            border-radius: 12px;
+            padding: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .chart-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75em;
+            color: var(--cyan-glow);
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .chart-container {
+            height: 120px;
+            position: relative;
+        }
+
+        /* 监测大屏入口按钮 */
+        .monitor-nav-btn {
+            position: relative;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2) 0%, rgba(45, 27, 78, 0.3) 100%);
+            border: 1px solid rgba(0, 212, 255, 0.4);
+            border-radius: 24px;
+            color: #00d4ff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .monitor-nav-btn:hover {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.3) 0%, rgba(45, 27, 78, 0.4) 100%);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .monitor-nav-btn::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00d4ff;
+            box-shadow: 0 0 10px #00d4ff;
+            animation: pulse-dot 2s infinite;
+        }
+
+        /* 响应式 */
+        @media (max-width: 1200px) {
+            #monitor-modal {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto 1fr auto auto;
+                grid-template-areas: 
+                    "header"
+                    "left"
+                    "center"
+                    "right"
+                    "bottom";
+                overflow-y: auto;
+            }
+            .monitor-bottom {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* ==================== 系统状态网格新样式 ==================== */
+        .sys-status-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .sys-status-item {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 10px 4px;
+            text-align: center;
+            border: 1px solid rgba(0, 212, 255, 0.1);
+            transition: all 0.3s;
+            min-width: 0;
+        }
+        .sys-status-item:hover {
+            border-color: rgba(0, 212, 255, 0.3);
+            background: rgba(0, 212, 255, 0.05);
+        }
+        .sys-status-icon {
+            font-size: 1.2em;
+            margin-bottom: 4px;
+            line-height: 1;
+        }
+        .sys-status-label {
+            font-size: 0.6em;
+            color: rgba(224, 231, 255, 0.5);
+            margin-bottom: 4px;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 0 2px;
+        }
+        .sys-status-value {
+            font-size: 0.85em;
+            color: #00d4ff;
+            font-weight: 700;
+            font-family: 'Roboto Mono', monospace;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 0 2px;
+        }
+
+        /* ==================== 调参面板样式 ==================== */
+        #param-panel {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 420px;
+            height: 100%;
+            z-index: 99999;
+            background: rgba(5, 5, 8, 0.98);
+            border-left: 1px solid rgba(0, 212, 255, 0.3);
+            backdrop-filter: blur(20px);
+            overflow-y: auto;
+            padding: 24px;
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: -10px 0 40px rgba(0,0,0,0.5);
+        }
+        #param-panel.active {
+            transform: translateX(0);
+        }
+        .param-group {
+            margin-bottom: 24px;
+            padding: 16px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .param-group-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85em;
+            color: var(--cyan-glow);
+            margin-bottom: 14px;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .param-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 0.8em;
+        }
+        .param-row label {
+            color: rgba(224,231,255,0.7);
+            width: 100px;
+            flex-shrink: 0;
+            font-size: 0.9em;
+        }
+        .param-row input[type="range"] {
+            flex: 1;
+            -webkit-appearance: none;
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            outline: none;
+        }
+        .param-row input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            background: #00d4ff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0,212,255,0.5);
+        }
+        .param-row input[type="number"] {
+            flex: 1;
+            padding: 6px 10px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(0,212,255,0.3);
+            border-radius: 6px;
+            color: #00d4ff;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.9em;
+            outline: none;
+        }
+        .param-row input[type="text"] {
+            flex: 1;
+            padding: 6px 10px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(0,212,255,0.3);
+            border-radius: 6px;
+            color: #00d4ff;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.9em;
+            outline: none;
+        }
+        .param-row span {
+            color: #00d4ff;
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 700;
+            min-width: 55px;
+            text-align: right;
+            font-size: 0.9em;
+        }
+        @media (max-width: 600px) {
+            #param-panel { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+<noscript style="position:fixed;inset:0;z-index:999999;background:#020203;color:#e0e7ff;display:flex;align-items:center;justify-content:center;font-family:sans-serif;text-align:center;padding:2rem;">
+    <div><h1 style="font-size:1.5rem;margin-bottom:1rem;color:#00d4ff;">LoongClaw 监测中心</h1><p>监测大屏需要启用 JavaScript 才能正常运行。</p><p style="margin-top:0.5rem;color:#888;">请在浏览器设置中开启 JavaScript 后刷新页面。</p></div>
+</noscript>
+
+    <!-- ==================== 多模态监测大屏 ==================== -->
+    <div id="monitor-modal">
+        <!-- 头部 -->
+        <div class="monitor-header">
+            <div class="monitor-logo">
+                <div class="monitor-logo-icon">🛰️</div>
+                <div>
+                    <div class="monitor-title-text">LoongClaw 监测中心</div>
+                    <div style="font-size: 0.65em; color: rgba(224, 231, 255, 0.6); margin-top: 2px;">空天地多模态实时融合监测系统</div>
+                </div>
+            </div>
+            
+            <div class="monitor-status-bar">
+                <div class="monitor-status-item">
+                    <span class="monitor-status-dot"></span>
+                    <span>系统在线</span>
+                </div>
+                <div class="monitor-status-item">
+                    <span>FPS: <span id="fpsCounter">60</span></span>
+                </div>
+                <div class="monitor-status-item">
+                    <span id="monitor-clock">00:00:00</span>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <button class="monitor-nav-btn" onclick="openParamPanel()" style="position: relative; padding: 6px 14px; font-size: 0.75rem;">
+                    ⚙️ 调参
+                </button>
+                <button class="monitor-close-btn" onclick="closeMonitorModal()">✕</button>
+            </div>
+        </div>
+
+        <!-- 左侧面板 -->
+        <div class="monitor-left">
+            <!-- 天基监测 -->
+            <div class="modality-card active" id="spaceCard">
+                <div class="card-header">
+                    <div class="card-title"><span style="color: #a855f7;">🛰️</span> 天基监测</div>
+                    <span class="confidence-badge" id="spaceConf">98%</span>
+                </div>
+                <div class="card-content" id="spaceResult">风云四号卫星数据接收中</div>
+                <div class="feature-tags">
+                    <span class="tag highlight">ERA5实时</span>
+                    <span class="tag">宏观环流</span>
+                    <span class="tag">覆盖:全线</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="spaceProgress" style="width: 98%"></div>
+                </div>
+            </div>
+
+            <!-- 空基监测 -->
+            <div class="modality-card active" id="skyCard">
+                <div class="card-header">
+                    <div class="card-title"><span style="color: var(--cyan-glow);">✈️</span> 空基监测</div>
+                    <span class="confidence-badge" id="skyConf">87%</span>
+                </div>
+                <div class="card-content" id="skyResult">Y3无人机集群: 6架在线</div>
+                <div class="feature-tags">
+                    <span class="tag highlight">续航: 87min</span>
+                    <span class="tag">精度: ±0.3m</span>
+                    <span class="tag">秒级回传</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="skyProgress" style="width: 87%"></div>
+                </div>
+            </div>
+
+            <!-- 地基监测 -->
+            <div class="modality-card active" id="groundCard">
+                <div class="card-header">
+                    <div class="card-title"><span style="color: #34d399;">📡</span> 地基监测</div>
+                    <span class="confidence-badge" id="groundConf">95%</span>
+                </div>
+                <div class="card-content" id="groundResult">多普勒雷达 x3 | 雨量站 x127</div>
+                <div class="feature-tags">
+                    <span class="tag highlight">DEM: 10m</span>
+                    <span class="tag">分钟级</span>
+                    <span class="tag">20年数据</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="groundProgress" style="width: 95%"></div>
+                </div>
+            </div>
+
+            <!-- 降水预报 -->
+            <div class="modality-card active" id="precipCard">
+                <div class="card-header">
+                    <div class="card-title"><span style="color: #fbbf24;">🌧️</span> 降水预报</div>
+                    <span class="confidence-badge" id="precipConf">82%</span>
+                </div>
+                <div class="card-content" id="precipResult">0-3h分钟级预报 | TS: 0.82</div>
+                <div class="feature-tags">
+                    <span class="tag highlight">MambaSwin</span>
+                    <span class="tag">POD: 0.82</span>
+                    <span class="tag">500m精度</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="precipProgress" style="width: 82%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 中央面板 -->
+        <div class="monitor-center">
+            <!-- 3D可视化 -->
+            <div class="monitor-panel" style="flex: 1; display: flex; flex-direction: column;">
+                <div class="panel-title">
+                    <span>🌐</span> 空天地一体化感知网络 (3D实时)
+                </div>
+                <div class="canvas-container" id="main3DCanvas">
+                    <canvas id="space3DCanvas" style="width: 100%; height: 100%;"></canvas>
+                </div>
+            </div>
+
+            <!-- 注意力热力图 -->
+            <div class="monitor-panel" style="height: 240px; flex-shrink: 0;">
+                <div class="panel-title">
+                    <span>🎯</span> 多模态注意力权重矩阵
+                </div>
+                <div class="attention-grid" id="attentionGrid"></div>
+            </div>
+        </div>
+
+        <!-- 右侧面板 -->
+        <div class="monitor-right">
+            <!-- 融合状态 -->
+            <div class="fusion-status" id="fusionStatus">
+                <div class="fusion-score" id="fusionScore">92.4</div>
+                <div class="fusion-label">融合置信度</div>
+            </div>
+
+            <!-- 风险预警 -->
+            <div class="monitor-panel">
+                <div class="panel-title">
+                    <span>⚠️</span> 风险预警
+                </div>
+                <div style="font-size: 0.85em; color: #fbbf24; font-weight: 600; margin-bottom: 8px;">黄色预警</div>
+                <div style="font-size: 0.8em; color: rgba(224, 231, 255, 0.7); margin-bottom: 12px;">
+                    受影响区间: 3个 | 预计降水: 25-45mm
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="riskProgress" style="width: 65%; background: linear-gradient(90deg, #fbbf24, #ff5f56);"></div>
+                </div>
+            </div>
+
+            <!-- 相似度矩阵 -->
+            <div class="monitor-panel">
+                <div class="panel-title">
+                    <span>🔍</span> 跨模态相似度
+                </div>
+                <div class="matrix-grid" id="similarityMatrix">
+                    <div class="matrix-cell header">-</div>
+                    <div class="matrix-cell header">天基</div>
+                    <div class="matrix-cell header">空基</div>
+                    <div class="matrix-cell header">地基</div>
+                    <div class="matrix-cell header">气象</div>
+                    <div class="matrix-cell header">风险</div>
+                    
+                    <div class="matrix-cell header">Space</div>
+                    <div class="matrix-cell high">0.95</div>
+                    <div class="matrix-cell medium">0.72</div>
+                    <div class="matrix-cell medium">0.68</div>
+                    <div class="matrix-cell high">0.88</div>
+                    <div class="matrix-cell medium">0.75</div>
+                    
+                    <div class="matrix-cell header">Sky</div>
+                    <div class="matrix-cell medium">0.72</div>
+                    <div class="matrix-cell high">0.98</div>
+                    <div class="matrix-cell medium">0.81</div>
+                    <div class="matrix-cell medium">0.76</div>
+                    <div class="matrix-cell high">0.92</div>
+                    
+                    <div class="matrix-cell header">Ground</div>
+                    <div class="matrix-cell medium">0.68</div>
+                    <div class="matrix-cell medium">0.81</div>
+                    <div class="matrix-cell high">0.96</div>
+                    <div class="matrix-cell high">0.90</div>
+                    <div class="matrix-cell medium">0.78</div>
+                    
+                    <div class="matrix-cell header">Weather</div>
+                    <div class="matrix-cell high">0.88</div>
+                    <div class="matrix-cell medium">0.76</div>
+                    <div class="matrix-cell high">0.90</div>
+                    <div class="matrix-cell high">0.97</div>
+                    <div class="matrix-cell high">0.94</div>
+                    
+                    <div class="matrix-cell header">Risk</div>
+                    <div class="matrix-cell medium">0.75</div>
+                    <div class="matrix-cell high">0.92</div>
+                    <div class="matrix-cell medium">0.78</div>
+                    <div class="matrix-cell high">0.94</div>
+                    <div class="matrix-cell high">0.99</div>
+                </div>
+            </div>
+
+            <!-- 实时摄像头 -->
+            <div class="monitor-panel" style="flex: 0 0 auto;">
+                <div class="panel-title">
+                    <span>📹</span> 实时摄像头
+                </div>
+                <div class="camera-container" id="cameraContainer">
+                    <video id="cameraVideo" autoplay playsinline muted style="width: 100%; height: 120px; object-fit: cover; border-radius: 6px; display: none;"></video>
+                    <div id="cameraPlaceholder" style="width: 100%; height: 120px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.4); border-radius: 6px; border: 1px dashed rgba(0,212,255,0.3);">
+                        <button onclick="toggleCamera()" style="padding: 6px 16px; background: linear-gradient(135deg, rgba(0,212,255,0.3), rgba(139,92,246,0.3)); border: 1px solid rgba(0,212,255,0.4); color: #00d4ff; border-radius: 20px; cursor: pointer; font-size: 11px; font-family: 'Orbitron', sans-serif; letter-spacing: 1px;">开启摄像头</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 语音输入 -->
+            <div class="monitor-panel" style="flex: 0 0 auto;">
+                <div class="panel-title">
+                    <span>🎙️</span> 语音输入
+                </div>
+                <div class="voice-container">
+                    <canvas id="voiceWaveform" width="280" height="60" style="width: 100%; height: 60px; border-radius: 6px; background: rgba(0,0,0,0.4);"></canvas>
+                    <div style="display: flex; gap: 8px; margin-top: 8px; align-items: center;">
+                        <button id="voiceBtn" onclick="toggleVoiceInput()" style="padding: 6px 16px; background: linear-gradient(135deg, rgba(0,212,255,0.3), rgba(139,92,246,0.3)); border: 1px solid rgba(0,212,255,0.4); color: #00d4ff; border-radius: 20px; cursor: pointer; font-size: 11px; font-family: 'Orbitron', sans-serif; letter-spacing: 1px; transition: all 0.3s;">🎤 开始录音</button>
+                        <span id="voiceStatus" style="font-size: 11px; color: rgba(224,231,255,0.5); font-family: 'Roboto Mono', monospace;">就绪</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 系统日志 / 系统状态 -->
+            <div class="monitor-panel" style="flex: 1; min-height: 420px; display: flex; flex-direction: column;">
+                <div class="panel-title">
+                    <span>📋</span> 系统日志 / 系统状态
+                </div>
+                <!-- 系统状态监控 -->
+                <div class="sys-status-grid">
+                    <div class="sys-status-item">
+                        <div class="sys-status-icon">🖥️</div>
+                        <div class="sys-status-label">CPU</div>
+                        <div class="sys-status-value" id="cpuStat">28%</div>
+                    </div>
+                    <div class="sys-status-item">
+                        <div class="sys-status-icon">💾</div>
+                        <div class="sys-status-label">内存</div>
+                        <div class="sys-status-value" id="memStat">6.0GB / 16GB</div>
+                    </div>
+                    <div class="sys-status-item">
+                        <div class="sys-status-icon">🌐</div>
+                        <div class="sys-status-label">网络</div>
+                        <div class="sys-status-value" id="netStat">↓12Mbps</div>
+                    </div>
+                    <div class="sys-status-item">
+                        <div class="sys-status-icon">💿</div>
+                        <div class="sys-status-label">磁盘</div>
+                        <div class="sys-status-value" id="diskStat">62%</div>
+                    </div>
+                    <div class="sys-status-item">
+                        <div class="sys-status-icon">🌡️</div>
+                        <div class="sys-status-label">温度</div>
+                        <div class="sys-status-value" id="tempStat">42°C</div>
+                    </div>
+                    <div class="sys-status-item">
+                        <div class="sys-status-icon">⚡</div>
+                        <div class="sys-status-label">负载</div>
+                        <div class="sys-status-value" id="loadStat">1.24</div>
+                    </div>
+                </div>
+                <div class="log-section" id="logConsole">
+                    <div class="log-entry info">
+                        <span class="log-time">[00:00:00]</span>
+                        <span>系统初始化完成 | LoongClaw v2.0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部面板 -->
+        <div class="monitor-bottom">
+            <div class="bottom-chart">
+                <div class="chart-title">📡 卫星数据接收率</div>
+                <div class="chart-container">
+                    <canvas id="satelliteChart"></canvas>
+                </div>
+            </div>
+            <div class="bottom-chart">
+                <div class="chart-title">✈️ 无人机电量状态</div>
+                <div class="chart-container">
+                    <canvas id="droneChart"></canvas>
+                </div>
+            </div>
+            <div class="bottom-chart">
+                <div class="chart-title">🌧️ 累计雨量监测</div>
+                <div class="chart-container">
+                    <canvas id="groundChart"></canvas>
+                </div>
+            </div>
+            <div class="bottom-chart">
+                <div class="chart-title">📊 预报降水趋势</div>
+                <div class="chart-container">
+                    <canvas id="precipChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 调参面板 ==================== -->
+    <div id="param-panel">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid rgba(0,212,255,0.2);">
+            <div>
+                <h2 style="font-family: 'Orbitron', sans-serif; font-size: 1.2em; color: #00d4ff; margin: 0; letter-spacing: 2px;">⚙️ 调参面板</h2>
+                <p style="font-size: 0.75em; color: rgba(224,231,255,0.5); margin: 4px 0 0;">实时调整系统监测数据</p>
+            </div>
+            <button onclick="closeParamPanel()" style="width: 32px; height: 32px; border-radius: 50%; background: rgba(255,95,86,0.2); border: 1px solid rgba(255,95,86,0.5); color: #ff5f56; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; transition: all 0.3s;">✕</button>
+        </div>
+        
+        <div class="param-group">
+            <h3 class="param-group-title">🛰️ 模态置信度</h3>
+            <div class="param-row"><label>天基监测</label><input type="range" id="param-space" min="0" max="100" value="98"><span id="param-space-val">98%</span></div>
+            <div class="param-row"><label>空基监测</label><input type="range" id="param-sky" min="0" max="100" value="87"><span id="param-sky-val">87%</span></div>
+            <div class="param-row"><label>地基监测</label><input type="range" id="param-ground" min="0" max="100" value="95"><span id="param-ground-val">95%</span></div>
+            <div class="param-row"><label>降水预报</label><input type="range" id="param-precip" min="0" max="100" value="82"><span id="param-precip-val">82%</span></div>
+        </div>
+        
+        <div class="param-group">
+            <h3 class="param-group-title">🌐 融合与风险</h3>
+            <div class="param-row"><label>融合置信度</label><input type="range" id="param-fusion" min="0" max="100" value="92.4" step="0.1"><span id="param-fusion-val">92.4</span></div>
+            <div class="param-row"><label>风险进度</label><input type="range" id="param-risk" min="0" max="100" value="65"><span id="param-risk-val">65%</span></div>
+        </div>
+        
+        <div class="param-group">
+            <h3 class="param-group-title">🖥️ 系统状态</h3>
+            <div class="param-row"><label>CPU (%)</label><input type="number" id="param-cpu" min="0" max="100" value="28"><span>%</span></div>
+            <div class="param-row"><label>内存 (GB)</label><input type="number" id="param-mem" min="0" max="16" value="6" step="0.1"><span>GB</span></div>
+            <div class="param-row"><label>磁盘 (%)</label><input type="number" id="param-disk" min="0" max="100" value="62"><span>%</span></div>
+            <div class="param-row"><label>温度 (°C)</label><input type="number" id="param-temp" min="0" max="100" value="42"><span>°C</span></div>
+            <div class="param-row"><label>负载</label><input type="number" id="param-load" min="0" max="10" value="1.24" step="0.01"><span></span></div>
+            <div class="param-row"><label>下行 (Mbps)</label><input type="number" id="param-net-down" min="0" max="1000" value="12"><span>Mbps</span></div>
+            <div class="param-row"><label>上行 (Mbps)</label><input type="number" id="param-net-up" min="0" max="1000" value="3"><span>Mbps</span></div>
+        </div>
+
+        <div class="param-group">
+            <h3 class="param-group-title">⚠️ 监测预警配置</h3>
+            <div class="param-row"><label>预警等级</label>
+                <select id="param-warning-level" style="flex:1;padding:6px 10px;background:rgba(0,0,0,0.3);border:1px solid rgba(0,212,255,0.3);border-radius:6px;color:#00d4ff;font-family:'Roboto Mono',monospace;font-size:0.9em;outline:none;">
+                    <option value="黄色" selected>黄色预警</option>
+                    <option value="橙色">橙色预警</option>
+                    <option value="红色">红色预警</option>
+                </select>
+            </div>
+            <div class="param-row"><label>受影响区间</label><input type="number" id="param-affected-sections" min="0" max="50" value="3"><span>个</span></div>
+            <div class="param-row"><label>预计降水</label><input type="text" id="param-precip-mm" value="25-45"><span>mm</span></div>
+            <div class="param-row"><label>无人机在线</label><input type="number" id="param-drone-online" min="0" max="50" value="6"><span>架</span></div>
+            <div class="param-row"><label>雨量站数量</label><input type="number" id="param-rain-stations" min="0" max="500" value="127"><span>个</span></div>
+            <div class="param-row"><label>雷达数量</label><input type="number" id="param-radar-count" min="0" max="50" value="3"><span>台</span></div>
+        </div>
+
+        <div class="param-group">
+            <h3 class="param-group-title">📡 模态详情文本</h3>
+            <div class="param-row" style="flex-direction: column; align-items: stretch; gap: 6px; margin-bottom: 12px;">
+                <label style="width:100%; margin-bottom: 2px; color: rgba(224,231,255,0.7); font-size: 0.9em;">天基状态描述</label>
+                <input type="text" id="param-space-desc" value="风云四号卫星数据接收中" style="width:100%; padding: 6px 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(0,212,255,0.3); border-radius: 6px; color: #00d4ff; font-family: 'Roboto Mono', monospace; font-size: 0.9em; outline: none;">
+            </div>
+            <div class="param-row" style="flex-direction: column; align-items: stretch; gap: 6px; margin-bottom: 12px;">
+                <label style="width:100%; margin-bottom: 2px; color: rgba(224,231,255,0.7); font-size: 0.9em;">空基状态描述</label>
+                <input type="text" id="param-sky-desc" value="Y3无人机集群: 6架在线" style="width:100%; padding: 6px 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(0,212,255,0.3); border-radius: 6px; color: #00d4ff; font-family: 'Roboto Mono', monospace; font-size: 0.9em; outline: none;">
+            </div>
+            <div class="param-row" style="flex-direction: column; align-items: stretch; gap: 6px; margin-bottom: 12px;">
+                <label style="width:100%; margin-bottom: 2px; color: rgba(224,231,255,0.7); font-size: 0.9em;">地基状态描述</label>
+                <input type="text" id="param-ground-desc" value="多普勒雷达 x3 | 雨量站 x127" style="width:100%; padding: 6px 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(0,212,255,0.3); border-radius: 6px; color: #00d4ff; font-family: 'Roboto Mono', monospace; font-size: 0.9em; outline: none;">
+            </div>
+            <div class="param-row" style="flex-direction: column; align-items: stretch; gap: 6px; margin-bottom: 12px;">
+                <label style="width:100%; margin-bottom: 2px; color: rgba(224,231,255,0.7); font-size: 0.9em;">降水状态描述</label>
+                <input type="text" id="param-precip-desc" value="0-3h分钟级预报 | TS: 0.82" style="width:100%; padding: 6px 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(0,212,255,0.3); border-radius: 6px; color: #00d4ff; font-family: 'Roboto Mono', monospace; font-size: 0.9em; outline: none;">
+            </div>
+        </div>
+
+        <div class="param-group">
+            <h3 class="param-group-title">🎛️ 动画与效果</h3>
+            <div class="param-row"><label>词云转速</label><input type="range" id="param-wordcloud-speed" min="0" max="50" value="8"><span id="param-wordcloud-speed-val">0.0008</span></div>
+            <div class="param-row"><label>星空密度</label><input type="range" id="param-star-density" min="10" max="100" value="50"><span id="param-star-density-val">50%</span></div>
+            <div class="param-row"><label>日志条数</label><input type="range" id="param-max-logs" min="10" max="200" value="50"><span id="param-max-logs-val">50</span></div>
+        </div>
+        
+        <div style="display: flex; gap: 10px; margin-top: 24px;">
+            <button onclick="resetParams()" style="flex: 1; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: rgba(224,231,255,0.7); border-radius: 8px; cursor: pointer; font-family: 'Orbitron', sans-serif; font-size: 0.8em; letter-spacing: 1px; transition: all 0.3s;">🔄 重置</button>
+            <button onclick="closeParamPanel()" style="flex: 1; padding: 10px; background: linear-gradient(135deg, rgba(0,212,255,0.3), rgba(139,92,246,0.3)); border: 1px solid rgba(0,212,255,0.4); color: #00d4ff; border-radius: 8px; cursor: pointer; font-family: 'Orbitron', sans-serif; font-size: 0.8em; letter-spacing: 1px; transition: all 0.3s;">✓ 完成</button>
+        </div>
+    </div>
+
+    <script>
+        // ==================== 多模态监测大屏功能 ====================
+        let monitorCharts = {};
+        let clockInterval;
+        let animationId;
+        let frameCount = 0;
+        let lastTime = performance.now();
+
+        // 【核心优化】关闭时优先关闭当前标签页回到主界面，避免刷新导致重新登录
+        function closeMonitorModal() {
+            if (window.opener && !window.opener.closed) {
+                // 由主界面 window.open 打开时，直接关闭当前标签，回到主界面标签（保持登录态）
+                window.close();
+            } else if (window.history.length > 1) {
+                // 无 opener 但有历史记录时，后退返回，不刷新页面
+                window.history.back();
+            } else {
+                // 兜底：直接跳转
+                window.location.href = './';
+            }
+        }
+
+        function startMonitorClock() {
+            const clockEl = document.getElementById('monitor-clock');
+            function updateClock() {
+                const now = new Date();
+                clockEl.textContent = now.toLocaleTimeString('zh-CN', { hour12: false });
+            }
+            updateClock();
+            clockInterval = setInterval(updateClock, 1000);
+        }
+
+        function startFPSCounter() {
+            function updateFPS() {
+                const now = performance.now();
+                frameCount++;
+                if (now - lastTime >= 1000) {
+                    const fps = Math.round((frameCount * 1000) / (now - lastTime));
+                    document.getElementById('fpsCounter').textContent = fps;
+                    frameCount = 0;
+                    lastTime = now;
+                }
+                requestAnimationFrame(updateFPS);
+            }
+            requestAnimationFrame(updateFPS);
+        }
+
+        function addLogEntry(message, type = 'info') {
+            const console = document.getElementById('logConsole');
+            if (!console) return;
+            
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            const time = new Date().toLocaleTimeString('zh-CN', { hour12: false });
+            entry.innerHTML = `<span class="log-time">[${time}]</span><span>${message}</span>`;
+            console.appendChild(entry);
+            console.scrollTop = console.scrollHeight;
+            
+            var maxLogs = window.maxLogEntries || 50;
+            while (console.children.length > maxLogs) {
+                console.removeChild(console.firstChild);
+            }
+        }
+
+        function initAttentionGrid() {
+            const grid = document.getElementById('attentionGrid');
+            if (!grid) return;
+            
+            grid.innerHTML = '';
+            for (let i = 0; i < 256; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'attention-cell';
+                const intensity = Math.random();
+                const hue = 180 + intensity * 60;
+                cell.style.background = `hsla(${hue}, 100%, ${intensity * 60}%, ${intensity * 0.8 + 0.2})`;
+                cell.dataset.value = intensity.toFixed(2);
+                
+                cell.addEventListener('mouseenter', () => {
+                    cell.style.transform = 'scale(1.5)';
+                    cell.style.zIndex = '100';
+                });
+                cell.addEventListener('mouseleave', () => {
+                    cell.style.transform = 'scale(1)';
+                    cell.style.zIndex = '1';
+                });
+                
+                grid.appendChild(cell);
+            }
+            
+            // 动态更新热力图
+            setInterval(() => {
+                const cells = grid.querySelectorAll('.attention-cell');
+                cells.forEach(cell => {
+                    const intensity = Math.random();
+                    const hue = 180 + intensity * 60;
+                    cell.style.background = `hsla(${hue}, 100%, ${intensity * 60}%, ${intensity * 0.8 + 0.2})`;
+                    cell.dataset.value = intensity.toFixed(2);
+                });
+            }, 2000);
+        }
+
+        function init3DVisualization() {
+            const canvas = document.getElementById('space3DCanvas');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            
+            const points = [];
+            const numPoints = 80;
+            
+            // 创建空天地三层点
+            for (let i = 0; i < numPoints; i++) {
+                const layer = i < 20 ? 'space' : i < 50 ? 'sky' : 'ground';
+                const yOffset = layer === 'space' ? -150 : layer === 'sky' ? 0 : 150;
+                const color = layer === 'space' ? '#a855f7' : layer === 'sky' ? '#00d4ff' : '#34d399';
+                
+                points.push({
+                    x: (Math.random() - 0.5) * 400,
+                    y: yOffset + (Math.random() - 0.5) * 80,
+                    z: (Math.random() - 0.5) * 400,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.3,
+                    vz: (Math.random() - 0.5) * 0.5,
+                    color,
+                    size: layer === 'space' ? 4 : layer === 'sky' ? 3 : 2,
+                    layer
+                });
+            }
+            
+            let rotation = 0;
+            
+            function animate() {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                rotation += 0.003;
+                
+                const cx = canvas.width / 2;
+                const cy = canvas.height / 2;
+                
+                // 绘制连接线
+                ctx.strokeStyle = 'rgba(0, 212, 255, 0.08)';
+                ctx.lineWidth = 0.5;
+                
+                for (let i = 0; i < points.length; i++) {
+                    for (let j = i + 1; j < points.length; j++) {
+                        const dx = points[i].x - points[j].x;
+                        const dy = points[i].y - points[j].y;
+                        const dz = points[i].z - points[j].z;
+                        const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+                        
+                        if (dist < 120) {
+                            const p1 = project(points[i], rotation, cx, cy);
+                            const p2 = project(points[j], rotation, cx, cy);
+                            ctx.beginPath();
+                            ctx.moveTo(p1.x, p1.y);
+                            ctx.lineTo(p2.x, p2.y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+                
+                // 绘制点
+                points.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.z += p.vz;
+                    
+                    // 边界反弹
+                    if (Math.abs(p.x) > 250) p.vx *= -1;
+                    if (Math.abs(p.y - (p.layer === 'space' ? -150 : p.layer === 'sky' ? 0 : 150)) > 60) p.vy *= -1;
+                    if (Math.abs(p.z) > 250) p.vz *= -1;
+                    
+                    const proj = project(p, rotation, cx, cy);
+                    const scale = (proj.z + 400) / 800;
+                    
+                    ctx.beginPath();
+                    ctx.arc(proj.x, proj.y, p.size * scale, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.fill();
+                    
+                    // 发光效果
+                    ctx.beginPath();
+                    ctx.arc(proj.x, proj.y, p.size * scale * 3, 0, Math.PI * 2);
+                    const gradient = ctx.createRadialGradient(proj.x, proj.y, 0, proj.x, proj.y, p.size * scale * 3);
+                    gradient.addColorStop(0, p.color + '40');
+                    gradient.addColorStop(1, 'transparent');
+                    ctx.fillStyle = gradient;
+                    ctx.fill();
+                });
+                
+                // 绘制铁路线
+                ctx.strokeStyle = 'rgba(255, 215, 0, 0.3)';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                for (let x = -200; x <= 200; x += 5) {
+                    const y = 20 * Math.sin(x * 0.02);
+                    const z = 100;
+                    const proj = project({x, y, z}, rotation, cx, cy);
+                    if (x === -200) ctx.moveTo(proj.x, proj.y);
+                    else ctx.lineTo(proj.x, proj.y);
+                }
+                ctx.stroke();
+                ctx.setLineDash([]);
+                
+                animationId = requestAnimationFrame(animate);
+            }
+            
+            function project(p, rot, cx, cy) {
+                const cos = Math.cos(rot);
+                const sin = Math.sin(rot);
+                const x = p.x * cos - p.z * sin;
+                const z = p.x * sin + p.z * cos;
+                const scale = 400 / (400 + z);
+                return {
+                    x: cx + x * scale,
+                    y: cy + p.y * scale,
+                    z: z
+                };
+            }
+            
+            animate();
+        }
+
+        function simulateRealTimeData() {
+            // 模拟实时数据更新
+            setInterval(() => {
+                if (window.paramPanelOpen) return;
+                
+                // 更新融合分数
+                const fusionScore = 90 + Math.random() * 8;
+                document.getElementById('fusionScore').textContent = fusionScore.toFixed(1);
+                
+                // 更新各模态置信度
+                const mods = ['space', 'sky', 'ground', 'precip'];
+                const names = ['Space', 'Sky', 'Ground', 'Precip'];
+                mods.forEach((mod, i) => {
+                    const conf = 80 + Math.random() * 18;
+                    document.getElementById(mod + 'Conf').textContent = conf.toFixed(0) + '%';
+                    document.getElementById(mod + 'Progress').style.width = conf + '%';
+                });
+                
+                // 更新系统状态信息
+                const cpuEl = document.getElementById('cpuStat');
+                const memEl = document.getElementById('memStat');
+                const netEl = document.getElementById('netStat');
+                const diskEl = document.getElementById('diskStat');
+                const tempEl = document.getElementById('tempStat');
+                const loadEl = document.getElementById('loadStat');
+                
+                if (cpuEl) cpuEl.textContent = Math.floor(20 + Math.random() * 50) + '%';
+                if (memEl) memEl.textContent = (3 + Math.random() * 8).toFixed(1) + 'GB / 16GB';
+                if (netEl) netEl.textContent = '↓' + Math.floor(5 + Math.random() * 40) + 'Mbps ↑' + Math.floor(1 + Math.random() * 15) + 'Mbps';
+                if (diskEl) diskEl.textContent = Math.floor(45 + Math.random() * 35) + '%';
+                if (tempEl) tempEl.textContent = Math.floor(38 + Math.random() * 20) + '°C';
+                if (loadEl) loadEl.textContent = (0.5 + Math.random() * 3).toFixed(2);
+                
+                // 随机添加日志
+                if (Math.random() < 0.3) {
+                    const messages = [
+                        { msg: '风云四号卫星数据更新 | 延迟: 12ms', type: 'info' },
+                        { msg: 'Y3-03无人机完成巡航任务', type: 'success' },
+                        { msg: '多普勒雷达检测到降水回波', type: 'warning' },
+                        { msg: '融合模型精度提升 0.3%', type: 'success' },
+                        { msg: '地基雨量站数据同步完成', type: 'info' },
+                    ];
+                    const rand = messages[Math.floor(Math.random() * messages.length)];
+                    addLogEntry(rand.msg, rand.type);
+                }
+            }, 3000);
+        }
+
+        function initMonitorCharts() {
+            const chartConfig = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { display: false },
+                    y: { 
+                        display: true,
+                        ticks: { color: 'rgba(224, 231, 255, 0.5)', font: { size: 9 } },
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                    }
+                },
+                elements: {
+                    point: { radius: 0 },
+                    line: { tension: 0.4 }
+                }
+            };
+
+            // 卫星数据图表
+            const satCtx = document.getElementById('satelliteChart');
+            if (satCtx) {
+                monitorCharts.satellite = new Chart(satCtx, {
+                    type: 'line',
+                    data: {
+                        labels: Array(20).fill(''),
+                        datasets: [{
+                            data: Array(20).fill(0).map(() => 95 + Math.random() * 5),
+                            borderColor: '#a855f7',
+                            backgroundColor: 'rgba(168, 85, 247, 0.1)',
+                            fill: true,
+                            borderWidth: 2
+                        }]
+                    },
+                    options: chartConfig
+                });
+            }
+
+            // 无人机图表
+            const droneCtx = document.getElementById('droneChart');
+            if (droneCtx) {
+                monitorCharts.drone = new Chart(droneCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Y3-01', 'Y3-02', 'Y3-03', 'Y3-04', 'Y3-05', 'Y3-06'],
+                        datasets: [{
+                            data: [85, 72, 91, 68, 79, 88],
+                            backgroundColor: [
+                                'rgba(0, 212, 255, 0.7)',
+                                'rgba(0, 212, 255, 0.6)',
+                                'rgba(0, 212, 255, 0.8)',
+                                'rgba(255, 189, 46, 0.7)',
+                                'rgba(0, 212, 255, 0.7)',
+                                'rgba(0, 212, 255, 0.8)'
+                            ],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: chartConfig
+                });
+            }
+
+            // 地面监测图表
+            const groundCtx = document.getElementById('groundChart');
+            if (groundCtx) {
+                monitorCharts.ground = new Chart(groundCtx, {
+                    type: 'line',
+                    data: {
+                        labels: Array(20).fill(''),
+                        datasets: [{
+                            data: Array(20).fill(0).map((_, i) => i * 2 + Math.random() * 5),
+                            borderColor: '#34d399',
+                            backgroundColor: 'rgba(52, 211, 153, 0.1)',
+                            fill: true,
+                            borderWidth: 2
+                        }]
+                    },
+                    options: chartConfig
+                });
+            }
+
+            // 降水预报图表
+            const precipCtx = document.getElementById('precipChart');
+            if (precipCtx) {
+                monitorCharts.precip = new Chart(precipCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['+10m', '+20m', '+30m', '+40m', '+50m', '+60m'],
+                        datasets: [{
+                            data: [5, 12, 25, 35, 28, 18],
+                            backgroundColor: 'rgba(251, 191, 36, 0.7)',
+                            borderWidth: 0
+                        }]
+                    },
+                    options: chartConfig
+                });
+            }
+
+            // 动态更新图表数据
+            setInterval(() => {
+                Object.values(monitorCharts).forEach(chart => {
+                    if (!chart) return;
+                    const data = chart.data.datasets[0].data;
+                    data.shift();
+                    if (chart.config.type === 'line') {
+                        data.push(90 + Math.random() * 10);
+                    } else {
+                        data.push(60 + Math.random() * 35);
+                    }
+                    chart.update('none');
+                });
+            }, 2000);
+        }
+
+        // ESC键关闭
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeMonitorModal();
+                closeParamPanel();
+            }
+        });
+
+        // ==================== 调参面板逻辑 ==================== */
+        function openParamPanel() {
+            document.getElementById('param-panel').classList.add('active');
+            window.paramPanelOpen = true;
+        }
+        function closeParamPanel() {
+            document.getElementById('param-panel').classList.remove('active');
+            window.paramPanelOpen = false;
+        }
+
+        // ==================== 调参面板辅助函数 ==================== */
+        function updateRiskText() {
+            var sections = document.getElementById('param-affected-sections')?.value || '3';
+            var precip = document.getElementById('param-precip-mm')?.value || '25-45';
+            var riskPanels = document.querySelectorAll('.monitor-panel');
+            riskPanels.forEach(function(panel) {
+                var title = panel.querySelector('.panel-title');
+                if (title && title.textContent.indexOf('风险预警') !== -1) {
+                    var detailDiv = panel.querySelector('div[style*="font-size: 0.8em; color: rgba(224, 231, 255, 0.7); margin-bottom: 12px;"]');
+                    if (detailDiv) {
+                        detailDiv.textContent = '受影响区间: ' + sections + '个 | 预计降水: ' + precip + 'mm';
+                    }
+                }
+            });
+        }
+
+        function syncDescFromDevices() {
+            var drones = document.getElementById('param-drone-online')?.value || '6';
+            var stations = document.getElementById('param-rain-stations')?.value || '127';
+            var radars = document.getElementById('param-radar-count')?.value || '3';
+
+            var skyDescInput = document.getElementById('param-sky-desc');
+            var skyDescEl = document.getElementById('skyResult');
+            if (skyDescInput && skyDescEl) {
+                var newVal = 'Y3无人机集群: ' + drones + '架在线';
+                skyDescInput.value = newVal;
+                skyDescEl.textContent = newVal;
+            }
+
+            var groundDescInput = document.getElementById('param-ground-desc');
+            var groundDescEl = document.getElementById('groundResult');
+            if (groundDescInput && groundDescEl) {
+                var newVal = '多普勒雷达 x' + radars + ' | 雨量站 x' + stations;
+                groundDescInput.value = newVal;
+                groundDescEl.textContent = newVal;
+            }
+        }
+        
+        function bindParamListeners() {
+            // 模态置信度
+            ['space', 'sky', 'ground', 'precip'].forEach(function(mod) {
+                var slider = document.getElementById('param-' + mod);
+                var valSpan = document.getElementById('param-' + mod + '-val');
+                if (!slider) return;
+                slider.addEventListener('input', function() {
+                    var val = this.value;
+                    valSpan.textContent = val + '%';
+                    var confEl = document.getElementById(mod + 'Conf');
+                    var progEl = document.getElementById(mod + 'Progress');
+                    if (confEl) confEl.textContent = val + '%';
+                    if (progEl) progEl.style.width = val + '%';
+                });
+            });
+            
+            // 融合分数
+            var fusionSlider = document.getElementById('param-fusion');
+            if (fusionSlider) {
+                fusionSlider.addEventListener('input', function() {
+                    document.getElementById('param-fusion-val').textContent = this.value;
+                    var fs = document.getElementById('fusionScore');
+                    if (fs) fs.textContent = this.value;
+                });
+            }
+            
+            // 风险进度
+            var riskSlider = document.getElementById('param-risk');
+            if (riskSlider) {
+                riskSlider.addEventListener('input', function() {
+                    document.getElementById('param-risk-val').textContent = this.value + '%';
+                    var rp = document.getElementById('riskProgress');
+                    if (rp) rp.style.width = this.value + '%';
+                });
+            }
+            
+            // 系统状态数值
+            var sysMap = [
+                { id: 'param-cpu', target: 'cpuStat', suffix: '%' },
+                { id: 'param-mem', target: 'memStat', suffix: 'GB / 16GB', isMem: true },
+                { id: 'param-disk', target: 'diskStat', suffix: '%' },
+                { id: 'param-temp', target: 'tempStat', suffix: '°C' },
+                { id: 'param-load', target: 'loadStat', suffix: '' }
+            ];
+            
+            sysMap.forEach(function(item) {
+                var input = document.getElementById(item.id);
+                if (!input) return;
+                input.addEventListener('input', function() {
+                    var val = this.value;
+                    var displayVal = val + item.suffix;
+                    if (item.isMem) displayVal = val + 'GB / 16GB';
+                    var target = document.getElementById(item.target);
+                    if (target) target.textContent = displayVal;
+                });
+            });
+            
+            // 网络
+            var netDown = document.getElementById('param-net-down');
+            var netUp = document.getElementById('param-net-up');
+            function updateNet() {
+                var d = netDown ? netDown.value : 12;
+                var u = netUp ? netUp.value : 3;
+                var netEl = document.getElementById('netStat');
+                if (netEl) netEl.textContent = '↓' + d + 'Mbps ↑' + u + 'Mbps';
+            }
+            if (netDown) netDown.addEventListener('input', updateNet);
+            if (netUp) netUp.addEventListener('input', updateNet);
+
+            // ==================== 扩展调参绑定 ==================== */
+            // 预警等级
+            var warningSelect = document.getElementById('param-warning-level');
+            if (warningSelect) {
+                warningSelect.addEventListener('change', function() {
+                    var level = this.value;
+                    var colorMap = { '黄色': '#fbbf24', '橙色': '#ffbd2e', '红色': '#ff5f56' };
+                    var color = colorMap[level] || '#fbbf24';
+                    var riskPanels = document.querySelectorAll('.monitor-panel');
+                    riskPanels.forEach(function(panel) {
+                        var title = panel.querySelector('.panel-title');
+                        if (title && title.textContent.indexOf('风险预警') !== -1) {
+                            var statusDiv = panel.querySelector('div[style*="font-size: 0.85em"]');
+                            if (statusDiv) {
+                                statusDiv.textContent = level + '预警';
+                                statusDiv.style.color = color;
+                                statusDiv.style.fontWeight = '600';
+                            }
+                        }
+                    });
+                });
+            }
+
+            // 受影响区间 & 预计降水
+            ['param-affected-sections', 'param-precip-mm'].forEach(function(id) {
+                var el = document.getElementById(id);
+                if (el) el.addEventListener('input', updateRiskText);
+            });
+
+            // 设备数量 -> 同步desc
+            ['param-drone-online', 'param-rain-stations', 'param-radar-count'].forEach(function(id) {
+                var el = document.getElementById(id);
+                if (el) el.addEventListener('input', syncDescFromDevices);
+            });
+
+            // 模态详情文本
+            var descMap = [
+                { input: 'param-space-desc', target: 'spaceResult' },
+                { input: 'param-sky-desc', target: 'skyResult' },
+                { input: 'param-ground-desc', target: 'groundResult' },
+                { input: 'param-precip-desc', target: 'precipResult' }
+            ];
+            descMap.forEach(function(item) {
+                var input = document.getElementById(item.input);
+                var target = document.getElementById(item.target);
+                if (input && target) {
+                    input.addEventListener('input', function() {
+                        target.textContent = this.value;
+                    });
+                }
+            });
+
+            // 词云转速
+            var wcSlider = document.getElementById('param-wordcloud-speed');
+            var wcVal = document.getElementById('param-wordcloud-speed-val');
+            if (wcSlider && wcVal) {
+                wcSlider.addEventListener('input', function() {
+                    var val = parseInt(this.value, 10);
+                    var speed = val / 10000;
+                    wcVal.textContent = speed.toFixed(4);
+                    if (!window.paramConfig) window.paramConfig = {};
+                    window.paramConfig.wordCloudSpeed = speed;
+                    window.paramConfig.wordCloudSpeedX = speed * 0.375;
+                });
+            }
+
+            // 星空密度
+            var starSlider = document.getElementById('param-star-density');
+            var starVal = document.getElementById('param-star-density-val');
+            if (starSlider && starVal) {
+                starSlider.addEventListener('input', function() {
+                    var val = this.value;
+                    starVal.textContent = val + '%';
+                    window.starDensityFactor = val / 50;
+                    if (typeof initStars === 'function') initStars();
+                });
+            }
+
+            // 日志条数
+            var logSlider = document.getElementById('param-max-logs');
+            var logVal = document.getElementById('param-max-logs-val');
+            if (logSlider && logVal) {
+                logSlider.addEventListener('input', function() {
+                    var val = parseInt(this.value, 10);
+                    logVal.textContent = val;
+                    window.maxLogEntries = val;
+                });
+            }
+        }
+        
+        function resetParams() {
+            var defaults = {
+                'param-space': 98, 'param-sky': 87, 'param-ground': 95, 'param-precip': 82,
+                'param-fusion': 92.4, 'param-risk': 65,
+                'param-cpu': 28, 'param-mem': 6, 'param-disk': 62, 'param-temp': 42, 'param-load': 1.24,
+                'param-net-down': 12, 'param-net-up': 3,
+                'param-warning-level': '黄色',
+                'param-affected-sections': 3,
+                'param-precip-mm': '25-45',
+                'param-drone-online': 6,
+                'param-rain-stations': 127,
+                'param-radar-count': 3,
+                'param-space-desc': '风云四号卫星数据接收中',
+                'param-sky-desc': 'Y3无人机集群: 6架在线',
+                'param-ground-desc': '多普勒雷达 x3 | 雨量站 x127',
+                'param-precip-desc': '0-3h分钟级预报 | TS: 0.82',
+                'param-wordcloud-speed': 8,
+                'param-star-density': 50,
+                'param-max-logs': 50
+            };
+            for (var id in defaults) {
+                var el = document.getElementById(id);
+                if (el) {
+                    el.value = defaults[id];
+                    if (el.tagName === 'SELECT') {
+                        el.dispatchEvent(new Event('change'));
+                    } else {
+                        el.dispatchEvent(new Event('input'));
+                    }
+                }
+            }
+            // 强制同步设备描述和风险文本
+            syncDescFromDevices();
+            updateRiskText();
+        }
+
+        // ==================== 实时摄像头逻辑 ==================== */
+        var cameraStream = null;
+        window.toggleCamera = function() {
+            var video = document.getElementById('cameraVideo');
+            var placeholder = document.getElementById('cameraPlaceholder');
+            var btn = placeholder.querySelector('button') || document.querySelector('#cameraContainer button');
+            
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(function(track) { track.stop(); });
+                cameraStream = null;
+                video.style.display = 'none';
+                placeholder.style.display = 'flex';
+                if (btn) btn.textContent = '开启摄像头';
+                addLogEntry('摄像头已关闭', 'info');
+            } else {
+                navigator.mediaDevices.getUserMedia({ video: true })
+                    .then(function(stream) {
+                        cameraStream = stream;
+                        video.srcObject = stream;
+                        video.style.display = 'block';
+                        placeholder.style.display = 'none';
+                        addLogEntry('摄像头已开启 | 实时视频流接入', 'success');
+                    })
+                    .catch(function(err) {
+                        addLogEntry('摄像头启动失败: ' + err.message, 'error');
+                        alert('无法访问摄像头，请检查权限设置');
+                    });
+            }
+        };
+
+        // ==================== 语音输入与波形图逻辑 ==================== */
+        (function() {
+            var audioContext = null;
+            var analyser = null;
+            var microphone = null;
+            var dataArray = null;
+            var isRecording = false;
+            var animationId = null;
+            var canvas = null;
+            var canvasCtx = null;
+
+            window.toggleVoiceInput = function() {
+                var btn = document.getElementById('voiceBtn');
+                var status = document.getElementById('voiceStatus');
+                
+                if (isRecording) {
+                    stopRecording();
+                    btn.textContent = '🎤 开始录音';
+                    btn.style.background = 'linear-gradient(135deg, rgba(0,212,255,0.3), rgba(139,92,246,0.3))';
+                    btn.style.borderColor = 'rgba(0,212,255,0.4)';
+                    status.textContent = '就绪';
+                    addLogEntry('语音输入已停止', 'info');
+                } else {
+                    startRecording();
+                    btn.textContent = '⏹ 停止录音';
+                    btn.style.background = 'linear-gradient(135deg, rgba(255,95,86,0.3), rgba(255,189,46,0.3))';
+                    btn.style.borderColor = 'rgba(255,95,86,0.5)';
+                    status.textContent = '录音中...';
+                    addLogEntry('语音输入已启动 | 正在采集音频', 'success');
+                }
+            };
+
+            function startRecording() {
+                canvas = document.getElementById('voiceWaveform');
+                if (!canvas) return;
+                canvasCtx = canvas.getContext('2d');
+
+                navigator.mediaDevices.getUserMedia({ audio: true })
+                    .then(function(stream) {
+                        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        analyser = audioContext.createAnalyser();
+                        microphone = audioContext.createMediaStreamSource(stream);
+                        microphone.connect(analyser);
+                        analyser.fftSize = 256;
+                        var bufferLength = analyser.frequencyBinCount;
+                        dataArray = new Uint8Array(bufferLength);
+                        isRecording = true;
+                        drawWaveform();
+                    })
+                    .catch(function(err) {
+                        addLogEntry('麦克风启动失败: ' + err.message, 'error');
+                        alert('无法访问麦克风，请检查权限设置');
+                        var btn = document.getElementById('voiceBtn');
+                        var status = document.getElementById('voiceStatus');
+                        btn.textContent = '🎤 开始录音';
+                        status.textContent = '就绪';
+                    });
+            }
+
+            function stopRecording() {
+                isRecording = false;
+                if (animationId) {
+                    cancelAnimationFrame(animationId);
+                    animationId = null;
+                }
+                if (microphone) {
+                    microphone.disconnect();
+                    microphone = null;
+                }
+                if (audioContext) {
+                    audioContext.close();
+                    audioContext = null;
+                }
+                // 清空画布
+                if (canvas && canvasCtx) {
+                    canvasCtx.fillStyle = 'rgba(0,0,0,0.4)';
+                    canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+                    // 绘制基线
+                    canvasCtx.strokeStyle = 'rgba(0,212,255,0.2)';
+                    canvasCtx.lineWidth = 1;
+                    canvasCtx.beginPath();
+                    canvasCtx.moveTo(0, canvas.height / 2);
+                    canvasCtx.lineTo(canvas.width, canvas.height / 2);
+                    canvasCtx.stroke();
+                }
+            }
+
+            function drawWaveform() {
+                if (!isRecording || !analyser || !canvasCtx || !canvas) return;
+                
+                animationId = requestAnimationFrame(drawWaveform);
+                analyser.getByteTimeDomainData(dataArray);
+
+                var width = canvas.width;
+                var height = canvas.height;
+                var cy = height / 2;
+
+                // 深色背景清除
+                canvasCtx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+                canvasCtx.fillRect(0, 0, width, height);
+
+                // 绘制网格线
+                canvasCtx.strokeStyle = 'rgba(0, 212, 255, 0.06)';
+                canvasCtx.lineWidth = 0.5;
+                for (var g = 0; g < 5; g++) {
+                    var gy = (height / 4) * g;
+                    canvasCtx.beginPath();
+                    canvasCtx.moveTo(0, gy);
+                    canvasCtx.lineTo(width, gy);
+                    canvasCtx.stroke();
+                }
+
+                // ===== 主波形 - 青色发光 =====
+                canvasCtx.lineWidth = 2.5;
+                canvasCtx.strokeStyle = '#00d4ff';
+                canvasCtx.shadowBlur = 15;
+                canvasCtx.shadowColor = '#00d4ff';
+                canvasCtx.beginPath();
+
+                var sliceWidth = width / dataArray.length;
+                var x = 0;
+
+                for (var i = 0; i < dataArray.length; i++) {
+                    var v = (dataArray[i] - 128) / 128.0;
+                    var y = cy + v * cy * 0.85;
+                    if (i === 0) canvasCtx.moveTo(x, y);
+                    else canvasCtx.lineTo(x, y);
+                    x += sliceWidth;
+                }
+                canvasCtx.stroke();
+
+                // ===== 镜像波形（下方） =====
+                canvasCtx.strokeStyle = 'rgba(0, 212, 255, 0.25)';
+                canvasCtx.shadowBlur = 0;
+                canvasCtx.lineWidth = 1;
+                canvasCtx.beginPath();
+                x = 0;
+                for (var j = 0; j < dataArray.length; j++) {
+                    var v2 = (dataArray[j] - 128) / 128.0;
+                    var y2 = cy - v2 * cy * 0.4;
+                    if (j === 0) canvasCtx.moveTo(x, y2);
+                    else canvasCtx.lineTo(x, y2);
+                    x += sliceWidth;
+                }
+                canvasCtx.stroke();
+
+                // ===== 填充渐变区域 =====
+                canvasCtx.beginPath();
+                x = 0;
+                for (var k = 0; k < dataArray.length; k++) {
+                    var v3 = (dataArray[k] - 128) / 128.0;
+                    var y3 = cy + v3 * cy * 0.85;
+                    if (k === 0) canvasCtx.moveTo(x, y3);
+                    else canvasCtx.lineTo(x, y3);
+                    x += sliceWidth;
+                }
+                canvasCtx.lineTo(width, height);
+                canvasCtx.lineTo(0, height);
+                canvasCtx.closePath();
+                var gradient = canvasCtx.createLinearGradient(0, cy, 0, height);
+                gradient.addColorStop(0, 'rgba(0, 212, 255, 0.45)');
+                gradient.addColorStop(0.5, 'rgba(168, 85, 247, 0.2)');
+                gradient.addColorStop(1, 'rgba(0, 212, 255, 0.02)');
+                canvasCtx.fillStyle = gradient;
+                canvasCtx.fill();
+
+                // ===== 频谱柱状图（叠加在波形上方） =====
+                var freqData = new Uint8Array(analyser.frequencyBinCount);
+                analyser.getByteFrequencyData(freqData);
+                var barCount = 32;
+                var barWidth = width / barCount;
+                for (var b = 0; b < barCount; b++) {
+                    var barHeight = (freqData[b * 2] / 255) * height * 0.5;
+                    var bx = b * barWidth;
+                    var barGrad = canvasCtx.createLinearGradient(0, cy - barHeight, 0, cy);
+                    barGrad.addColorStop(0, 'rgba(0, 212, 255, 0.5)');
+                    barGrad.addColorStop(1, 'rgba(168, 85, 247, 0.15)');
+                    canvasCtx.fillStyle = barGrad;
+                    canvasCtx.fillRect(bx + 1, cy - barHeight, barWidth - 2, barHeight);
+                    // 底部对称
+                    canvasCtx.fillStyle = 'rgba(0, 212, 255, 0.08)';
+                    canvasCtx.fillRect(bx + 1, cy, barWidth - 2, barHeight * 0.3);
+                }
+
+                canvasCtx.shadowBlur = 0;
+
+                // ===== 中心基线 =====
+                canvasCtx.strokeStyle = 'rgba(0, 212, 255, 0.3)';
+                canvasCtx.lineWidth = 1;
+                canvasCtx.beginPath();
+                canvasCtx.moveTo(0, cy);
+                canvasCtx.lineTo(width, cy);
+                canvasCtx.stroke();
+
+                // ===== 峰值指示点 =====
+                var maxVal = 0;
+                var maxIdx = 0;
+                for (var m = 0; m < dataArray.length; m++) {
+                    var diff = Math.abs(dataArray[m] - 128);
+                    if (diff > maxVal) { maxVal = diff; maxIdx = m; }
+                }
+                var peakX = maxIdx * sliceWidth;
+                var peakY = cy + ((dataArray[maxIdx] - 128) / 128.0) * cy * 0.85;
+                canvasCtx.beginPath();
+                canvasCtx.arc(peakX, peakY, 4, 0, Math.PI * 2);
+                canvasCtx.fillStyle = '#ffd700';
+                canvasCtx.shadowBlur = 10;
+                canvasCtx.shadowColor = '#ffd700';
+                canvasCtx.fill();
+                canvasCtx.shadowBlur = 0;
+            }
+
+            // 初始化画布基线
+            document.addEventListener('DOMContentLoaded', function() {
+                var c = document.getElementById('voiceWaveform');
+                if (c) {
+                    var ctx = c.getContext('2d');
+                    ctx.fillStyle = 'rgba(0,0,0,0.4)';
+                    ctx.fillRect(0, 0, c.width, c.height);
+                    ctx.strokeStyle = 'rgba(0,212,255,0.2)';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(0, c.height / 2);
+                    ctx.lineTo(c.width, c.height / 2);
+                    ctx.stroke();
+                }
+            });
+        })();
+
+        // ==================== 页面加载自动启动 ==================== */
+        document.addEventListener('DOMContentLoaded', function() {
+            initMonitorCharts();
+            initAttentionGrid();
+            init3DVisualization();
+            startMonitorClock();
+            startFPSCounter();
+            addLogEntry('监测大屏已启动 | 多模态融合系统就绪', 'success');
+            simulateRealTimeData();
+            bindParamListeners();
+        });
+    </script>
+
+<!-- ========== UI Enhancement Layer (non-destructive) ========== -->
+<style>
+/* ── 1. 文字选择样式 ── */
+::selection { background: rgba(0, 212, 255, 0.3); color: #fff; }
+::-moz-selection { background: rgba(0, 212, 255, 0.3); color: #fff; }
+
+/* ── 2. 键盘焦点样式 ── */
+*:focus-visible {
+    outline: 2px solid rgba(0, 212, 255, 0.7);
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+a:focus-visible, button:focus-visible {
+    outline: 2px solid rgba(0, 212, 255, 0.7);
+    outline-offset: 3px;
+}
+
+/* ── 3. 减少动画偏好 ── */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ── 4. Firefox 滚动条 ── */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,212,255,0.3) var(--space-black, #050508);
+}
+
+/* ── 5. 关闭按钮增强 ── */
+.monitor-close-btn {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+.monitor-close-btn:active {
+    transform: scale(0.9);
+}
+
+/* ── 6. 全局触摸反馈 ── */
+button, .modality-card, .data-card {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* ── 7. 打印样式 ── */
+@media print {
+    body { background: #fff !important; color: #111 !important; overflow: visible !important; }
+    #monitor-modal, canvas, video { display: none !important; }
+    .glass-panel { background: #f8f9fa !important; border: 1px solid #ddd !important; backdrop-filter: none !important; }
+    .font-orbitron { font-family: 'Noto Sans SC', sans-serif !important; }
+    .monitor-close-btn { display: none !important; }
+}
+
+/* ── 8. 监控大屏移动端适配 ── */
+@media (max-width: 767px) {
+    body { overflow: auto !important; }
+    #monitor-modal {
+        height: auto !important;
+        min-height: 100vh;
+        overflow-y: auto !important;
+    }
+    .monitor-header {
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 8px 12px !important;
+    }
+    .monitor-title-text { font-size: 0.85rem !important; }
+    .monitor-status-bar { gap: 8px; }
+    .monitor-status-item { font-size: 0.65rem !important; }
+    .monitor-left, .monitor-right {
+        overflow-y: visible !important;
+        max-height: none !important;
+    }
+    .modality-card {
+        margin-bottom: 8px;
+    }
+    .card-header { padding: 8px 12px !important; }
+    .card-content { padding: 8px 12px !important; font-size: 0.75rem !important; }
+    .feature-tags { padding: 6px 12px !important; flex-wrap: wrap; }
+    .monitor-panel { padding: 10px !important; }
+    .attention-grid { gap: 2px !important; }
+    .attention-cell { width: 14px !important; height: 14px !important; }
+    .similarity-matrix { gap: 2px !important; }
+    .similarity-cell { width: 16px !important; height: 16px !important; font-size: 0.45rem !important; }
+    .monitor-bottom { grid-template-columns: 1fr !important; }
+    .sys-status-grid { grid-template-columns: repeat(2, 1fr); }
+    .fusion-progress-bar { height: 12px !important; }
+    #param-panel {
+        width: 100% !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        top: auto !important;
+        max-height: 60vh;
+        border-radius: 16px 16px 0 0 !important;
+    }
+}
+</style>
+
+<script>
+(function(){
+    /* ── A. ESC 关闭监测大屏 ── */
+    document.addEventListener('keydown', function(e){
+        if (e.key === 'Escape') {
+            if (typeof closeParamPanel === 'function' && window.paramPanelOpen) {
+                closeParamPanel();
+            } else if (typeof closeMonitorModal === 'function') {
+                closeMonitorModal();
+            }
+        }
+    });
+
+    /* ── B. 关闭按钮添加 aria-label ── */
+    document.querySelectorAll('.monitor-close-btn').forEach(function(btn){
+        if (!btn.getAttribute('aria-label')) btn.setAttribute('aria-label', '关闭监测大屏');
+    });
+
+    /* ── C. 模态卡片增强 ── */
+    document.querySelectorAll('.modality-card').forEach(function(card){
+        if (!card.getAttribute('role')) card.setAttribute('role', 'button');
+        if (!card.getAttribute('tabindex')) card.setAttribute('tabindex', '0');
+        card.addEventListener('keydown', function(e){
+            if (e.key === 'Enter' || e.key === ' ') {
+                card.click();
+                e.preventDefault();
+            }
+        });
+    });
+
+    /* ── D. 所有交互元素添加 aria-label ── */
+    document.querySelectorAll('a[onclick], button[onclick]').forEach(function(el){
+        var txt = (el.textContent || '').trim();
+        if (txt && !el.getAttribute('aria-label') && !el.getAttribute('title')) {
+            el.setAttribute('aria-label', txt);
+        }
+    });
+
+    /* ── E. 后台标签页暂停 Canvas 动画 ── */
+    var _originalRAF = window.requestAnimationFrame;
+    var _rafCallbacks = [];
+    window.requestAnimationFrame = function(cb) {
+        if (document.hidden) { _rafCallbacks.push(cb); return 0; }
+        return _originalRAF.call(window, cb);
+    };
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+            var pending = _rafCallbacks.splice(0);
+            pending.forEach(function(cb) { _originalRAF.call(window, cb); });
+        }
+    });
+})();
+</script>
+</body>
+</html>

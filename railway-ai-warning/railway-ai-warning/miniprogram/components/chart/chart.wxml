@@ -1,8 +1,0 @@
-<view class="chart-container">
-  <canvas 
-    type="2d" 
-    id="{{chartId}}"
-    class="chart-canvas"
-    style="width: {{width}}px; height: {{height}}px;"
-  ></canvas>
-</view>

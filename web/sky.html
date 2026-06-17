@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <title>空基实时飞行监控 | 智驭苍穹 · 守路安澜</title>
+    <meta name="description" content="空基实时飞行监控 — Y3垂起固定翼无人机集群FPV图传，秒级回传，复杂山区抵近侦察。">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Orbitron:wght@400;700;900&family=Roboto+Mono:wght@300;400;700&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --space-black: #050508;
+            --nebula-blue: #1a1f3d;
+            --cosmic-purple: #2d1b4e;
+            --star-white: #e0e7ff;
+            --cyan-glow: #00d4ff;
+            --gold-accent: #ffd700;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: var(--space-black);
+            color: var(--star-white);
+            overflow-x: hidden;
+        }
+        
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        .font-mono { font-family: 'Roboto Mono', monospace; }
+        
+        /* 深空背景 */
+        .deep-space-bg {
+            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+        }
+        .nebula-bg {
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 119, 198, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%);
+        }
+        
+        /* 玻璃态 */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        .glass-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 1;
+        }
+        .glass-card:hover {
+            border-color: rgba(0, 212, 255, 0.5);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        /* 文字发光 */
+        .text-glow {
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5), 0 0 40px rgba(0, 212, 255, 0.3);
+        }
+        
+        /* 扫描线 */
+        .scan-line {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--cyan-glow), transparent);
+            opacity: 0.5;
+            animation: scan 4s linear infinite;
+            z-index: 50;
+            pointer-events: none;
+        }
+        @keyframes scan {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(100vh); }
+        }
+        
+        /* 视频容器 HUD 效果 */
+        .video-hud {
+            position: relative;
+            overflow: hidden;
+            border-radius: 16px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            box-shadow: 0 0 40px rgba(0, 212, 255, 0.15), inset 0 0 60px rgba(0,0,0,0.5);
+        }
+        .video-hud::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 16px;
+            padding: 1.5px;
+            background: linear-gradient(135deg, rgba(0,212,255,0.6), rgba(168,85,247,0.4), rgba(0,212,255,0.6));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            z-index: 10;
+        }
+        .video-hud::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 212, 255, 0.03) 2px,
+                rgba(0, 212, 255, 0.03) 4px
+            );
+            pointer-events: none;
+            z-index: 9;
+        }
+        
+        /* 十字准星 */
+        .crosshair {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px; height: 40px;
+            pointer-events: none;
+            z-index: 11;
+        }
+        .crosshair::before, .crosshair::after {
+            content: '';
+            position: absolute;
+            background: rgba(0, 212, 255, 0.6);
+        }
+        .crosshair::before { top: 19px; left: 0; width: 40px; height: 2px; }
+        .crosshair::after { top: 0; left: 19px; width: 2px; height: 40px; }
+        
+        /* 角标 */
+        .corner-bracket {
+            position: absolute;
+            width: 20px; height: 20px;
+            border-color: rgba(0, 212, 255, 0.6);
+            border-style: solid;
+            pointer-events: none;
+            z-index: 11;
+        }
+        .cb-tl { top: 12px; left: 12px; border-width: 2px 0 0 2px; }
+        .cb-tr { top: 12px; right: 12px; border-width: 2px 2px 0 0; }
+        .cb-bl { bottom: 12px; left: 12px; border-width: 0 0 2px 2px; }
+        .cb-br { bottom: 12px; right: 12px; border-width: 0 2px 2px 0; }
+        
+        /* 状态指示灯 */
+        .status-pulse {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #27c93f;
+            box-shadow: 0 0 8px #27c93f;
+            animation: pulse-dot 2s infinite;
+        }
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        
+        /* 数据条 */
+        .data-bar-bg {
+            background: rgba(255,255,255,0.12);
+            border-radius: 4px;
+            overflow: hidden;
+            height: 6px;
+        }
+        .data-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+        .data-bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        /* 终端日志 */
+        .terminal-log {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.75em;
+            line-height: 1.7;
+            max-height: 220px;
+            overflow-y: auto;
+        }
+        .terminal-log::-webkit-scrollbar { width: 4px; }
+        .terminal-log::-webkit-scrollbar-thumb { background: rgba(0,212,255,0.3); border-radius: 2px; }
+        .log-line { padding-left: 8px; border-left: 2px solid transparent; margin: 3px 0; opacity: 0; animation: fadeIn 0.3s forwards; }
+        .log-info { border-left-color: var(--cyan-glow); color: rgba(224,231,255,0.8); }
+        .log-success { border-left-color: #27c93f; color: #27c93f; }
+        .log-warn { border-left-color: #fbbf24; color: #fbbf24; }
+        @keyframes fadeIn { to { opacity: 1; } }
+        
+        /* 视角切换按钮 */
+        .view-btn {
+            padding: 8px 16px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(0,212,255,0.25);
+            border-radius: 20px;
+            color: rgba(224,231,255,0.7);
+            font-size: 0.8em;
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 1px;
+        }
+        .view-btn:hover, .view-btn.active {
+            background: rgba(0,212,255,0.15);
+            border-color: rgba(0,212,255,0.6);
+            color: var(--cyan-glow);
+            box-shadow: 0 0 15px rgba(0,212,255,0.2);
+        }
+        
+        /* 返回按钮 */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, rgba(0,212,255,0.15), rgba(45,27,78,0.3));
+            border: 1px solid rgba(0,212,255,0.4);
+            border-radius: 30px;
+            color: var(--cyan-glow);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85em;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        .back-btn:hover {
+            background: linear-gradient(135deg, rgba(0,212,255,0.3), rgba(45,27,78,0.5));
+            box-shadow: 0 0 25px rgba(0,212,255,0.3);
+            transform: translateX(-3px);
+        }
+        
+        /* 滚动条 */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--space-black); }
+        ::-webkit-scrollbar-thumb { background: rgba(0,212,255,0.3); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(0,212,255,0.6); }
+
+        /* 机队状态专用高对比度样式 */
+        .fleet-item {
+            transition: all 0.3s ease;
+        }
+        .fleet-item-active {
+            background: rgba(0, 212, 255, 0.12);
+            border: 1px solid rgba(0, 212, 255, 0.45);
+            box-shadow: 0 0 16px rgba(0, 212, 255, 0.15);
+        }
+        .fleet-item-idle {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        .fleet-item-idle:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+    
+    /* ====== SPA 页面过渡动画（星际虫洞传送效果） ====== */
+    #page-transition-overlay {
+        position: fixed; inset: 0; z-index: 99999;
+        display: flex; align-items: center; justify-content: center;
+        opacity: 0; pointer-events: none;
+        transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    #page-transition-overlay.active { opacity: 1; pointer-events: all; }
+    #page-transition-overlay .tunnel {
+        position: absolute; width: 100%; height: 100%;
+        overflow: hidden; background: radial-gradient(ellipse at center, #0a0f1e 0%, #020304 100%);
+    }
+    #page-transition-overlay .tunnel-ring {
+        position: absolute; top: 50%; left: 50%;
+        border: 2px solid rgba(0, 212, 255, 0.6);
+        border-radius: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        animation: tunnelExpand 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    #page-transition-overlay .tunnel-ring:nth-child(1) { animation-delay: 0s; border-color: rgba(0, 212, 255, 0.8); }
+    #page-transition-overlay .tunnel-ring:nth-child(2) { animation-delay: 0.06s; border-color: rgba(138, 43, 226, 0.6); }
+    #page-transition-overlay .tunnel-ring:nth-child(3) { animation-delay: 0.12s; border-color: rgba(0, 212, 255, 0.5); }
+    #page-transition-overlay .tunnel-ring:nth-child(4) { animation-delay: 0.18s; border-color: rgba(138, 43, 226, 0.4); }
+    #page-transition-overlay .tunnel-ring:nth-child(5) { animation-delay: 0.24s; border-color: rgba(0, 212, 255, 0.3); }
+    #page-transition-overlay .tunnel-ring:nth-child(6) { animation-delay: 0.30s; border-color: rgba(138, 43, 226, 0.2); }
+    #page-transition-overlay .tunnel-ring:nth-child(7) { animation-delay: 0.36s; border-color: rgba(0, 212, 255, 0.15); }
+    #page-transition-overlay .tunnel-ring:nth-child(8) { animation-delay: 0.42s; border-color: rgba(138, 43, 226, 0.1); }
+    @keyframes tunnelExpand {
+        0% { width: 10px; height: 10px; opacity: 1; }
+        100% { width: 250vmax; height: 250vmax; opacity: 0; }
+    }
+    #page-transition-overlay .warp-flash {
+        position: absolute; inset: 0;
+        background: radial-gradient(ellipse at center, rgba(0,212,255,0.3) 0%, transparent 70%);
+        animation: warpFlash 0.6s ease-out forwards;
+        animation-delay: 0.2s;
+        opacity: 0;
+    }
+    @keyframes warpFlash {
+        0% { opacity: 0; transform: scale(0.5); }
+        40% { opacity: 1; }
+        100% { opacity: 0; transform: scale(2); }
+    }
+    #page-transition-overlay .warp-center-glow {
+        position: absolute; top: 50%; left: 50%;
+        width: 120px; height: 120px;
+        transform: translate(-50%, -50%);
+        background: radial-gradient(circle, rgba(0,212,255,0.9) 0%, rgba(138,43,226,0.5) 40%, transparent 70%);
+        border-radius: 50%;
+        animation: centerGlow 0.8s ease-out forwards;
+    }
+    @keyframes centerGlow {
+        0% { transform: translate(-50%,-50%) scale(0); opacity: 1; }
+        60% { transform: translate(-50%,-50%) scale(1.5); opacity: 0.8; }
+        100% { transform: translate(-50%,-50%) scale(3); opacity: 0; }
+    }
+</style>
+</head>
+<body class="deep-space-bg">
+<noscript style="position:fixed;inset:0;z-index:999999;background:#050508;color:#e0e7ff;display:flex;align-items:center;justify-content:center;font-family:sans-serif;text-align:center;padding:2rem;">
+    <div><h1 style="font-size:1.5rem;margin-bottom:1rem;color:#00d4ff;">空基实时飞行监控</h1><p>本系统需要启用 JavaScript 才能正常运行。</p><p style="margin-top:0.5rem;color:#888;">请在浏览器设置中开启 JavaScript 后刷新页面。</p></div>
+</noscript>
+
+    <div class="scan-line"></div>
+    <canvas id="starfield" style="position: fixed; top:0; left:0; width:100%; height:100%; z-index:-1; pointer-events:none;"></canvas>
+    <div class="nebula-bg fixed inset-0 opacity-40 pointer-events-none"></div>
+
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 w-full z-50 glass-panel border-b border-white/5" role="navigation" aria-label="主导航">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- 返回按钮 -->
+            <div class="flex items-center gap-3">
+                <button class="back-btn" onclick="navigateTo('universe.html')" aria-label="返回寰宇">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                    返回寰宇
+                </button>
+            </div>
+
+            <!-- 桌面端导航链接 -->
+            <div class="hidden md:flex space-x-6 text-sm font-medium tracking-wide items-center">
+                <a href="javascript:void(0)" onclick="navigateTo('index.html')" class="hover:text-cyan-400 transition-colors duration-300 relative group text-gray-400">
+                    星枢
+                    <span class="absolute -bottom-1 left-0 w-0 h-px bg-cyan-400 group-hover:w-full transition-all duration-300"></span>
+                </a>
+                <a href="javascript:void(0)" onclick="navigateTo('universe.html')" class="hover:text-cyan-400 transition-colors duration-300 relative group text-cyan-400">
+                    寰宇
+                    <span class="absolute -bottom-1 left-0 w-full h-px bg-cyan-400 transition-all duration-300"></span>
+                </a>
+                <a href="javascript:void(0)" onclick="navigateTo('core.html')" class="hover:text-cyan-400 transition-colors duration-300 relative group text-gray-400">
+                    核心
+                    <span class="absolute -bottom-1 left-0 w-0 h-px bg-cyan-400 group-hover:w-full transition-all duration-300"></span>
+                </a>
+                <a href="javascript:void(0)" onclick="navigateTo('system.html')" class="hover:text-cyan-400 transition-colors duration-300 relative group text-gray-400">
+                    系统
+                    <span class="absolute -bottom-1 left-0 w-0 h-px bg-cyan-400 group-hover:w-full transition-all duration-300"></span>
+                </a>
+                <a href="javascript:void(0)" onclick="navigateTo('community.html')" class="hover:text-cyan-400 transition-colors duration-300 relative group text-gray-400">
+                    资讯
+                    <span class="absolute -bottom-1 left-0 w-0 h-px bg-cyan-400 group-hover:w-full transition-all duration-300"></span>
+                </a>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="hidden md:flex items-center gap-3">
+                    <div class="status-pulse"></div>
+                    <span class="font-orbitron text-sm text-cyan-400 tracking-wider">LIVE</span>
+                    <span class="text-xs text-gray-500 font-mono" id="live-clock">00:00:00</span>
+                </div>
+                <!-- 移动端汉堡按钮 -->
+                <button class="md:hidden text-white nav-hamburger" id="sky-hamburger-btn" aria-label="打开导航菜单" aria-expanded="false" onclick="toggleSkyMenu()">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 移动端菜单（空基页面专用） -->
+    <div id="sky-mobile-menu" class="fixed inset-0 z-40 bg-black/95 backdrop-blur-xl transform translate-x-full transition-transform duration-300 md:hidden">
+        <button class="menu-close-btn" aria-label="关闭菜单" onclick="toggleSkyMenu()">
+            <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+        <div class="flex flex-col items-center justify-center h-full space-y-8 text-2xl font-light">
+            <a href="javascript:void(0)" onclick="navigateTo('index.html'); toggleSkyMenu();" class="hover:text-cyan-400 transition-colors text-gray-300">星枢</a>
+            <a href="javascript:void(0)" onclick="navigateTo('universe.html'); toggleSkyMenu();" class="text-cyan-400 transition-colors">寰宇</a>
+            <a href="javascript:void(0)" onclick="navigateTo('core.html'); toggleSkyMenu();" class="hover:text-cyan-400 transition-colors text-gray-300">核心</a>
+            <a href="javascript:void(0)" onclick="navigateTo('system.html'); toggleSkyMenu();" class="hover:text-cyan-400 transition-colors text-gray-300">系统</a>
+            <a href="javascript:void(0)" onclick="navigateTo('community.html'); toggleSkyMenu();" class="hover:text-cyan-400 transition-colors text-gray-300">资讯</a>
+            <div class="flex items-center gap-3 mt-4">
+                <div class="status-pulse"></div>
+                <span class="font-orbitron text-sm text-cyan-400 tracking-wider">LIVE</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主内容 -->
+    <main class="relative z-10 pt-24 pb-16 px-4 md:px-6 max-w-7xl mx-auto">
+        
+        <!-- 标题区 -->
+        <div class="text-center mb-10">
+            <div class="inline-block px-4 py-1 rounded-full border border-cyan-400/30 bg-cyan-400/10 text-cyan-400 text-xs tracking-[0.3em] font-orbitron uppercase mb-4">
+                UAV REAL-TIME MONITORING
+            </div>
+            <h1 class="text-4xl md:text-6xl font-black text-glow font-orbitron tracking-wider mb-2">
+                空基 · 实时飞行监控
+            </h1>
+            <p class="text-gray-400 max-w-2xl mx-auto text-sm md:text-base">
+                Y3 垂起固定翼无人机集群 FPV 图传 · 秒级回传 · 复杂山区抵近侦察
+            </p>
+        </div>
+
+        <!-- 视频主控区 -->
+        <div class="grid lg:grid-cols-3 gap-6 mb-8">
+            <!-- 左侧：主视频 -->
+            <div class="lg:col-span-2">
+                <div class="video-hud relative bg-black/60 aspect-video">
+                    <video id="uavVideo" class="w-full h-full object-cover rounded-2xl" autoplay loop muted playsinline>
+                        <source src="assets/videos/无人机测试.mp4" type="video/mp4">
+                        您的浏览器不支持视频播放。
+                    </video>
+                    
+                    <!-- HUD 叠加层 -->
+                    <div class="crosshair"></div>
+                    <div class="corner-bracket cb-tl"></div>
+                    <div class="corner-bracket cb-tr"></div>
+                    <div class="corner-bracket cb-bl"></div>
+                    <div class="corner-bracket cb-br"></div>
+                    
+                    <!-- 左上角信息 -->
+                    <div class="absolute top-5 left-5 z-20 font-mono text-xs text-cyan-400/90 space-y-1 pointer-events-none">
+                        <div>CAM: Y3-03_FPV_MAIN</div>
+                        <div>REC ● <span id="rec-time">00:00:00</span></div>
+                        <div>ISO: 400 | SHUTTER: 1/1000</div>
+                    </div>
+                    
+                    <!-- 右上角信息 -->
+                    <div class="absolute top-5 right-5 z-20 font-mono text-xs text-right space-y-1 pointer-events-none">
+                        <div class="text-cyan-400/90">GPS: 36.0542°N, 103.8342°E</div>
+                        <div class="text-cyan-400/90">ALT: <span id="hud-alt">2847</span>m</div>
+                        <div class="text-yellow-400/90">BAT: <span id="hud-bat">87</span>%</div>
+                    </div>
+                    
+                    <!-- 底部信息条 -->
+                    <div class="absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-black/80 to-transparent p-5 pointer-events-none">
+                        <div class="flex justify-between items-end font-mono text-xs">
+                            <div class="text-gray-300">
+                                <div class="text-cyan-400 font-bold text-sm mb-1">Y3-03 主视角</div>
+                                <div>风速: 4.2m/s | 能见度: 12km | 云高: 800m</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-2xl font-bold text-cyan-400 font-orbitron" id="hud-speed">12.5<span class="text-sm text-gray-400 ml-1">m/s</span></div>
+                                <div class="text-gray-400">地速</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 视角切换 -->
+                <div class="flex gap-3 mt-4 justify-center flex-wrap">
+                    <button class="view-btn active" onclick="switchView(0, this)">Y3-01 前视</button>
+                    <button class="view-btn" onclick="switchView(1, this)">Y3-02 下视</button>
+                    <button class="view-btn" onclick="switchView(2, this)">Y3-03 主视角</button>
+                    <button class="view-btn" onclick="switchView(3, this)">Y3-04 红外</button>
+                    <button class="view-btn" onclick="switchView(4, this)">Y3-05 广角</button>
+                    <button class="view-btn" onclick="switchView(5, this)">Y3-06 变焦</button>
+                </div>
+            </div>
+
+            <!-- 右侧：状态面板 -->
+            <div class="space-y-4">
+                <!-- 机队状态 -->
+                <div class="glass-card rounded-2xl p-5">
+                    <h3 class="font-orbitron text-sm text-cyan-400 mb-4 tracking-wider flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                        机队状态
+                    </h3>
+                    <div class="space-y-3" id="fleet-status">
+                        <!-- 动态生成 -->
+                    </div>
+                </div>
+
+                <!-- 环境气象 -->
+                <div class="glass-card rounded-2xl p-5">
+                    <h3 class="font-orbitron text-sm text-cyan-400 mb-4 tracking-wider">环境气象</h3>
+                    <div class="grid grid-cols-2 gap-3 font-mono text-xs">
+                        <div class="bg-white/5 rounded-lg p-3 text-center">
+                            <div class="text-gray-400 mb-1">温度</div>
+                            <div class="text-cyan-400 text-lg font-bold" id="env-temp">18.4°C</div>
+                        </div>
+                        <div class="bg-white/5 rounded-lg p-3 text-center">
+                            <div class="text-gray-400 mb-1">湿度</div>
+                            <div class="text-cyan-400 text-lg font-bold" id="env-hum">62%</div>
+                        </div>
+                        <div class="bg-white/5 rounded-lg p-3 text-center">
+                            <div class="text-gray-400 mb-1">气压</div>
+                            <div class="text-cyan-400 text-lg font-bold" id="env-pres">1013hPa</div>
+                        </div>
+                        <div class="bg-white/5 rounded-lg p-3 text-center">
+                            <div class="text-gray-400 mb-1">风向</div>
+                            <div class="text-cyan-400 text-lg font-bold" id="env-wind">SE 4.2</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 信号质量 -->
+                <div class="glass-card rounded-2xl p-5">
+                    <h3 class="font-orbitron text-sm text-cyan-400 mb-3 tracking-wider">图传信号</h3>
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="font-mono text-xs text-gray-400 w-12">5.8G</span>
+                        <div class="flex-1 data-bar-bg">
+                            <div class="data-bar-fill bg-gradient-to-r from-cyan-500 to-blue-500" style="width: 92%"></div>
+                        </div>
+                        <span class="font-mono text-xs text-cyan-400 w-10 text-right">-42dBm</span>
+                    </div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="font-mono text-xs text-gray-400 w-12">4G</span>
+                        <div class="flex-1 data-bar-bg">
+                            <div class="data-bar-fill bg-gradient-to-r from-green-500 to-emerald-500" style="width: 78%"></div>
+                        </div>
+                        <span class="font-mono text-xs text-cyan-400 w-10 text-right">-68dBm</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="font-mono text-xs text-gray-400 w-12">北斗</span>
+                        <div class="flex-1 data-bar-bg">
+                            <div class="data-bar-fill bg-gradient-to-r from-yellow-500 to-orange-500" style="width: 95%"></div>
+                        </div>
+                        <span class="font-mono text-xs text-cyan-400 w-10 text-right">12颗</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部：飞行日志 + 迷你地图占位 -->
+        <div class="grid md:grid-cols-3 gap-6">
+            <div class="md:col-span-2 glass-card rounded-2xl p-5">
+                <h3 class="font-orbitron text-sm text-cyan-400 mb-3 tracking-wider flex items-center gap-2">
+                    <span>📡</span> 飞行日志 / 遥测数据流
+                </h3>
+                <div class="terminal-log" id="flight-log">
+                    <div class="log-line log-success">[SYSTEM] Y3-03 图传链路已建立 | 延迟 12ms</div>
+                </div>
+            </div>
+            
+            <div class="glass-card rounded-2xl p-5 flex flex-col">
+                <h3 class="font-orbitron text-sm text-cyan-400 mb-3 tracking-wider">航线概览</h3>
+                <div class="flex-1 bg-black/40 rounded-xl border border-white/5 relative overflow-hidden flex items-center justify-center min-h-[160px]">
+                    <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=600&h=400&fit=crop" 
+                         alt="航线概览" 
+                         class="w-full h-full object-cover opacity-40 rounded-xl">
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="text-center">
+                            <div class="text-cyan-400 font-orbitron text-xs tracking-widest mb-1">FLIGHT PATH</div>
+                            <div class="text-gray-400 text-xs font-mono">实时航线渲染中...</div>
+                        </div>
+                    </div>
+                    <div class="absolute w-3 h-3 bg-cyan-400 rounded-full shadow-[0_0_10px_#00d4ff]" style="top: 30%; left: 20%; animation: pulse-dot 1.5s infinite;"></div>
+                    <div class="absolute w-2 h-2 bg-cyan-400 rounded-full shadow-[0_0_8px_#00d4ff]" style="top: 45%; left: 50%; animation: pulse-dot 1.8s infinite 0.3s;"></div>
+                    <div class="absolute w-2 h-2 bg-cyan-400 rounded-full shadow-[0_0_8px_#00d4ff]" style="top: 60%; left: 75%; animation: pulse-dot 2s infinite 0.6s;"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="border-t border-white/10 py-8 mt-8">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <p class="text-xs text-gray-600 font-orbitron tracking-widest">
+                LoongClaw UAV MONITORING SYSTEM // 智驭苍穹 · 守路安澜
+            </p>
+        </div>
+    </footer>
+
+    <script>
+                // ==================== 星空背景（与主界面一致）====================
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+        let width, height, stars = [], shootingStars = [];
+        
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+            initStars();
+        }
+        function initStars() {
+            stars = [];
+            const numStars = Math.floor((width * height) / 3000);
+            for (let i = 0; i < numStars; i++) {
+                stars.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    radius: Math.random() * 1.5,
+                    alpha: Math.random(),
+                    speed: Math.random() * 0.05
+                });
+            }
+        }
+        class ShootingStar {
+            constructor() { this.reset(); }
+            reset() {
+                this.x = Math.random() * width;
+                this.y = 0;
+                this.length = Math.random() * 80 + 20;
+                this.speed = Math.random() * 10 + 5;
+                this.angle = Math.PI / 4;
+                this.alpha = 1;
+                this.active = true;
+            }
+            update() {
+                this.x += Math.cos(this.angle) * this.speed;
+                this.y += Math.sin(this.angle) * this.speed;
+                this.alpha -= 0.02;
+                if (this.alpha <= 0 || this.x > width || this.y > height) this.active = false;
+            }
+            draw() {
+                if (!this.active) return;
+                ctx.save();
+                ctx.strokeStyle = `rgba(255,255,255,${this.alpha})`;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y);
+                ctx.lineTo(this.x - this.length*Math.cos(this.angle), this.y - this.length*Math.sin(this.angle));
+                ctx.stroke();
+                ctx.fillStyle = `rgba(0,212,255,${this.alpha})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 2, 0, Math.PI*2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+        function animateStars() {
+            ctx.clearRect(0, 0, width, height);
+            stars.forEach(star => {
+                star.alpha += star.speed;
+                if (star.alpha > 1 || star.alpha < 0.2) star.speed *= -1;
+                ctx.fillStyle = `rgba(255,255,255,${star.alpha})`;
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.radius, 0, Math.PI*2);
+                ctx.fill();
+            });
+            if (Math.random() < 0.02) shootingStars.push(new ShootingStar());
+            shootingStars = shootingStars.filter(s => s.active);
+            shootingStars.forEach(s => { s.update(); s.draw(); });
+            requestAnimationFrame(animateStars);
+        }
+        window.addEventListener('resize', resize);
+        resize();
+        animateStars();
+
+        // ==================== 时钟 ====================
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('live-clock').textContent = now.toLocaleTimeString('zh-CN', {hour12:false});
+            document.getElementById('rec-time').textContent = now.toLocaleTimeString('zh-CN', {hour12:false});
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // ==================== 机队状态生成 ====================
+        const drones = [
+            { id: 'Y3-01', bat: 85, sig: 92, alt: 2450, status: '巡航' },
+            { id: 'Y3-02', bat: 72, sig: 88, alt: 2100, status: '悬停' },
+            { id: 'Y3-03', bat: 87, sig: 95, alt: 2847, status: '侦察', active: true },
+            { id: 'Y3-04', bat: 91, sig: 90, alt: 2600, status: '巡航' },
+            { id: 'Y3-05', bat: 68, sig: 85, alt: 2300, status: '返航' },
+            { id: 'Y3-06', bat: 88, sig: 93, alt: 2500, status: '待命' },
+        ];
+        
+        function renderFleet() {
+            const container = document.getElementById('fleet-status');
+            container.innerHTML = drones.map(d => {
+                const isActive = d.active;
+                const wrapperClass = isActive ? 'fleet-item-active' : 'fleet-item-idle';
+                const idColor = isActive ? 'text-cyan-300' : 'text-gray-200';
+                const numBg = isActive ? 'bg-cyan-400/25 text-cyan-300' : 'bg-white/20 text-gray-300';
+                const statusBg = isActive ? 'bg-cyan-400/20 text-cyan-300' : 'bg-white/15 text-gray-300';
+                const metaColor = 'text-gray-400';
+                const barGradient = d.bat < 30 ? 'bg-red-500' : d.bat < 70 ? 'bg-yellow-500' : 'bg-gradient-to-r from-cyan-400 to-green-400';
+                
+                return `
+                <div class="fleet-item flex items-center gap-3 p-2.5 rounded-lg ${wrapperClass}">
+                    <div class="w-8 h-8 rounded-full ${numBg} flex items-center justify-center font-mono text-xs font-bold shrink-0">
+                        ${d.id.split('-')[1]}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-mono text-xs font-bold ${idColor}">${d.id}</span>
+                            <span class="text-[10px] px-2 py-0.5 rounded-full ${statusBg} font-medium">${d.status}</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-[11px] font-mono ${metaColor}">
+                            <span>BAT:${d.bat}%</span>
+                            <span>SIG:${d.sig}%</span>
+                            <span>ALT:${d.alt}m</span>
+                        </div>
+                        <div class="data-bar-bg mt-1.5">
+                            <div class="data-bar-fill ${barGradient}" style="width:${d.bat}%"></div>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+        renderFleet();
+
+        // ==================== 视角切换 ====================
+        const videoSources = [
+            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4"
+        ];
+        
+        window.switchView = function(index, btn) {
+            const video = document.getElementById('uavVideo');
+            video.src = videoSources[index % videoSources.length];
+            video.play();
+            
+            document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const d = drones[index];
+            document.getElementById('hud-alt').textContent = d.alt;
+            document.getElementById('hud-bat').textContent = d.bat;
+            document.getElementById('hud-speed').innerHTML = (8 + Math.random()*8).toFixed(1) + '<span class="text-sm text-gray-400 ml-1">m/s</span>';
+            
+            addLog(`切换至 ${d.id} ${btn.textContent.trim()} | 信号强度 ${d.sig}%`, 'info');
+            
+            drones.forEach((dr, i) => dr.active = (i === index));
+            renderFleet();
+        };
+
+        // ==================== 飞行日志 ====================
+        const logContainer = document.getElementById('flight-log');
+        function addLog(msg, type='info') {
+            const line = document.createElement('div');
+            line.className = `log-line log-${type}`;
+            const time = new Date().toLocaleTimeString('zh-CN', {hour12:false});
+            line.innerHTML = `<span class="text-gray-500">[${time}]</span> ${msg}`;
+            logContainer.appendChild(line);
+            logContainer.scrollTop = logContainer.scrollHeight;
+            if (logContainer.children.length > 50) logContainer.removeChild(logContainer.firstChild);
+        }
+        
+        const logMessages = [
+            { msg: 'Y3-03 姿态稳定 | 俯仰: -2.3° | 横滚: 0.8°', type: 'info' },
+            { msg: '风速传感器更新 | 4.2m/s SE', type: 'info' },
+            { msg: '图传信号强度优良 | 5.8G -42dBm', type: 'success' },
+            { msg: 'GPS 定位精度: RTK 固定解 | ±0.03m', type: 'success' },
+            { msg: '前方 1.2km 检测到降水回波', type: 'warn' },
+            { msg: '电池温度正常 | 32°C', type: 'info' },
+            { msg: '云台角度调整 | 偏航: 15°', type: 'info' },
+            { msg: '与地面站心跳包正常 | 延迟 12ms', type: 'success' },
+        ];
+        
+        setInterval(() => {
+            const rand = logMessages[Math.floor(Math.random() * logMessages.length)];
+            addLog(rand.msg, rand.type);
+            
+            if (Math.random() > 0.6) {
+                document.getElementById('hud-alt').textContent = 2800 + Math.floor(Math.random() * 100);
+                document.getElementById('env-temp').textContent = (16 + Math.random() * 5).toFixed(1) + '°C';
+                document.getElementById('env-wind').textContent = 'SE ' + (3 + Math.random() * 3).toFixed(1);
+            }
+        }, 2500);
+
+        // ==================== GSAP 入场动画 ====================
+        gsap.fromTo("main", 
+            { opacity: 0, y: 30 }, 
+            { opacity: 1, y: 0, duration: 1, ease: "power3.out", delay: 0.2 }
+        );
+        gsap.fromTo(".glass-card", 
+            { opacity: 0, y: 20 }, 
+            { opacity: 1, y: 0, duration: 0.8, stagger: 0.1, ease: "power3.out", delay: 0.5 }
+        );
+    
+        // ==================== SPA 页面导航（丝滑过渡）====================
+                function navigateTo(targetPage) {
+            var overlay = document.getElementById('page-transition-overlay');
+            if (overlay) {
+                overlay.classList.add('active');
+                setTimeout(function() {
+                    localStorage.setItem('openclaw_session', 'true');
+                    window.location.href = targetPage;
+                }, 600);
+            } else {
+                localStorage.setItem('openclaw_session', 'true');
+                window.location.href = targetPage;
+            }
+        }
+
+        // 移动端菜单切换函数
+        function toggleSkyMenu() {
+            var menu = document.getElementById('sky-mobile-menu');
+            var btn = document.getElementById('sky-hamburger-btn');
+            if (menu.classList.contains('translate-x-full')) {
+                menu.classList.remove('translate-x-full');
+                if (btn) btn.setAttribute('aria-expanded', 'true');
+            } else {
+                menu.classList.add('translate-x-full');
+                if (btn) btn.setAttribute('aria-expanded', 'false');
+            }
+        }
+
+</script>
+
+<!-- ========== UI Enhancement Layer (non-destructive) ========== -->
+<style>
+/* ── 1. 移动端菜单关闭按钮 ── */
+#sky-mobile-menu .menu-close-btn,
+#mobile-menu .menu-close-btn {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: rgba(224,231,255,0.7);
+    cursor: pointer;
+    transition: all 0.3s;
+    z-index: 10;
+}
+#sky-mobile-menu .menu-close-btn:hover,
+#mobile-menu .menu-close-btn:hover {
+    background: rgba(0,212,255,0.15);
+    border-color: rgba(0,212,255,0.5);
+    color: #00d4ff;
+    transform: rotate(90deg);
+}
+#sky-mobile-menu .menu-close-btn:active,
+#mobile-menu .menu-close-btn:active {
+    transform: rotate(90deg) scale(0.92);
+}
+
+/* ── 2. 平滑滚动 ── */
+html { scroll-behavior: smooth; }
+
+/* ── 3. 文字选择样式 ── */
+::selection { background: rgba(0, 212, 255, 0.3); color: #fff; }
+::-moz-selection { background: rgba(0, 212, 255, 0.3); color: #fff; }
+
+/* ── 4. 键盘焦点样式 ── */
+*:focus-visible {
+    outline: 2px solid rgba(0, 212, 255, 0.7);
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+a:focus-visible, button:focus-visible {
+    outline: 2px solid rgba(0, 212, 255, 0.7);
+    outline-offset: 3px;
+}
+
+/* ── 5. 减少动画偏好 ── */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    #page-transition-overlay { display: none !important; }
+}
+
+/* ── 6. Firefox 滚动条 ── */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,212,255,0.3) var(--space-black, #050508);
+}
+
+/* ── 7. 导航栏汉堡按钮触摸反馈 ── */
+.nav-hamburger {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+.nav-hamburger:active svg {
+    transform: scale(0.85);
+    transition: transform 0.1s;
+}
+
+/* ── 8. 移动端菜单链接触摸反馈 ── */
+#sky-mobile-menu a, #sky-mobile-menu button {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: all 0.2s;
+}
+#sky-mobile-menu a:active, #sky-mobile-menu button:active {
+    transform: scale(0.95);
+}
+
+/* ── 9. 导航链接平滑下划线过渡增强 ── */
+nav a span {
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── 10. 按钮全局触摸反馈 ── */
+button, .glass-card, a[class*="glass"] {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* ── 11. 空基页面移动端布局优化 ── */
+@media (max-width: 767px) {
+    /* 标题区缩小 */
+    .video-hud {
+        border-radius: 12px;
+    }
+    /* HUD 信息文字缩小 */
+    .video-hud .font-mono { font-size: 0.6rem !important; }
+    .video-hud .absolute.top-5 { top: 0.5rem !important; }
+    .video-hud .absolute.top-5.left-5 { left: 0.5rem !important; }
+    .video-hud .absolute.top-5.right-5 { right: 0.5rem !important; }
+    .video-hud .absolute.bottom-0 { padding: 0.5rem !important; }
+    .video-hud .text-2xl { font-size: 1rem !important; }
+    /* 视角按钮缩小 */
+    .view-btn {
+        padding: 6px 10px !important;
+        font-size: 0.7em !important;
+    }
+    /* 环境气象网格保持 2 列 */
+    .glass-card .grid.grid-cols-2 { gap: 0.25rem; }
+    .glass-card .grid.grid-cols-2 > div { padding: 0.4rem; }
+    /* 信号面板紧凑 */
+    .data-bar-bg { height: 4px; }
+    /* 航线概览最小高度降低 */
+    [class*="min-h-[160px]"] { min-height: 120px; }
+    /* 飞行日志高度限制 */
+    .terminal-log { max-height: 160px; }
+}
+
+/* ── 12. 打印样式 ── */
+@media print {
+    body { background: #fff !important; color: #111 !important; overflow: visible !important; }
+    #starfield, .scan-line, .nebula-bg, #page-transition-overlay, video, canvas { display: none !important; }
+    .glass-panel, .glass-card { background: #f8f9fa !important; border: 1px solid #ddd !important; backdrop-filter: none !important; box-shadow: none !important; }
+    .text-glow { text-shadow: none !important; }
+    .font-orbitron { font-family: 'Noto Sans SC', sans-serif !important; }
+    nav { border: none !important; background: #fff !important; }
+}
+</style>
+
+<script>
+(function(){
+    /* ── A. ESC 键关闭移动端菜单 ── */
+    document.addEventListener('keydown', function(e){
+        if (e.key === 'Escape') {
+            var m = document.getElementById('sky-mobile-menu') || document.getElementById('mobile-menu');
+            if (m && !m.classList.contains('translate-x-full')) {
+                if (typeof toggleSkyMenu === 'function') toggleSkyMenu();
+                else if (typeof toggleMenu === 'function') toggleMenu();
+                else { m.classList.add('translate-x-full'); }
+                e.preventDefault();
+            }
+        }
+    });
+
+    /* ── B. 点击移动端菜单空白区域关闭 ── */
+    var skyMenu = document.getElementById('sky-mobile-menu');
+    if (skyMenu) {
+        skyMenu.addEventListener('click', function(e){
+            if (e.target === skyMenu && !skyMenu.classList.contains('translate-x-full')) {
+                if (typeof toggleSkyMenu === 'function') toggleSkyMenu();
+                else { skyMenu.classList.add('translate-x-full'); }
+            }
+        });
+    }
+
+    /* ── C. 导航添加 aria-label ── */
+    document.querySelectorAll('nav').forEach(function(n){
+        if (!n.getAttribute('role')) n.setAttribute('role', 'navigation');
+        if (!n.getAttribute('aria-label')) n.setAttribute('aria-label', '主导航');
+    });
+
+    /* ── D. 所有交互元素添加 aria-label 增强 ── */
+    document.querySelectorAll('a[onclick], button[onclick]').forEach(function(el){
+        var txt = (el.textContent || '').trim();
+        if (txt && !el.getAttribute('aria-label') && !el.getAttribute('title')) {
+            el.setAttribute('aria-label', txt);
+        }
+    });
+
+    /* ── E. 图片懒加载 + onError 兜底 ── */
+    document.querySelectorAll('img:not([loading])').forEach(function(img){
+        img.setAttribute('loading', 'lazy');
+    });
+    document.querySelectorAll('img').forEach(function(img){
+        if (!img.dataset.errorBound) {
+            img.dataset.errorBound = '1';
+            img.addEventListener('error', function(){
+                if (!img.dataset.fallback) {
+                    img.dataset.fallback = '1';
+                    img.style.opacity = '0.15';
+                    img.style.minHeight = '120px';
+                    img.alt = img.alt || '(图片加载失败)';
+                }
+            });
+        }
+    });
+
+    /* ── F. 后台标签页暂停 Canvas 动画 ── */
+    var _originalRAF = window.requestAnimationFrame;
+    var _rafCallbacks = [];
+    window.requestAnimationFrame = function(cb) {
+        if (document.hidden) { _rafCallbacks.push(cb); return 0; }
+        return _originalRAF.call(window, cb);
+    };
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+            var pending = _rafCallbacks.splice(0);
+            pending.forEach(function(cb) { _originalRAF.call(window, cb); });
+        }
+    });
+})();
+</script>
+</body>
+</html>

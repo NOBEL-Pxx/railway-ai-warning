@@ -1,8 +1,0 @@
-{
-  "navigationBarTitleText": "LoongClaw引擎",
-  "navigationBarBackgroundColor": "#0a0a0f",
-  "navigationBarTextStyle": "white",
-  "backgroundColor": "#F8F9FA",
-  "enablePullDownRefresh": false,
-  "usingComponents": {}
-}

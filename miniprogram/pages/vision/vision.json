@@ -1,0 +1,12 @@
+{
+  "navigationBarTitleText": "发展愿景",
+  "navigationBarBackgroundColor": "#165DFF",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#F8F9FA",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "glass-card": "/components/glass-card/glass-card",
+    "timeline": "/components/timeline/timeline"
+  },
+  "initialRenderingCache": "static"
+}

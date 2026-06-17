@@ -1,0 +1,14 @@
+<view class="notice-bar {{type}} {{scrollable ? 'scrollable' : ''}}" wx:if="{{visible}}" bindtap="onTap">
+  <view class="notice-icon">
+    <text wx:if="{{type === 'info'}}">ℹ️</text>
+    <text wx:if="{{type === 'success'}}">✅</text>
+    <text wx:if="{{type === 'warning'}}">⚠️</text>
+    <text wx:if="{{type === 'error'}}">❌</text>
+  </view>
+  <view class="notice-content">
+    <text class="notice-text {{scrollable ? 'scroll' : ''}}">{{text}}</text>
+  </view>
+  <view class="notice-close" wx:if="{{closable}}" catchtap="onClose">
+    <text>✕</text>
+  </view>
+</view>

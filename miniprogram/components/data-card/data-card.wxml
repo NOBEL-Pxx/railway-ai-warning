@@ -1,0 +1,16 @@
+<view class="data-card" bindtap="onTap">
+  <view class="data-icon-wrapper" style="background: {{color}}20;">
+    <image wx:if="{{icon}}" class="data-icon" src="{{icon}}" mode="aspectFit"/>
+  </view>
+  <view class="data-content">
+    <text class="data-title">{{title}}</text>
+    <view class="data-value-wrapper">
+      <text class="data-value" style="color: {{color}};">{{value}}</text>
+      <text wx:if="{{unit}}" class="data-unit">{{unit}}</text>
+    </view>
+    <view class="data-trend" wx:if="{{trend}}">
+      <text class="trend-icon {{trendType}}">{{trendType === 'up' ? '↑' : '↓'}}</text>
+      <text class="trend-value">{{trend}}</text>
+    </view>
+  </view>
+</view>

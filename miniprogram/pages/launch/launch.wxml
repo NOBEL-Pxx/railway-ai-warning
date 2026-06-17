@@ -1,0 +1,111 @@
+﻿<view class="launch-container {{fadeOut ? 'fade-out' : ''}}">
+  <!-- 动态背景层 -->
+  <view class="bg-gradient">
+    <view class="bg-orb orb-1"></view>
+    <view class="bg-orb orb-2"></view>
+    <view class="bg-orb orb-3"></view>
+    <view class="bg-grid"></view>
+    <!-- 粒子效果层 -->
+    <view class="particles-container">
+      <view class="particle p-1"></view>
+      <view class="particle p-2"></view>
+      <view class="particle p-3"></view>
+      <view class="particle p-4"></view>
+      <view class="particle p-5"></view>
+    </view>
+  </view>
+  
+  <!-- 主要内容区域 -->
+  <view class="content {{showContent ? 'show' : ''}}">
+    <!-- Logo展示区域 -->
+    <view class="logo-section">
+      <view class="logo-ring ring-1"></view>
+      <view class="logo-ring ring-2"></view>
+      <view class="logo-ring ring-3"></view>
+      <view class="logo-core">
+        <image class="logo-icon" src="{{launchBgImage}}" mode="aspectFit" lazy-load="true"></image>
+      </view>
+      <view class="pulse-ring"></view>
+      <view class="glow-effect"></view>
+    </view>
+    
+    <!-- 品牌标题区域 -->
+    <view class="title-section">
+      <text class="main-title">智驭苍穹 · 守路安澜</text>
+      <view class="title-underline"></view>
+      <text class="sub-title">空天地多模态铁路短临致灾风险孪生预警系统</text>
+      <text class="sub-title-en">Intelligent Sky-Rail Disaster Prevention System</text>
+    </view>
+    
+    <!-- 核心技术标签 -->
+    <view class="tech-tags">
+      <view class="tag-item" style="animation-delay: 0.1s;">
+        <image class="tag-icon-img" src="/images/academic/neural_arch.png" mode="aspectFit"></image>
+        <text class="tag-text">人工智能</text>
+      </view>
+      <view class="tag-item" style="animation-delay: 0.2s;">
+        <image class="tag-icon-img" src="/images/academic/satellite_ir.jpg" mode="aspectFit"></image>
+        <text class="tag-text">卫星遥感</text>
+      </view>
+      <view class="tag-item" style="animation-delay: 0.3s;">
+        <image class="tag-icon-img" src="/images/academic/slope_analysis.png" mode="aspectFit"></image>
+        <text class="tag-text">铁路防灾</text>
+      </view>
+      <view class="tag-item" style="animation-delay: 0.4s;">
+        <image class="tag-icon-img" src="/images/academic/uav_route.png" mode="aspectFit"></image>
+        <text class="tag-text">低空巡检</text>
+      </view>
+    </view>
+    
+    <!-- 功能特性展示 -->
+    <view class="features-section">
+      <view class="feature-item" style="animation-delay: 0.5s;">
+        <image class="feature-icon" src="/images/academic/risk_heatmap.png" mode="aspectFit"></image>
+        <text class="feature-text">实时预警</text>
+      </view>
+      <view class="feature-item" style="animation-delay: 0.6s;">
+        <image class="feature-icon" src="/images/academic/data_fusion.png" mode="aspectFit"></image>
+        <text class="feature-text">智能分析</text>
+      </view>
+      <view class="feature-item" style="animation-delay: 0.7s;">
+        <image class="feature-icon" src="/images/academic/digital_twin.png" mode="aspectFit"></image>
+        <text class="feature-text">云端协同</text>
+      </view>
+    </view>
+    
+    <!-- 底部信息区域 -->
+    <view class="footer-section">
+      <view class="team-info-card">
+        <image class="team-logo" src="/images/academic/forecast_score.png" mode="aspectFit"></image>
+        <view class="team-info">
+          <text class="team-name">智驭苍穹 · 守路安澜</text>
+          <text class="school">兰州大学 · 萃英学院 · 彭小溪</text>
+          <text class="advisor">指导教师：胡淑娟 教授</text>
+        </view>
+      </view>
+      
+      <!-- 进度加载区域 -->
+      <view class="loading-section">
+        <view class="loading-bar-container">
+          <view class="loading-track"></view>
+          <view class="loading-progress" style="width: {{loadingProgress}}%;"></view>
+          <view class="loading-glow"></view>
+        </view>
+        <view class="loading-info">
+          <text class="loading-text">{{loadingText}}</text>
+          <text class="loading-percent">{{loadingProgress}}%</text>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 装饰元素 -->
+  <view class="decoration corner-tl"></view>
+  <view class="decoration corner-tr"></view>
+  <view class="decoration corner-bl"></view>
+  <view class="decoration corner-br"></view>
+  
+  <!-- 版本信息 -->
+  <view class="version">V 2.0.0 Beta</view>
+
+</view>

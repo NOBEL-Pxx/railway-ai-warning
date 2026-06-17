@@ -1,0 +1,14 @@
+# 每日科研流程
+name: daily_research
+description: 每日科研例行检查与任务规划
+schedule: "0 9 * * *"  # 每天9点
+
+steps:
+  - name: 检查数据状态
+    skill: check_data
+    
+  - name: 查看今日任务
+    skill: get_today_tasks
+    
+  - name: 更新记忆
+    skill: update_memory

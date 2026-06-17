@@ -1,0 +1,18 @@
+# 数据处理流程
+name: data_pipeline
+description: 完整的数据处理流程
+
+steps:
+  - name: 下载ERA5数据
+    skill: download_era5
+    params:
+      variables: ["t2m", "d2m", "u10", "v10", "sp", "tp"]
+      
+  - name: 数据质量控制
+    skill: quality_control
+    
+  - name: 计算地形特征
+    skill: compute_terrain
+    
+  - name: 特征工程
+    skill: feature_engineering

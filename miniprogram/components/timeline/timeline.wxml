@@ -1,0 +1,17 @@
+<view class="timeline {{direction}}">
+  <view class="timeline-item" 
+        wx:for="{{items}}" 
+        wx:key="index"
+        data-index="{{index}}"
+        bindtap="onItemTap">
+    <view class="timeline-node">
+      <view class="timeline-dot {{item.highlight ? 'highlight' : ''}}"></view>
+      <view class="timeline-line" wx:if="{{index < items.length - 1}}"></view>
+    </view>
+    <view class="timeline-content">
+      <text class="timeline-time" wx:if="{{item.time || item.year}}">{{item.time || item.year}}</text>
+      <text class="timeline-title">{{item.title || item.event}}</text>
+      <text class="timeline-desc" wx:if="{{item.desc}}">{{item.desc}}</text>
+    </view>
+  </view>
+</view>

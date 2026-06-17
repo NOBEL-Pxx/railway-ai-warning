@@ -1,0 +1,309 @@
+﻿<view class="page-container starfield-theme">
+
+  <!-- 星空背景层 -->
+  <view class="starfield-bg">
+    <view class="nebula-layer nebula-1"></view>
+    <view class="nebula-layer nebula-2"></view>
+    <view class="nebula-layer nebula-3"></view>
+    <view class="stars-layer">
+      <view class="star star-1"></view><view class="star star-2"></view>
+      <view class="star star-3"></view><view class="star star-4"></view>
+      <view class="star star-5"></view><view class="star star-6"></view>
+      <view class="star star-7"></view><view class="star star-8"></view>
+      <view class="star star-9"></view><view class="star star-10"></view>
+      <view class="star star-11"></view><view class="star star-12"></view>
+      <view class="star star-13"></view><view class="star star-14"></view>
+      <view class="star star-15"></view><view class="star star-16"></view>
+      <view class="star star-17"></view><view class="star star-18"></view>
+      <view class="star star-19"></view><view class="star star-20"></view>
+      <view class="star star-21"></view><view class="star star-22"></view>
+      <view class="star star-23"></view><view class="star star-24"></view>
+      <view class="star star-25"></view>
+    </view>
+    <view class="milky-way"></view>
+    <view class="shooting-star shooting-1"></view>
+    <view class="shooting-star shooting-2"></view>
+  </view>
+
+  <!-- 返回按钮 -->
+  <view class="back-btn" bindtap="goBack">
+    <text class="back-arrow">←</text>
+  </view>
+
+  <!-- Hero头部 - 轮播图 -->
+  <view class="page-header stellar-header">
+    <swiper class="hero-swiper" indicator-dots="{{true}}" autoplay="{{true}}"
+      interval="{{5000}}" duration="{{800}}" circular="{{true}}"
+      indicator-color="rgba(255,255,255,0.3)" indicator-active-color="#00D4FF">
+      <swiper-item>
+        <image class="hero-bg-img" src="/images/1.jpg" mode="aspectFill"></image>
+        <view class="hero-img-overlay"></view>
+      </swiper-item>
+      <swiper-item>
+        <image class="hero-bg-img" src="/images/2.jpg" mode="aspectFill"></image>
+        <view class="hero-img-overlay"></view>
+      </swiper-item>
+      <swiper-item>
+        <image class="hero-bg-img" src="/images/3.jpg" mode="aspectFill"></image>
+        <view class="hero-img-overlay"></view>
+      </swiper-item>
+    </swiper>
+    <view class="header-vignette"></view>
+    <view class="header-content">
+      <text class="header-subtitle stellar-sub">太初之核</text>
+      <text class="header-title stellar-title">LoongClaw</text>
+      <text class="header-desc stellar-desc">动态路由混合专家系统</text>
+      <view class="version-badge stellar-badge">V 2.0</view>
+    </view>
+  </view>
+
+  <!-- 引擎概览 -->
+  <view class="section stellar-section overview-section">
+    <view class="engine-overview stellar-overview">
+      <view class="overview-icon-wrap">
+        <view class="icon-ring ring-1"></view>
+        <view class="icon-ring ring-2"></view>
+        <view class="icon-core">
+          <text class="core-text">🧠</text>
+        </view>
+      </view>
+      <text class="overview-desc stellar-overview-desc">融合AI、物理、统计、LLM四大专家，通过动态路由机制实现智能协同，显著提升短临预报精度</text>
+    </view>
+  </view>
+
+  <!-- 四大专家模块 -->
+  <view class="section stellar-section">
+    <view class="section-header stellar-section-header">
+      <text class="section-icon-text">🎯</text>
+      <text class="section-title stellar-section-title">四大专家模块</text>
+    </view>
+    <swiper class="expert-swiper" 
+            indicator-dots="{{true}}" 
+            autoplay="{{false}}" 
+            interval="{{5000}}" 
+            duration="{{500}}"
+            bindchange="onSwiperChange"
+            current="{{currentExpert}}"
+            indicator-color="rgba(255,255,255,0.3)"
+            indicator-active-color="#00D4FF">
+      <swiper-item wx:for="{{experts}}" wx:key="id">
+        <view class="expert-card stellar-expert-card" style="border-color: {{item.color}}33;">
+          <view class="expert-card-glow" style="background: {{item.color}}22;"></view>
+          <view class="card-content">
+            <view class="card-header">
+              <view class="expert-icon-wrap" style="background: {{item.color}}22; border-color: {{item.color}}44;">
+                <text class="expert-icon">{{item.icon}}</text>
+              </view>
+              <view class="expert-badge stellar-expert-badge" style="color: {{item.color}}; border-color: {{item.color}}44;">{{item.badge}}</view>
+            </view>
+            <view class="card-body">
+              <text class="expert-name stellar-expert-name">{{item.name}}</text>
+              <text class="expert-title stellar-expert-title" style="color: {{item.color}};">{{item.title}}</text>
+              <text class="expert-desc stellar-expert-desc">{{item.description}}</text>
+              <view class="capability-list">
+                <view class="capability-item" wx:for="{{item.capabilities}}" wx:for-item="cap" wx:key="index">
+                  <text class="cap-check" style="color: {{item.color}};">✓</text>
+                  <text class="cap-text stellar-cap-text">{{cap}}</text>
+                </view>
+              </view>
+            </view>
+            <view class="card-footer stellar-card-footer" style="border-color: {{item.color}}33;">
+              <view class="metric-item">
+                <text class="metric-value stellar-metric-val" style="color: {{item.color}};">{{item.metric.value}}</text>
+                <text class="metric-label stellar-metric-lab">{{item.metric.label}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </swiper-item>
+    </swiper>
+    
+    <!-- 专家指示器 -->
+    <view class="expert-indicators stellar-indicators">
+      <view class="indicator stellar-indicator {{currentExpert === index ? 'active' : ''}}" 
+            wx:for="{{experts}}" 
+            wx:key="id"
+            bindtap="switchExpert"
+            data-index="{{index}}">
+        <text class="indicator-icon">{{item.icon}}</text>
+        <text class="indicator-name stellar-indicator-name">{{item.shortName}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 动态路由机制 -->
+  <view class="section stellar-section">
+    <view class="section-header stellar-section-header">
+      <text class="section-icon-text">⚡</text>
+      <text class="section-title stellar-section-title">动态路由机制</text>
+    </view>
+    <view class="routing-card stellar-card">
+      <view class="routing-flow stellar-flow">
+        <view class="flow-node">
+          <view class="node-circle stellar-node">
+            <text class="node-icon">📊</text>
+          </view>
+          <text class="node-name stellar-node-name">输入数据</text>
+        </view>
+        <text class="flow-arrow-text">→</text>
+        <view class="flow-node">
+          <view class="node-circle stellar-node pulse">
+            <text class="node-icon">🎯</text>
+          </view>
+          <text class="node-name stellar-node-name">路由决策</text>
+        </view>
+        <text class="flow-arrow-text">→</text>
+        <view class="flow-node">
+          <view class="node-circle stellar-node">
+            <text class="node-icon">🧠</text>
+          </view>
+          <text class="node-name stellar-node-name">专家计算</text>
+        </view>
+        <text class="flow-arrow-text">→</text>
+        <view class="flow-node">
+          <view class="node-circle stellar-node">
+            <text class="node-icon">⚗️</text>
+          </view>
+          <text class="node-name stellar-node-name">融合输出</text>
+        </view>
+      </view>
+      
+      <view class="routing-logic stellar-logic-list">
+        <view class="logic-item stellar-logic-item">
+          <view class="logic-num">1</view>
+          <text class="logic-text stellar-logic-text">根据气象条件动态选择激活专家</text>
+        </view>
+        <view class="logic-item stellar-logic-item">
+          <view class="logic-num">2</view>
+          <text class="logic-text stellar-logic-text">计算各专家权重系数（0-1）</text>
+        </view>
+        <view class="logic-item stellar-logic-item">
+          <view class="logic-num">3</view>
+          <text class="logic-text stellar-logic-text">加权融合多专家预测结果</text>
+        </view>
+        <view class="logic-item stellar-logic-item">
+          <view class="logic-num">4</view>
+          <text class="logic-text stellar-logic-text">LLM生成风险解释与决策建议</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 专家权重分配 -->
+  <view class="section stellar-section">
+    <view class="section-header stellar-section-header">
+      <text class="section-icon-text">📊</text>
+      <text class="section-title stellar-section-title">专家权重分配</text>
+    </view>
+    <view class="weights-card stellar-card">
+      <view class="scenario-selector stellar-scenario-selector">
+        <view class="scenario-item stellar-scenario-item {{activeScenario === 0 ? 'active' : ''}}" bindtap="selectScenario" data-index="0">
+          <text class="scenario-icon">🌧️</text>
+          <text class="scenario-name">暴雨</text>
+        </view>
+        <view class="scenario-item stellar-scenario-item {{activeScenario === 1 ? 'active' : ''}}" bindtap="selectScenario" data-index="1">
+          <text class="scenario-icon">💨</text>
+          <text class="scenario-name">大风</text>
+        </view>
+        <view class="scenario-item stellar-scenario-item {{activeScenario === 2 ? 'active' : ''}}" bindtap="selectScenario" data-index="2">
+          <text class="scenario-icon">❄️</text>
+          <text class="scenario-name">冰雪</text>
+        </view>
+        <view class="scenario-item stellar-scenario-item {{activeScenario === 3 ? 'active' : ''}}" bindtap="selectScenario" data-index="3">
+          <text class="scenario-icon">🌐</text>
+          <text class="scenario-name">综合</text>
+        </view>
+      </view>
+      
+      <view class="weights-chart stellar-weights-chart">
+        <view class="weight-bar stellar-weight-bar" wx:for="{{scenarios[activeScenario].weights}}" wx:key="name">
+          <view class="bar-info">
+            <view class="bar-dot" style="background: {{item.color}};"></view>
+            <text class="bar-label stellar-bar-label">{{item.name}}</text>
+          </view>
+          <view class="bar-track stellar-bar-track">
+            <view class="bar-fill" style="width: {{item.value}}%; background: linear-gradient(90deg, {{item.color}} 0%, {{item.color}}CC 100%);"></view>
+          </view>
+          <text class="bar-value" style="color: {{item.color}};">{{item.value}}%</text>
+        </view>
+      </view>
+      
+      <view class="weights-summary stellar-summary">
+        <text class="summary-text stellar-summary-text">当前场景下，{{scenarios[activeScenario].weights[0].name}}贡献最大，占比{{scenarios[activeScenario].weights[0].value}}%</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 核心性能指标 -->
+  <view class="section stellar-section">
+    <view class="section-header stellar-section-header">
+      <text class="section-icon-text">🚀</text>
+      <text class="section-title stellar-section-title">核心性能指标</text>
+    </view>
+    <view class="metrics-grid stellar-metrics-grid">
+      <view class="metric-card stellar-metric-card" style="border-color: rgba(0,212,255,0.2);">
+        <text class="metric-icon-big">📈</text>
+        <text class="metric-val stellar-metric-val-big" style="color:#00D4FF;">0.82</text>
+        <text class="metric-lab stellar-metric-lab-big">强降水命中率</text>
+        <view class="metric-change up"><text class="change-text">↑ 15%</text></view>
+      </view>
+      <view class="metric-card stellar-metric-card" style="border-color: rgba(0,204,153,0.2);">
+        <text class="metric-icon-big">📉</text>
+        <text class="metric-val stellar-metric-val-big" style="color:#00CC99;">0.18</text>
+        <text class="metric-lab stellar-metric-lab-big">空报率</text>
+        <view class="metric-change down"><text class="change-text">↓ 35%</text></view>
+      </view>
+      <view class="metric-card stellar-metric-card" style="border-color: rgba(255,149,0,0.2);">
+        <text class="metric-icon-big">⏱️</text>
+        <text class="metric-val stellar-metric-val-big" style="color:#FF9500;">5min</text>
+        <text class="metric-lab stellar-metric-lab-big">平均响应时间</text>
+        <view class="metric-change down"><text class="change-text">↓ 80%</text></view>
+      </view>
+      <view class="metric-card stellar-metric-card" style="border-color: rgba(123,97,255,0.2);">
+        <text class="metric-icon-big">🎯</text>
+        <text class="metric-val stellar-metric-val-big" style="color:#7B61FF;">76.5%</text>
+        <text class="metric-lab stellar-metric-lab-big">灾害回溯吻合度</text>
+        <view class="metric-change up"><text class="change-text">↑ 12%</text></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 模型架构图（学术论文图占位） -->
+  <view class="section stellar-section">
+    <view class="section-header stellar-section-header">
+      <text class="section-icon-text">🏗️</text>
+      <text class="section-title stellar-section-title">MambaSwin-UNet-STA架构</text>
+    </view>
+    <view class="architecture-card stellar-card">
+      <view class="architecture-image" bindtap="previewArchitecture">
+        <image class="arch-img" src="/images/resources/moe_layer_arch.jpeg" mode="aspectFit" lazy-load="true"></image>
+        <view class="image-overlay">
+          <text class="overlay-text">点击查看详细架构</text>
+        </view>
+      </view>
+      <view class="architecture-desc stellar-arch-desc">
+        <text class="desc-icon">💡</text>
+        <text class="desc-text stellar-desc-text">融合Mamba状态空间模型、Swin Transformer窗口注意力、UNet编码器-解码器结构和时空注意力机制，实现高效的短临降水预报</text>
+      </view>
+      <view class="arch-paper-imgs">
+        <image class="arch-small-img" src="/images/resources/convlstm_arch.png" mode="aspectFill" lazy-load="true"></image>
+        <image class="arch-small-img" src="/images/resources/swin_window_attention.png" mode="aspectFill" lazy-load="true"></image>
+        <image class="arch-small-img" src="/images/resources/mamba_ssm_arch.png" mode="aspectFill" lazy-load="true"></image>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部按钮 -->
+  <view class="section stellar-section action-section">
+    <view class="action-card stellar-card">
+      <text class="action-hint stellar-action-hint">探索更多技术细节与验证成果</text>
+      <button class="btn stellar-btn-primary" bindtap="viewAchievement">
+        <text class="btn-icon-text">🔍</text>
+        <text class="btn-text">查看成果验证</text>
+      </button>
+    </view>
+  </view>
+
+  <!-- 安全区域 -->
+  <view class="safe-area-bottom"></view>
+</view>

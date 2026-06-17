@@ -1,0 +1,5142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <title>数字孪生风险推演 | 智驭苍穹 · 守路安澜</title>
+    <meta name="description" content="数字孪生风险推演 — 基于多模态数据融合的铁路沿线短临致灾风险实时模拟与预警系统。">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Orbitron:wght@400;700;900&family=Roboto+Mono:wght@300;400;700&family=Major+Mono+Display&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --space-black: #050508;
+            --nebula-blue: #1a1f3d;
+            --cosmic-purple: #2d1b4e;
+            --star-white: #e0e7ff;
+            --cyan-glow: #00d4ff;
+            --gold-accent: #ffd700;
+            
+            --primary-hue: 180;
+            --secondary-hue: 280;
+            --accent-hue: 45;
+            --success-hue: 150;
+            --warning-hue: 45;
+            --error-hue: 0;
+            
+            --primary: hsl(var(--primary-hue), 100%, 50%);
+            --secondary: hsl(var(--secondary-hue), 100%, 65%);
+            --accent: hsl(var(--accent-hue), 100%, 55%);
+            --success: hsl(var(--success-hue), 100%, 55%);
+            --warning: hsl(var(--warning-hue), 100%, 55%);
+            --error: hsl(var(--error-hue), 100%, 60%);
+            
+            --bg-darkest: #020203;
+            --bg-panel: rgba(10, 10, 20, 0.92);
+            --bg-elevated: rgba(20, 20, 35, 0.95);
+            --border-prominent: rgba(0, 212, 255, 0.3);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: var(--space-black);
+            color: var(--star-white);
+            overflow-x: hidden;
+        }
+        
+        .font-orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        #starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        .deep-space-bg {
+            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+        }
+        
+        .nebula-bg {
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 119, 198, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%);
+        }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        
+        .glass-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .glass-card:hover {
+            border-color: rgba(0, 212, 255, 0.5);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+            transform: translateY(-5px);
+        }
+        
+        .text-glow {
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5), 0 0 40px rgba(0, 212, 255, 0.3);
+        }
+        
+        .text-glow-gold {
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.4), 0 0 40px rgba(255, 215, 0, 0.2);
+        }
+        
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--cyan-glow), transparent);
+            opacity: 0.5;
+            animation: scan 4s linear infinite;
+        }
+        
+        @keyframes scan {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(100vh); }
+        }
+        
+        .float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .float-delayed {
+            animation: float 6s ease-in-out 2s infinite;
+        }
+        
+        .galaxy-spin {
+            animation: spin 120s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .pulse-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 140%;
+            height: 140%;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 50%;
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+        }
+        
+        .orbit-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            aspect-ratio: 1;
+            margin: 0 auto;
+        }
+        
+        .orbit-ring {
+            position: absolute;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .orbit-item {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: 0 0;
+        }
+        
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--space-black);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 212, 255, 0.3);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 212, 255, 0.6);
+        }
+        
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--space-black);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease;
+        }
+        
+        .loader-hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .connector-line {
+            position: relative;
+            overflow: visible;
+        }
+        
+        .connector-line::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 4px;
+            height: 100%;
+            background: inherit;
+            filter: blur(4px);
+            opacity: 0.5;
+            z-index: -1;
+        }
+
+        #trail-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9998;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background-color: #fff;
+            border-radius: 50%;
+            opacity: 1;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            mix-blend-mode: screen;
+        }
+
+        @keyframes fadeOut {
+            0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+        }
+
+        .particle.fade {
+            animation: fadeOut 0.5s ease-out forwards;
+        }
+
+        .terminal-module {
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .terminal-window {
+            background: rgba(0, 0, 0, 0.85);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.1), inset 0 0 20px rgba(0, 212, 255, 0.05);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .terminal-window::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            background: rgba(30, 30, 30, 0.9);
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+            display: flex;
+            align-items: center;
+            padding-left: 15px;
+            z-index: 10;
+        }
+
+        .terminal-window::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ff5f56;
+            box-shadow: 20px 0 0 #ffbd2e, 40px 0 0 #27c93f;
+            z-index: 11;
+        }
+
+        .terminal-header {
+            position: relative;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(0, 212, 255, 0.6);
+            font-size: 12px;
+            letter-spacing: 2px;
+            z-index: 11;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .terminal-content {
+            padding: 20px;
+            padding-top: 50px;
+            height: 100%;
+            overflow-y: auto;
+            max-height: 500px;
+        }
+
+        .code-block {
+            font-family: 'Major Mono Display', 'Roboto Mono', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            color: #00ff41;
+            text-shadow: 0 0 5px rgba(0, 255, 65, 0.5);
+        }
+
+        .code-keyword { color: #00d4ff; text-shadow: 0 0 5px rgba(0, 212, 255, 0.5); }
+        .code-string { color: #ffd700; text-shadow: 0 0 5px rgba(255, 215, 0, 0.3); }
+        .code-comment { color: #6272a4; font-style: italic; }
+        .code-number { color: #bd93f9; }
+        .code-function { color: #50fa7b; }
+
+        .typing-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 18px;
+            background: #00ff41;
+            margin-left: 2px;
+            vertical-align: middle;
+            animation: blink 1s step-end infinite;
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.8);
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        #login-overlay {
+            display: none !important;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            background: radial-gradient(ellipse at bottom, #0a0f1e 0%, #020304 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease, visibility 0.8s;
+            backdrop-filter: blur(8px);
+        }
+
+        .login-hidden {
+            opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none;
+        }
+
+        .ring {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .ring i {
+            position: absolute;
+            inset: 0;
+            border: 2px solid rgba(0, 212, 255, 0.4);
+            transition: 0.5s;
+            border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
+            animation: animate 6s linear infinite;
+        }
+
+        .ring i:nth-child(2) {
+            border-radius: 41% 44% 56% 59% / 38% 62% 63% 37%;
+            animation: animate 4s linear infinite;
+            border-color: rgba(138, 43, 226, 0.4);
+        }
+
+        .ring i:nth-child(3) {
+            border-radius: 41% 44% 56% 59% / 38% 62% 63% 37%;
+            animation: animate2 10s linear infinite;
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+
+        .ring:hover i {
+            border-width: 4px;
+            filter: drop-shadow(0 0 15px var(--cyan-glow));
+        }
+
+        @keyframes animate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes animate2 {
+            0% { transform: rotate(360deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        .login {
+            position: absolute;
+            width: 320px;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 20px;
+            z-index: 10;
+        }
+
+        .login h2 {
+            font-size: 2.5em;
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 8px;
+            text-shadow: 0 0 20px #00d4ff;
+        }
+
+        .login .inputBx {
+            position: relative;
+            width: 100%;
+        }
+
+        .login .inputBx input {
+            position: relative;
+            width: 100%;
+            padding: 14px 24px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+            border: 1.5px solid rgba(0, 212, 255, 0.5);
+            border-radius: 40px;
+            font-size: 1.1em;
+            color: #fff;
+            box-shadow: 0 0 20px rgba(0,212,255,0.1);
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .login .inputBx input:focus {
+            border-color: #ffd700;
+            box-shadow: 0 0 25px rgba(255,215,0,0.3);
+        }
+
+        .login .inputBx input[type="submit"] {
+            background: linear-gradient(135deg, #00d4ff 0%, #2d1b4e 100%);
+            border: none;
+            font-weight: bold;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        .login .inputBx input[type="submit"]:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 30px #00d4ff;
+        }
+
+        .login .inputBx input::placeholder {
+            color: rgba(220, 240, 255, 0.7);
+            font-weight: 300;
+        }
+
+        .login .links {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 10px;
+            color: #a0c0e0;
+            font-size: 0.9rem;
+        }
+
+        #login-tishi {
+            color: #ff8888;
+            text-align: center;
+            font-size: 0.9rem;
+            min-height: 24px;
+            text-shadow: 0 0 8px red;
+        }
+
+        #monitor-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9997;
+            background: var(--bg-darkest);
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            overflow: hidden;
+        }
+
+        #monitor-modal.active {
+            display: grid;
+            opacity: 1;
+            grid-template-columns: 280px 1fr 320px;
+            grid-template-rows: 60px 1fr 180px;
+            grid-template-areas: 
+                "header header header"
+                "left center right"
+                "bottom bottom bottom";
+            gap: 12px;
+            padding: 12px;
+        }
+
+        .monitor-header {
+            grid-area: header;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-prominent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            backdrop-filter: blur(20px);
+            position: relative;
+        }
+
+        .monitor-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), var(--secondary), transparent);
+        }
+
+        .monitor-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .monitor-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--cyan-glow), #8b5cf6);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .monitor-title-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2em;
+            background: linear-gradient(90deg, var(--cyan-glow), #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .monitor-status-bar {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .monitor-status-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75em;
+            padding: 4px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            border: 1px solid var(--border-subtle);
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .monitor-status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #27c93f;
+            box-shadow: 0 0 8px #27c93f;
+            animation: pulse-dot 2s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .monitor-close-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 95, 86, 0.2);
+            border: 1px solid rgba(255, 95, 86, 0.5);
+            color: #ff5f56;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+        }
+
+        .monitor-close-btn:hover {
+            background: rgba(255, 95, 86, 0.4);
+            box-shadow: 0 0 20px rgba(255, 95, 86, 0.5);
+            transform: rotate(90deg);
+        }
+
+        .monitor-left {
+            grid-area: left;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            min-height: 0;
+            max-height: 100%;
+            padding-right: 4px;
+        }
+
+        .monitor-left::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .monitor-left::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+
+        .monitor-left::-webkit-scrollbar-thumb {
+            background: rgba(0, 212, 255, 0.4);
+            border-radius: 3px;
+        }
+
+        .monitor-left::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 212, 255, 0.7);
+        }
+
+        .monitor-left .modality-card {
+            flex-shrink: 0;
+        }
+
+        .monitor-center {
+            grid-area: center;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow: hidden;
+        }
+
+        .monitor-right {
+            grid-area: right;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            min-height: 0;
+            max-height: 100%;
+            padding-right: 4px;
+        }
+
+        .monitor-right::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .monitor-right::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+
+        .monitor-right::-webkit-scrollbar-thumb {
+            background: rgba(0, 212, 255, 0.4);
+            border-radius: 3px;
+        }
+
+        .monitor-right::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 212, 255, 0.7);
+        }
+
+        .monitor-right .monitor-panel,
+        .monitor-right .fusion-status {
+            flex-shrink: 0;
+        }
+
+        .monitor-bottom {
+            grid-area: bottom;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 12px;
+        }
+
+        .monitor-panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-prominent);
+            border-radius: 12px;
+            padding: 16px;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .monitor-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--cyan-glow), transparent);
+            opacity: 0.6;
+        }
+
+        .panel-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8em;
+            color: var(--cyan-glow);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .modality-card {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            border: 1px solid var(--border-subtle);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modality-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--cyan-glow);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .modality-card:hover {
+            border-color: var(--border-prominent);
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateX(3px);
+        }
+
+        .modality-card:hover::before {
+            opacity: 1;
+        }
+
+        .modality-card.active {
+            background: rgba(0, 212, 255, 0.08);
+            border-color: rgba(0, 212, 255, 0.4);
+        }
+
+        .modality-card.active::before {
+            opacity: 1;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .card-title {
+            font-size: 0.85em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .confidence-badge {
+            font-size: 0.75em;
+            padding: 2px 10px;
+            border-radius: 20px;
+            background: rgba(6, 255, 165, 0.15);
+            color: var(--success);
+            font-weight: 700;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .card-content {
+            font-size: 0.8em;
+            color: rgba(224, 231, 255, 0.7);
+            margin-bottom: 8px;
+        }
+
+        .feature-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+
+        .tag {
+            font-size: 0.7em;
+            padding: 2px 8px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 4px;
+            color: rgba(224, 231, 255, 0.6);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .tag.highlight {
+            background: rgba(0, 212, 255, 0.2);
+            color: var(--cyan-glow);
+            border-color: var(--cyan-glow);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cyan-glow), #27c93f);
+            width: 0%;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: progressShimmer 2s infinite;
+        }
+
+        @keyframes progressShimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .canvas-container {
+            position: relative;
+            flex: 1;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+            overflow: hidden;
+            min-height: 300px;
+        }
+
+        .attention-grid {
+            display: grid;
+            grid-template-columns: repeat(16, 1fr);
+            grid-template-rows: repeat(16, 1fr);
+            gap: 1px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+            overflow: hidden;
+            height: 200px;
+        }
+
+        .attention-cell {
+            background: rgba(0, 0, 0, 0.8);
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .attention-cell:hover {
+            transform: scale(1.3);
+            z-index: 10;
+            box-shadow: 0 0 8px rgba(0, 212, 255, 0.5);
+        }
+
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: auto repeat(5, 1fr);
+            gap: 2px;
+            font-size: 0.7em;
+        }
+
+        .matrix-cell {
+            padding: 6px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+            font-family: 'Roboto Mono', monospace;
+            transition: all 0.3s;
+        }
+
+        .matrix-cell.header {
+            background: rgba(0, 212, 255, 0.15);
+            color: var(--cyan-glow);
+            font-weight: 600;
+        }
+
+        .matrix-cell.high { 
+            background: rgba(6, 255, 165, 0.2); 
+            color: var(--success);
+            animation: highPulse 2s infinite;
+        }
+
+        @keyframes highPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(6, 255, 165, 0.4); }
+            50% { box-shadow: 0 0 8px 2px rgba(6, 255, 165, 0.2); }
+        }
+
+        .matrix-cell.medium { background: rgba(255, 190, 11, 0.2); color: var(--warning); }
+        .matrix-cell.low { background: rgba(255, 0, 110, 0.1); color: #ff006e; opacity: 0.8; }
+
+        .log-section {
+            padding: 12px;
+            overflow-y: auto;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.75em;
+            line-height: 1.6;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            flex: 1;
+            min-height: 220px;
+            max-height: 300px;
+        }
+
+        .log-section::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .log-section::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+
+        .log-section::-webkit-scrollbar-thumb {
+            background: rgba(0, 212, 255, 0.4);
+            border-radius: 3px;
+        }
+
+        .log-section::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 212, 255, 0.7);
+        }
+
+        .log-entry {
+            margin: 2px 0;
+            padding: 2px 0;
+            border-left: 2px solid transparent;
+            padding-left: 8px;
+            opacity: 0;
+            animation: fadeIn 0.3s forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .log-entry.info { border-left-color: var(--cyan-glow); color: var(--star-white); }
+        .log-entry.success { border-left-color: var(--success); color: var(--success); }
+        .log-entry.warning { border-left-color: var(--warning); color: var(--warning); }
+        .log-entry.error { border-left-color: var(--error); color: var(--error); }
+
+        .log-time {
+            color: rgba(224, 231, 255, 0.5);
+            font-size: 0.9em;
+            margin-right: 6px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8em;
+            padding: 4px 0;
+        }
+
+        .stat-label {
+            color: rgba(224, 231, 255, 0.7);
+        }
+
+        .stat-value {
+            color: var(--cyan-glow);
+            font-weight: 700;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .fusion-status {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(139, 92, 246, 0.1));
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .fusion-status:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 212, 255, 0.2);
+        }
+
+        .fusion-score {
+            font-size: 2.5em;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--cyan-glow), #27c93f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .fusion-label {
+            font-size: 0.75em;
+            color: rgba(224, 231, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 8px;
+        }
+
+        .bottom-chart {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-prominent);
+            border-radius: 12px;
+            padding: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .chart-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75em;
+            color: var(--cyan-glow);
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .chart-container {
+            height: 120px;
+            position: relative;
+        }
+
+        .monitor-nav-btn {
+            position: relative;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2) 0%, rgba(45, 27, 78, 0.3) 100%);
+            border: 1px solid rgba(0, 212, 255, 0.4);
+            border-radius: 24px;
+            color: #00d4ff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .monitor-nav-btn:hover {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.3) 0%, rgba(45, 27, 78, 0.4) 100%);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .monitor-nav-btn::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00d4ff;
+            box-shadow: 0 0 10px #00d4ff;
+            animation: pulse-dot 2s infinite;
+        }
+
+        @media (max-width: 1200px) {
+            #monitor-modal.active {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto 1fr auto auto;
+                grid-template-areas: 
+                    "header"
+                    "left"
+                    "center"
+                    "right"
+                    "bottom";
+                overflow-y: auto;
+            }
+            .monitor-bottom {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .hero-title-container {
+            position: relative;
+        }
+
+        .hero-calligraphy {
+            background: linear-gradient(
+                90deg,
+                #1a3a5c 0%,
+                #4a90d9 15%,
+                #a8d8ff 25%,
+                #ffffff 35%,
+                #ffd700 45%,
+                #ffffff 55%,
+                #a8d8ff 65%,
+                #4a90d9 75%,
+                #1a3a5c 100%
+            );
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmerFlow 4s linear infinite;
+            filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.4)) 
+                    drop-shadow(0 0 40px rgba(0, 212, 255, 0.2))
+                    drop-shadow(0 0 80px rgba(0, 100, 255, 0.1));
+            letter-spacing: 0.15em;
+            line-height: 1.2;
+        }
+
+        .hero-title,
+        .hero-subtitle {
+            font-size: clamp(3.5rem, 10vw, 9rem);
+        }
+
+        @keyframes shimmerFlow {
+            0% { background-position: 200% center; }
+            100% { background-position: -200% center; }
+        }
+
+        .hero-title-container::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120%;
+            height: 150%;
+            background: radial-gradient(
+                ellipse at center,
+                rgba(0, 212, 255, 0.15) 0%,
+                rgba(0, 100, 200, 0.08) 30%,
+                transparent 70%
+            );
+            pointer-events: none;
+            z-index: -1;
+            animation: spotlightPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes spotlightPulse {
+            0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+        }
+
+        .hero-title-container::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 10%;
+            width: 80%;
+            height: 2px;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(0, 212, 255, 0.8) 20%,
+                rgba(255, 215, 0, 0.8) 50%,
+                rgba(0, 212, 255, 0.8) 80%,
+                transparent 100%
+            );
+            background-size: 200% 100%;
+            animation: bottomShimmer 3s linear infinite;
+            filter: blur(1px);
+        }
+
+        @keyframes bottomShimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        #wordcloud-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        #wordcloud-container .word {
+            width: auto;
+            height: auto;
+            text-align: center;
+            cursor: default;
+            font-size: 48px;
+            font-weight: bold;
+            padding: 10px 18px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            font-family: 'Noto Sans SC', 'Orbitron', sans-serif;
+            pointer-events: none;
+            will-change: transform;
+        }
+
+        .ai-assistant-container {
+            background: rgba(0, 0, 0, 0.85);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.1), inset 0 0 20px rgba(0, 212, 255, 0.05);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            height: 480px;
+        }
+
+        .ai-assistant-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            background: rgba(30, 30, 30, 0.9);
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+            z-index: 10;
+        }
+
+        .ai-assistant-container::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ff5f56;
+            box-shadow: 20px 0 0 #ffbd2e, 40px 0 0 #27c93f;
+            z-index: 11;
+        }
+
+        .ai-assistant-header {
+            position: relative;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(0, 212, 255, 0.6);
+            font-size: 12px;
+            letter-spacing: 2px;
+            z-index: 11;
+            font-family: 'Orbitron', sans-serif;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .ai-chat-window {
+            flex: 1;
+            padding: 12px;
+            overflow-y: auto;
+            font-family: 'Noto Sans SC', sans-serif;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .ai-chat-window::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .ai-chat-window::-webkit-scrollbar-thumb {
+            background: rgba(0, 212, 255, 0.3);
+            border-radius: 2px;
+        }
+
+        .ai-chat-message {
+            display: flex;
+            margin-bottom: 10px;
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        .ai-chat-message.user {
+            justify-content: flex-end;
+        }
+
+        .ai-chat-message.bot {
+            justify-content: flex-start;
+        }
+
+        .ai-message-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+            max-width: 85%;
+        }
+
+        .ai-chat-message.user .ai-message-content {
+            flex-direction: row-reverse;
+        }
+
+        .ai-message-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .ai-chat-message.user .ai-message-avatar {
+            background: rgba(0, 212, 255, 0.2);
+            border: 1px solid rgba(0, 212, 255, 0.4);
+        }
+
+        .ai-chat-message.bot .ai-message-avatar {
+            background: rgba(168, 85, 247, 0.2);
+            border: 1px solid rgba(168, 85, 247, 0.4);
+        }
+
+        .ai-message-text {
+            padding: 8px 12px;
+            border-radius: 12px;
+            word-wrap: break-word;
+            white-space: normal;
+            line-height: 1.5;
+        }
+
+        .ai-chat-message.user .ai-message-text {
+            background: rgba(0, 212, 255, 0.15);
+            border: 1px solid rgba(0, 212, 255, 0.25);
+            color: #e0e7ff;
+            border-bottom-right-radius: 4px;
+        }
+
+        .ai-chat-message.bot .ai-message-text {
+            background: rgba(168, 85, 247, 0.15);
+            border: 1px solid rgba(168, 85, 247, 0.25);
+            color: #e0e7ff;
+            border-bottom-left-radius: 4px;
+        }
+
+        .ai-input-container {
+            display: flex;
+            padding: 10px 12px;
+            border-top: 1px solid rgba(0, 212, 255, 0.2);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .ai-input-container input {
+            flex: 1;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 20px;
+            color: #e0e7ff;
+            font-size: 13px;
+            font-family: 'Noto Sans SC', sans-serif;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .ai-input-container input::placeholder {
+            color: rgba(224, 231, 255, 0.4);
+        }
+
+        .ai-input-container input:focus {
+            border-color: rgba(0, 212, 255, 0.6);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
+        }
+
+        .ai-input-container button {
+            padding: 8px 16px;
+            margin-left: 8px;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(139, 92, 246, 0.3));
+            border: 1px solid rgba(0, 212, 255, 0.4);
+            color: #00d4ff;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+        }
+
+        .ai-input-container button:hover {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.5), rgba(139, 92, 246, 0.5));
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .ai-typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 8px 12px;
+        }
+
+        .ai-typing-indicator span {
+            width: 6px;
+            height: 6px;
+            background: rgba(168, 85, 247, 0.6);
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite ease-in-out both;
+        }
+
+        .ai-typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .ai-typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes typingBounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        .guestbook-container {
+            background: rgba(0, 0, 0, 0.85);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.1), inset 0 0 20px rgba(0, 212, 255, 0.05);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            height: 420px;
+        }
+
+        .guestbook-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            background: rgba(30, 30, 30, 0.9);
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+            z-index: 10;
+        }
+
+        .guestbook-container::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ff5f56;
+            box-shadow: 20px 0 0 #ffbd2e, 40px 0 0 #27c93f;
+            z-index: 11;
+        }
+
+        .guestbook-header {
+            position: relative;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(0, 212, 255, 0.6);
+            font-size: 12px;
+            letter-spacing: 2px;
+            z-index: 11;
+            font-family: 'Orbitron', sans-serif;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .guestbook-messages {
+            flex: 1;
+            padding: 12px;
+            overflow-y: auto;
+            font-family: 'Noto Sans SC', sans-serif;
+            font-size: 13px;
+        }
+
+        .guestbook-messages::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .guestbook-messages::-webkit-scrollbar-thumb {
+            background: rgba(0, 212, 255, 0.3);
+            border-radius: 2px;
+        }
+
+        .guestbook-msg {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .guestbook-msg-name {
+            font-weight: 600;
+            color: var(--cyan-glow);
+            font-size: 12px;
+            margin-bottom: 3px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .guestbook-msg-text {
+            color: rgba(224, 231, 255, 0.8);
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        .guestbook-msg-time {
+            font-size: 10px;
+            color: rgba(224, 231, 255, 0.4);
+            margin-top: 4px;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .guestbook-input-area {
+            display: flex;
+            flex-direction: column;
+            padding: 10px 12px;
+            border-top: 1px solid rgba(0, 212, 255, 0.2);
+            background: rgba(0, 0, 0, 0.5);
+            gap: 6px;
+        }
+
+        .guestbook-input-area input {
+            padding: 6px 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.25);
+            border-radius: 6px;
+            color: #e0e7ff;
+            font-size: 12px;
+            font-family: 'Noto Sans SC', sans-serif;
+            outline: none;
+        }
+
+        .guestbook-input-area input::placeholder {
+            color: rgba(224, 231, 255, 0.35);
+        }
+
+        .guestbook-input-area input:focus {
+            border-color: rgba(0, 212, 255, 0.5);
+        }
+
+        .guestbook-input-row {
+            display: flex;
+            gap: 6px;
+        }
+
+        .guestbook-input-row input {
+            flex: 1;
+        }
+
+        .guestbook-input-row button {
+            padding: 6px 14px;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(139, 92, 246, 0.3));
+            border: 1px solid rgba(0, 212, 255, 0.4);
+            color: #00d4ff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .guestbook-input-row button:hover {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.5), rgba(139, 92, 246, 0.5));
+            box-shadow: 0 0 12px rgba(0, 212, 255, 0.3);
+        }
+
+        .music-trigger {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 100;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(168, 85, 247, 0.3));
+            border: 2px solid rgba(0, 212, 255, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .music-trigger:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.6);
+        }
+
+        .music-trigger.playing {
+            animation: musicPulse 2s ease-in-out infinite;
+            border-color: rgba(168, 85, 247, 0.8);
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.5);
+        }
+
+        @keyframes musicPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(168, 85, 247, 0.4); }
+            50% { transform: scale(1.08); box-shadow: 0 0 40px rgba(168, 85, 247, 0.7); }
+        }
+
+        .music-trigger svg {
+            width: 24px;
+            height: 24px;
+            color: #00d4ff;
+            transition: all 0.3s;
+        }
+
+        .music-trigger.playing svg {
+            color: #a855f7;
+        }
+
+        .music-note {
+            position: fixed;
+            z-index: 99;
+            font-size: 24px;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        .music-note.active {
+            animation: noteFloat 4s linear forwards, noteSpin 2s linear infinite;
+            opacity: 1;
+        }
+
+        @keyframes noteFloat {
+            0% { transform: translateY(0) scale(0.5); opacity: 0; }
+            10% { opacity: 1; transform: translateY(-30px) scale(1); }
+            100% { transform: translateY(-300px) scale(0.3); opacity: 0; }
+        }
+
+        @keyframes noteSpin {
+            0% { transform: translateY(-30px) rotate(0deg); }
+            100% { transform: translateY(-300px) rotate(360deg); }
+        }
+
+        .music-note-orbital {
+            position: fixed;
+            bottom: 58px;
+            right: 58px;
+            z-index: 98;
+            pointer-events: none;
+        }
+
+        .music-note-orbital .orbital-note {
+            position: absolute;
+            font-size: 18px;
+            opacity: 0;
+        }
+
+        .music-note-orbital.playing .orbital-note {
+            animation: orbitalSpin 3s linear infinite;
+        }
+
+        .music-note-orbital.playing .orbital-note:nth-child(1) {
+            animation-delay: 0s;
+            --orbit-radius: 50px;
+        }
+
+        .music-note-orbital.playing .orbital-note:nth-child(2) {
+            animation-delay: -1s;
+            --orbit-radius: 65px;
+        }
+
+        .music-note-orbital.playing .orbital-note:nth-child(3) {
+            animation-delay: -2s;
+            --orbit-radius: 45px;
+        }
+
+        @keyframes orbitalSpin {
+            0% { 
+                opacity: 1;
+                transform: rotate(0deg) translateX(var(--orbit-radius, 50px)) rotate(0deg); 
+            }
+            100% { 
+                opacity: 1;
+                transform: rotate(360deg) translateX(var(--orbit-radius, 50px)) rotate(-360deg); 
+            }
+        }
+
+        .sys-status-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .sys-status-item {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 10px 4px;
+            text-align: center;
+            border: 1px solid rgba(0, 212, 255, 0.1);
+            transition: all 0.3s;
+            min-width: 0;
+        }
+        .sys-status-item:hover {
+            border-color: rgba(0, 212, 255, 0.3);
+            background: rgba(0, 212, 255, 0.05);
+        }
+        .sys-status-icon {
+            font-size: 1.2em;
+            margin-bottom: 4px;
+            line-height: 1;
+        }
+        .sys-status-label {
+            font-size: 0.6em;
+            color: rgba(224, 231, 255, 0.5);
+            margin-bottom: 4px;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 0 2px;
+        }
+        .sys-status-value {
+            font-size: 0.85em;
+            color: #00d4ff;
+            font-weight: 700;
+            font-family: 'Roboto Mono', monospace;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 0 2px;
+        }
+
+        #param-panel {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 420px;
+            height: 100%;
+            z-index: 99999;
+            background: rgba(5, 5, 8, 0.98);
+            border-left: 1px solid rgba(0, 212, 255, 0.3);
+            backdrop-filter: blur(20px);
+            overflow-y: auto;
+            padding: 24px;
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: -10px 0 40px rgba(0,0,0,0.5);
+        }
+        #param-panel.active {
+            transform: translateX(0);
+        }
+        .param-group {
+            margin-bottom: 24px;
+            padding: 16px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .param-group-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85em;
+            color: var(--cyan-glow);
+            margin-bottom: 14px;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .param-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 0.8em;
+        }
+        .param-row label {
+            color: rgba(224,231,255,0.7);
+            width: 100px;
+            flex-shrink: 0;
+            font-size: 0.9em;
+        }
+        .param-row input[type="range"] {
+            flex: 1;
+            -webkit-appearance: none;
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            outline: none;
+        }
+        .param-row input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            background: #00d4ff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0,212,255,0.5);
+        }
+        .param-row input[type="number"] {
+            flex: 1;
+            padding: 6px 10px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(0,212,255,0.3);
+            border-radius: 6px;
+            color: #00d4ff;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.9em;
+            outline: none;
+        }
+        .param-row input[type="text"] {
+            flex: 1;
+            padding: 6px 10px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(0,212,255,0.3);
+            border-radius: 6px;
+            color: #00d4ff;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.9em;
+            outline: none;
+        }
+        .param-row span {
+            color: #00d4ff;
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 700;
+            min-width: 55px;
+            text-align: right;
+            font-size: 0.9em;
+        }
+        @media (max-width: 600px) {
+            #param-panel { width: 100%; }
+        }
+
+        .about-carousel-wrap {
+            position: relative;
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 212, 255, 0.15);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(0,212,255,0.08);
+            background: rgba(0,0,0,0.4);
+        }
+
+        .about-carousel-track {
+            display: flex;
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform;
+        }
+
+        .about-carousel-slide {
+            min-width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about-carousel-slide img {
+            width: 100%;
+            height: 520px;
+            object-fit: cover;
+            display: block;
+            transition: transform 6s ease;
+        }
+
+        .about-carousel-slide.active img {
+            transform: scale(1.08);
+        }
+
+        .about-carousel-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 50px 40px 40px;
+            background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 60%, transparent 100%);
+            z-index: 2;
+        }
+
+        .about-carousel-caption h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.6em;
+            color: #fff;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            text-shadow: 0 0 20px rgba(0,212,255,0.5);
+        }
+
+        .about-carousel-caption p {
+            color: rgba(224, 231, 255, 0.85);
+            font-size: 0.95em;
+            line-height: 1.6;
+            max-width: 600px;
+        }
+
+        .about-carousel-caption .caption-tag {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 20px;
+            background: rgba(0, 212, 255, 0.15);
+            border: 1px solid rgba(0, 212, 255, 0.35);
+            color: var(--cyan-glow);
+            font-size: 0.75em;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .about-carousel-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 212, 255, 0.4);
+            color: var(--cyan-glow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+            backdrop-filter: blur(8px);
+        }
+
+        .about-carousel-arrow:hover {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: rgba(0, 212, 255, 0.8);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .about-carousel-arrow.prev { left: 20px; }
+        .about-carousel-arrow.next { right: 20px; }
+
+        .about-carousel-dots {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .about-carousel-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .about-carousel-dot.active {
+            background: var(--cyan-glow);
+            border-color: var(--cyan-glow);
+            box-shadow: 0 0 12px rgba(0, 212, 255, 0.7);
+            transform: scale(1.3);
+        }
+
+        .about-carousel-dot:hover {
+            background: rgba(0, 212, 255, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .about-carousel-slide img { height: 320px; }
+            .about-carousel-caption { padding: 30px 20px 25px; }
+            .about-carousel-caption h3 { font-size: 1.2em; }
+            .about-carousel-caption p { font-size: 0.85em; }
+            .about-carousel-arrow { width: 40px; height: 40px; }
+            .about-carousel-arrow.prev { left: 10px; }
+            .about-carousel-arrow.next { right: 10px; }
+        }
+
+        #pdf-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10001;
+            background: rgba(2, 2, 3, 0.75);
+            backdrop-filter: blur(12px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.35s ease;
+        }
+        #pdf-modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+        #pdf-modal-window {
+            width: 80vw;
+            height: 80vh;
+            max-width: 1000px;
+            max-height: 800px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-prominent);
+            border-radius: 16px;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.7), 0 0 50px rgba(0,212,255,0.12);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            transform: scale(0.92);
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #pdf-modal-overlay.active #pdf-modal-window {
+            transform: scale(1);
+        }
+        #pdf-modal-header {
+            height: 50px;
+            flex-shrink: 0;
+            background: rgba(0, 0, 0, 0.35);
+            border-bottom: 1px solid var(--border-prominent);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            cursor: move;
+            user-select: none;
+        }
+        #pdf-modal-header .pdf-modal-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9em;
+            color: var(--cyan-glow);
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            pointer-events: none;
+        }
+        #pdf-modal-close {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: rgba(255, 95, 86, 0.15);
+            border: 1px solid rgba(255, 95, 86, 0.4);
+            color: #ff5f56;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            z-index: 2;
+        }
+        #pdf-modal-close:hover {
+            background: rgba(255, 95, 86, 0.35);
+            box-shadow: 0 0 20px rgba(255, 95, 86, 0.4);
+            transform: rotate(90deg);
+        }
+        #pdf-modal-body {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            background: #000;
+        }
+        #pdf-modal-body iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+        #pdf-modal-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--cyan-glow);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85em;
+            letter-spacing: 3px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            text-align: center;
+        }
+        #pdf-modal-loading.active {
+            opacity: 1;
+        }
+        @media (max-width: 768px) {
+            #pdf-modal-window {
+                width: 95vw;
+                height: 85vh;
+                max-width: none;
+                max-height: none;
+                border-radius: 12px;
+            }
+        }
+
+        #resume-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10002;
+            background: rgba(2, 2, 3, 0.75);
+            backdrop-filter: blur(12px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.35s ease;
+        }
+        #resume-modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+        #resume-modal-window {
+            width: 80vw;
+            height: 80vh;
+            max-width: 1000px;
+            max-height: 800px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-prominent);
+            border-radius: 16px;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.7), 0 0 50px rgba(0,212,255,0.12);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            transform: scale(0.92);
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #resume-modal-overlay.active #resume-modal-window {
+            transform: scale(1);
+        }
+        #resume-modal-header {
+            height: 50px;
+            flex-shrink: 0;
+            background: rgba(0, 0, 0, 0.35);
+            border-bottom: 1px solid var(--border-prominent);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            cursor: move;
+            user-select: none;
+        }
+        #resume-modal-header .pdf-modal-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9em;
+            color: var(--cyan-glow);
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            pointer-events: none;
+        }
+        #resume-modal-close {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: rgba(255, 95, 86, 0.15);
+            border: 1px solid rgba(255, 95, 86, 0.4);
+            color: #ff5f56;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            z-index: 2;
+        }
+        #resume-modal-close:hover {
+            background: rgba(255, 95, 86, 0.35);
+            box-shadow: 0 0 20px rgba(255, 95, 86, 0.4);
+            transform: rotate(90deg);
+        }
+        #resume-modal-body {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            background: #000;
+        }
+        #resume-modal-body iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+        #resume-modal-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--cyan-glow);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85em;
+            letter-spacing: 3px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            text-align: center;
+        }
+        #resume-modal-loading.active {
+            opacity: 1;
+        }
+        @media (max-width: 768px) {
+            #resume-modal-window {
+                width: 95vw;
+                height: 85vh;
+                max-width: none;
+                max-height: none;
+                border-radius: 12px;
+            }
+        }
+
+        #universe-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .tilt-card {
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out;
+        }
+        .glass-card.tilt-card:hover {
+            transform: translateY(-5px) perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) scale3d(1.02, 1.02, 1.02);
+        }
+
+        .tilt-glow {
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: radial-gradient(
+                circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+                rgba(0, 212, 255, 0.15) 0%,
+                transparent 60%
+            );
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 2;
+            mix-blend-mode: screen;
+        }
+        .tilt-card:hover .tilt-glow {
+            opacity: 1;
+        }
+
+        .flow-border {
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: conic-gradient(
+                from 0deg,
+                transparent 0%,
+                rgba(0, 212, 255, 0.8) 10%,
+                rgba(168, 85, 247, 0.8) 25%,
+                transparent 35%,
+                transparent 65%,
+                rgba(0, 212, 255, 0.8) 75%,
+                rgba(168, 85, 247, 0.8) 90%,
+                transparent 100%
+            );
+            animation: flowRotate 3s linear infinite;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 1;
+            pointer-events: none;
+            -webkit-mask: 
+                linear-gradient(#fff 0 0) content-box, 
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: source-out;
+            mask-composite: subtract;
+            padding: 2px;
+        }
+        .tilt-card:hover .flow-border {
+            opacity: 1;
+        }
+        @keyframes flowRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .data-stream-particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--cyan-glow);
+            box-shadow: 0 0 8px var(--cyan-glow), 0 0 16px var(--cyan-glow);
+            left: 50%;
+            top: -10%;
+            transform: translateX(-50%);
+            animation: streamFlow 2.5s linear infinite;
+            pointer-events: none;
+            z-index: 5;
+        }
+        .data-stream-particle:nth-child(2) {
+            background: #a855f7;
+            box-shadow: 0 0 8px #a855f7, 0 0 16px #a855f7;
+            animation-duration: 3s;
+        }
+        @keyframes streamFlow {
+            0% { top: -10%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 110%; opacity: 0; }
+        }
+
+        .orbit-ring-visual {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 90%;
+            height: 90%;
+            transform: translate(-50%, -50%);
+            border: 1px dashed rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .tilt-card:hover .orbit-ring-visual {
+            opacity: 1;
+            animation: orbitSpin 8s linear infinite;
+        }
+        @keyframes orbitSpin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .float-data-tag {
+            position: absolute;
+            font-size: 0.65rem;
+            font-family: 'Roboto Mono', monospace;
+            padding: 3px 8px;
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: rgba(224, 231, 255, 0.8);
+            backdrop-filter: blur(4px);
+            z-index: 15;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        .tilt-card:hover .float-data-tag {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .tag-tl { top: 12px; left: 12px; }
+        .tag-tr { top: 12px; right: 12px; }
+        .tag-bl { bottom: 12px; left: 12px; }
+        .tag-br { bottom: 12px; right: 12px; }
+
+        .card-detail-panel {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(5, 5, 8, 0.9);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(0, 212, 255, 0.2);
+            padding: 0 16px;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), 
+                        opacity 0.4s ease, 
+                        padding 0.4s ease;
+            z-index: 15;
+            border-radius: 0 0 16px 16px;
+            pointer-events: none;
+        }
+        .tilt-card:hover .card-detail-panel {
+            max-height: 160px;
+            opacity: 1;
+            padding: 12px 16px;
+            pointer-events: auto;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: rgba(224, 231, 255, 0.7);
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+        .detail-row:last-child { border-bottom: none; }
+        .detail-row span:last-child {
+            color: var(--cyan-glow);
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 600;
+        }
+
+        .layer-icon-wrap {
+            position: relative;
+            display: flex;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .layer-icon-wrap::before {
+            content: '';
+            position: absolute;
+            inset: -8px;
+            border-radius: 50%;
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            animation: iconOrbit 10s linear infinite;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .tilt-card:hover .layer-icon-wrap::before {
+            opacity: 1;
+        }
+        @keyframes iconOrbit {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    
+    /* ====== SPA 页面过渡动画（星际虫洞传送效果） ====== */
+    #page-transition-overlay {
+        position: fixed; inset: 0; z-index: 99999;
+        display: flex; align-items: center; justify-content: center;
+        opacity: 0; pointer-events: none;
+        transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    #page-transition-overlay.active { opacity: 1; pointer-events: all; }
+    #page-transition-overlay .tunnel {
+        position: absolute; width: 100%; height: 100%;
+        overflow: hidden; background: radial-gradient(ellipse at center, #0a0f1e 0%, #020304 100%);
+    }
+    #page-transition-overlay .tunnel-ring {
+        position: absolute; top: 50%; left: 50%;
+        border: 2px solid rgba(0, 212, 255, 0.6);
+        border-radius: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        animation: tunnelExpand 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    #page-transition-overlay .tunnel-ring:nth-child(1) { animation-delay: 0s; border-color: rgba(0, 212, 255, 0.8); }
+    #page-transition-overlay .tunnel-ring:nth-child(2) { animation-delay: 0.06s; border-color: rgba(138, 43, 226, 0.6); }
+    #page-transition-overlay .tunnel-ring:nth-child(3) { animation-delay: 0.12s; border-color: rgba(0, 212, 255, 0.5); }
+    #page-transition-overlay .tunnel-ring:nth-child(4) { animation-delay: 0.18s; border-color: rgba(138, 43, 226, 0.4); }
+    #page-transition-overlay .tunnel-ring:nth-child(5) { animation-delay: 0.24s; border-color: rgba(0, 212, 255, 0.3); }
+    #page-transition-overlay .tunnel-ring:nth-child(6) { animation-delay: 0.30s; border-color: rgba(138, 43, 226, 0.2); }
+    #page-transition-overlay .tunnel-ring:nth-child(7) { animation-delay: 0.36s; border-color: rgba(0, 212, 255, 0.15); }
+    #page-transition-overlay .tunnel-ring:nth-child(8) { animation-delay: 0.42s; border-color: rgba(138, 43, 226, 0.1); }
+    @keyframes tunnelExpand {
+        0% { width: 10px; height: 10px; opacity: 1; }
+        100% { width: 250vmax; height: 250vmax; opacity: 0; }
+    }
+    #page-transition-overlay .warp-flash {
+        position: absolute; inset: 0;
+        background: radial-gradient(ellipse at center, rgba(0,212,255,0.3) 0%, transparent 70%);
+        animation: warpFlash 0.6s ease-out forwards;
+        animation-delay: 0.2s;
+        opacity: 0;
+    }
+    @keyframes warpFlash {
+        0% { opacity: 0; transform: scale(0.5); }
+        40% { opacity: 1; }
+        100% { opacity: 0; transform: scale(2); }
+    }
+    #page-transition-overlay .warp-center-glow {
+        position: absolute; top: 50%; left: 50%;
+        width: 120px; height: 120px;
+        transform: translate(-50%, -50%);
+        background: radial-gradient(circle, rgba(0,212,255,0.9) 0%, rgba(138,43,226,0.5) 40%, transparent 70%);
+        border-radius: 50%;
+        animation: centerGlow 0.8s ease-out forwards;
+    }
+    @keyframes centerGlow {
+        0% { transform: translate(-50%,-50%) scale(0); opacity: 1; }
+        60% { transform: translate(-50%,-50%) scale(1.5); opacity: 0.8; }
+        100% { transform: translate(-50%,-50%) scale(3); opacity: 0; }
+    }
+</style>
+</head>
+<body class="deep-space-bg">
+<noscript style="position:fixed;inset:0;z-index:999999;background:#050508;color:#e0e7ff;display:flex;align-items:center;justify-content:center;font-family:sans-serif;text-align:center;padding:2rem;">
+    <div><h1 style="font-size:1.5rem;margin-bottom:1rem;color:#00d4ff;">智驭苍穹 · 守路安澜</h1><p>本系统需要启用 JavaScript 才能正常运行。</p><p style="margin-top:0.5rem;color:#888;">请在浏览器设置中开启 JavaScript 后刷新页面。</p></div>
+</noscript>
+
+    <!-- 登录浮层 -->
+    <div id="login-overlay">
+        <div class="ring">
+            <i style="--clr:#00d4ff;"></i>
+            <i style="--clr:#8a2be2;"></i>
+            <i style="--clr:#ffd700;"></i>
+            <div class="login">
+                <h2>LoongClaw</h2>
+                <div class="inputBx">
+                    <input type="text" id="acc" placeholder="用户名" value="">
+                </div>
+                <div class="inputBx">
+                    <input type="password" id="pwd" placeholder="密码" value="">
+                </div>
+                <div class="inputBx">
+                    <input type="submit" value="验证登陆" onclick="validateLogin()">
+                </div>
+                <div id="login-tishi"></div>
+                <div class="links">
+                    <span>⚡ 智驭苍穹</span>
+                    <span>🌌 守路安澜</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 鼠标拖尾粒子容器 -->
+    <div id="trail-container"></div>
+
+    <!-- 加载动画 -->
+    <div class="loader" id="loader">
+        <div class="relative w-full h-full overflow-hidden">
+            <div class="absolute inset-0 flex items-center justify-center flex-col">
+                <div class="w-32 h-32 rounded-full border-2 border-cyan-400/30 animate-pulse flex items-center justify-center">
+                    <div class="w-24 h-24 rounded-full border-2 border-cyan-400/50 animate-pulse flex items-center justify-center" style="animation-delay: 0.5s">
+                        <div class="w-16 h-16 rounded-full bg-cyan-400/20 animate-pulse" style="animation-delay: 1s"></div>
+                    </div>
+                </div>
+                <p class="mt-8 font-orbitron text-cyan-400 tracking-[0.3em] text-sm animate-pulse">INITIALIZING...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 动态星空画布 -->
+    <canvas id="starfield"></canvas>
+    
+    <!-- 扫描线效果 -->
+    <div class="scan-line"></div>
+
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 w-full z-50 glass-panel border-b border-white/5 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="javascript:void(0)" onclick="navigateTo('index.html')" class="flex items-center space-x-3 group" style="text-decoration:none;color:inherit;">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center group-hover:shadow-[0_0_20px_rgba(0,212,255,0.6)] transition-shadow duration-300">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="font-orbitron font-bold text-xl tracking-wider text-white">LoongClaw</h1>
+                    <p class="text-[10px] text-cyan-400 tracking-[0.2em] uppercase">Cosmic Guardian</p>
+                </div>
+            </a>
+            
+            <div class="hidden md:flex space-x-8 text-sm font-medium tracking-wide items-center">
+                <a href="javascript:void(0)" onclick="navigateTo('index.html')" class="hover:text-cyan-400 transition-colors duration-300 relative group">
+                    星枢
+                    <span class="absolute -bottom-1 left-0 w-0 h-px bg-cyan-400 group-hover:w-full transition-all duration-300"></span>
+                </a>
+                <a href="javascript:void(0)" onclick="navigateTo('universe.html')" class="hover:text-cyan-400 transition-colors duration-300 relative group">
+                    寰宇
+                    <span class="absolute -bottom-1 left-0 w-0 h-px bg-cyan-400 group-hover:w-full transition-all duration-300"></span>
+                </a>
+                <a href="javascript:void(0)" onclick="navigateTo('core.html')" class="hover:text-cyan-400 transition-colors duration-300 relative group">
+                    核心
+                    <span class="absolute -bottom-1 left-0 w-0 h-px bg-cyan-400 group-hover:w-full transition-all duration-300"></span>
+                </a>
+                <a href="javascript:void(0)" onclick="navigateTo('system.html')" class="text-cyan-400 transition-colors duration-300 relative group">
+                    系统
+                    <span class="absolute -bottom-1 left-0 w-full h-px bg-cyan-400 transition-all duration-300"></span>
+                </a>
+                <a href="javascript:void(0)" onclick="navigateTo('community.html')" class="hover:text-cyan-400 transition-colors duration-300 relative group">
+                    资讯
+                    <span class="absolute -bottom-1 left-0 w-0 h-px bg-cyan-400 group-hover:w-full transition-all duration-300"></span>
+                </a>
+                <button class="monitor-nav-btn" onclick="openMonitorModal()">
+                    监测大屏
+                </button>
+            </div>
+
+            <button class="md:hidden text-white nav-hamburger" onclick="toggleMenu()" aria-label="打开导航菜单">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- 移动端菜单 -->
+    <div id="mobile-menu" class="fixed inset-0 z-40 bg-black/95 backdrop-blur-xl transform translate-x-full transition-transform duration-300 md:hidden">
+        <div class="flex flex-col items-center justify-center h-full space-y-8 text-2xl font-light">
+            <a href="javascript:void(0)" onclick="navigateTo('index.html'); toggleMenu();" class="hover:text-cyan-400 transition-colors">星枢</a>
+            <a href="javascript:void(0)" onclick="navigateTo('universe.html'); toggleMenu();" class="hover:text-cyan-400 transition-colors">寰宇</a>
+            <a href="javascript:void(0)" onclick="navigateTo('core.html'); toggleMenu();" class="hover:text-cyan-400 transition-colors">核心</a>
+            <a href="javascript:void(0)" onclick="navigateTo('system.html'); toggleMenu();" class="text-cyan-400 transition-colors">系统</a>
+            <a href="javascript:void(0)" onclick="navigateTo('community.html'); toggleMenu();" class="hover:text-cyan-400 transition-colors">资讯</a>
+            <button class="monitor-nav-btn mt-4" onclick="openMonitorModal(); toggleMenu();">
+                监测大屏
+            </button>
+        </div>
+    </div>
+
+    <!-- 数字孪生展示 -->
+    <section id="system" class="relative py-32 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4 text-glow">数字孪生风险推演</h2>
+                <p class="text-gray-400">从气象场到铁路灾害链的全链条虚拟仿真</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="glass-card rounded-2xl p-8 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl group-hover:bg-blue-500/20 transition-colors"></div>
+                    <div class="text-5xl font-orbitron font-bold text-blue-400 mb-4">0-3h</div>
+                    <h3 class="text-xl font-bold mb-2">分钟级降水预报</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        基于MambaSwin-UNet-STA架构，实现未来3小时分钟级降水预报，TS评分较传统方法提升15.3%
+                    </p>
+                    <div class="mt-6 flex gap-2">
+                        <span class="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs text-blue-300">TS 0.82</span>
+                        <span class="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs text-blue-300">POD 0.82</span>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-2xl p-8 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-3xl group-hover:bg-cyan-500/20 transition-colors"></div>
+                    <div class="text-5xl font-orbitron font-bold text-cyan-400 mb-4">500m</div>
+                    <h3 class="text-xl font-bold mb-2">空间定位精度</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        "8·7"榆中山洪回溯验证中，强降水中心空间定位误差压缩至500米以内，提前42分钟预警
+                    </p>
+                    <div class="mt-6 flex gap-2">
+                        <span class="px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-xs text-cyan-300">提前40min</span>
+                        <span class="px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-xs text-cyan-300">误差15%</span>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-2xl p-8 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl group-hover:bg-purple-500/20 transition-colors"></div>
+                    <div class="text-5xl font-orbitron font-bold text-purple-400 mb-4">90min</div>
+                    <h3 class="text-xl font-bold mb-2">无人机续航</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Y3垂起固定翼无人机续航突破90分钟，悬停精度±0.5m，深入山谷峡谷进行抵近侦察
+                    </p>
+                    <div class="mt-6 flex gap-2">
+                        <span class="px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-xs text-purple-300">垂起起降</span>
+                        <span class="px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-xs text-purple-300">6级抗风</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-12 glass-card rounded-3xl p-8 md:p-12 relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 opacity-0 hover:opacity-100 transition-opacity duration-700"></div>
+                <div class="grid md:grid-cols-2 gap-12 items-center relative z-10">
+                    <div>
+                        <h3 class="text-3xl font-bold mb-4 font-orbitron">风险热力图实时生成</h3>
+                        <p class="text-gray-300 mb-6 leading-relaxed">
+                            从"天有可测风云"到"路有预知安澜"，系统基于SCS-CN产汇流模型，实时推演路基冲刷深度、边坡失稳概率，生成区间级风险热力图与行车限速建议。
+                        </p>
+                        <ul class="space-y-3 text-sm text-gray-400">
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                路基冲刷深度定量推演
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                边坡稳定性实时监测
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                积水淹没范围预测
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="relative h-64 rounded-xl overflow-hidden bg-black/50 border border-white/10">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-full h-full relative">
+                                <div class="absolute top-1/4 left-1/4 w-32 h-32 bg-red-500/30 rounded-full blur-xl animate-pulse"></div>
+                                <div class="absolute bottom-1/3 right-1/3 w-24 h-24 bg-yellow-500/30 rounded-full blur-xl animate-pulse" style="animation-delay: 1s;"></div>
+                                <div class="absolute top-1/2 left-1/2 w-40 h-40 bg-blue-500/20 rounded-full blur-xl animate-pulse" style="animation-delay: 2s;"></div>
+                                
+                                <div class="absolute inset-0" style="background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 40px 40px;"></div>
+                                
+                                <div class="absolute bottom-4 right-4 text-xs font-orbitron text-cyan-400">LIVE MONITORING</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 音乐触发按钮 -->
+    <div class="music-trigger" id="musicTrigger" onclick="toggleMusic()">
+        <svg id="musicIconPlay" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z"/>
+        </svg>
+        <svg id="musicIconPause" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display: none;">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+    </div>
+
+    <!-- 音符轨道容器 -->
+    <div class="music-note-orbital" id="musicNoteOrbital">
+        <span class="orbital-note">♪</span>
+        <span class="orbital-note">♫</span>
+        <span class="orbital-note">♬</span>
+    </div>
+
+    <!-- PDF预览弹窗 -->
+    <div id="pdf-modal-overlay" onclick="closePdfModal(event)">
+        <div id="pdf-modal-window" onclick="event.stopPropagation()">
+            <div id="pdf-modal-header">
+                <div class="pdf-modal-title">
+                    <span>📄</span>
+                    <span>萃英基金项目书预览</span>
+                </div>
+                <button id="pdf-modal-close" onclick="closePdfModal()" title="关闭">✕</button>
+            </div>
+            <div id="pdf-modal-body">
+                <div id="pdf-modal-loading" class="active">LOADING PDF...</div>
+                <iframe id="pdf-viewer" src="" type="application/pdf"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- 个人简历PDF预览弹窗 -->
+    <div id="resume-modal-overlay" onclick="closeResumeModal(event)">
+        <div id="resume-modal-window" onclick="event.stopPropagation()">
+            <div id="resume-modal-header">
+                <div class="pdf-modal-title">
+                    <span>📄</span>
+                    <span>个人简历预览</span>
+                </div>
+                <button id="resume-modal-close" onclick="closeResumeModal()" title="关闭">✕</button>
+            </div>
+            <div id="resume-modal-body">
+                <div id="resume-modal-loading" class="active">LOADING PDF...</div>
+                <iframe id="resume-viewer" src="" type="application/pdf"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== 微信小程序手机端预览 ===== -->
+    <style>
+    /* ---- 整体区块 ---- */
+    .wxapp-section {
+        position: relative;
+        padding: 100px 0 80px;
+        overflow: hidden;
+    }
+    .wxapp-section::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse 80% 50% at 50% 50%, rgba(6,182,212,0.06) 0%, transparent 70%);
+        pointer-events: none;
+    }
+    .wxapp-inner {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 24px;
+        display: flex;
+        align-items: center;
+        gap: 80px;
+    }
+    /* ---- 左侧文字 ---- */
+    .wxapp-desc {
+        flex: 1;
+        min-width: 0;
+    }
+    .wxapp-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(6,182,212,0.1);
+        border: 1px solid rgba(6,182,212,0.3);
+        border-radius: 999px;
+        padding: 6px 16px;
+        font-size: 12px;
+        color: #22d3ee;
+        letter-spacing: 2px;
+        margin-bottom: 24px;
+        text-transform: uppercase;
+        font-family: 'Orbitron', monospace;
+    }
+    .wxapp-badge-dot {
+        width: 6px; height: 6px;
+        border-radius: 50%;
+        background: #22d3ee;
+        animation: wxapp-pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes wxapp-pulse {
+        0%,100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.4; transform: scale(0.7); }
+    }
+    .wxapp-title {
+        font-size: clamp(24px, 3vw, 38px);
+        font-weight: 700;
+        line-height: 1.2;
+        margin-bottom: 16px;
+        font-family: 'Orbitron', monospace;
+        background: linear-gradient(135deg, #e2e8f0 30%, #22d3ee 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .wxapp-subtitle {
+        font-size: 14px;
+        color: #64748b;
+        line-height: 1.8;
+        margin-bottom: 40px;
+        max-width: 480px;
+    }
+    .wxapp-features {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+    .wxapp-feature-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+    }
+    .wxapp-feature-icon {
+        width: 36px; height: 36px;
+        border-radius: 10px;
+        background: rgba(6,182,212,0.1);
+        border: 1px solid rgba(6,182,212,0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+    .wxapp-feature-text h4 {
+        font-size: 14px;
+        font-weight: 600;
+        color: #e2e8f0;
+        margin-bottom: 2px;
+    }
+    .wxapp-feature-text p {
+        font-size: 12px;
+        color: #64748b;
+        line-height: 1.5;
+    }
+    /* ---- 右侧手机 ---- */
+    .wxapp-phone-wrap {
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+    .iphone-frame {
+        position: relative;
+        width: 320px;
+        height: 680px;
+        background: linear-gradient(145deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%);
+        border-radius: 52px;
+        box-shadow:
+            0 0 0 2px #2a2a4a,
+            0 0 0 4px #1a1a2e,
+            0 30px 80px rgba(0,0,0,0.6),
+            0 0 60px rgba(6,182,212,0.15),
+            inset 0 1px 0 rgba(255,255,255,0.12);
+        overflow: hidden;
+    }
+    /* 侧边按钮 */
+    .iphone-frame::before {
+        content: '';
+        position: absolute;
+        left: -4px;
+        top: 110px;
+        width: 3px;
+        height: 32px;
+        background: #2a2a4a;
+        border-radius: 2px 0 0 2px;
+        box-shadow: 0 48px 0 #2a2a4a, 0 96px 0 #2a2a4a;
+    }
+    .iphone-frame::after {
+        content: '';
+        position: absolute;
+        right: -4px;
+        top: 150px;
+        width: 3px;
+        height: 60px;
+        background: #2a2a4a;
+        border-radius: 0 2px 2px 0;
+    }
+    /* 灵动岛 */
+    .iphone-island {
+        position: absolute;
+        top: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 110px;
+        height: 30px;
+        background: #000;
+        border-radius: 20px;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+    .island-camera {
+        width: 10px; height: 10px;
+        border-radius: 50%;
+        background: #1a1a1a;
+        border: 1px solid #333;
+        box-shadow: inset 0 0 3px rgba(0,0,0,0.8);
+    }
+    .island-dot {
+        width: 6px; height: 6px;
+        border-radius: 50%;
+        background: #1c2233;
+    }
+    /* 状态栏 */
+    .iphone-statusbar {
+        position: absolute;
+        top: 0;
+        left: 0; right: 0;
+        height: 52px;
+        display: flex;
+        align-items: flex-end;
+        padding: 0 20px 6px;
+        justify-content: space-between;
+        z-index: 90;
+        background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent);
+    }
+    .sb-time {
+        font-size: 11px;
+        font-weight: 600;
+        color: #fff;
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .sb-icons {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .sb-icons svg {
+        width: 14px; height: 14px;
+        fill: #fff;
+    }
+    .sb-battery {
+        width: 22px; height: 11px;
+        border: 1.5px solid rgba(255,255,255,0.8);
+        border-radius: 3px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        padding: 1.5px;
+    }
+    .sb-battery::after {
+        content: '';
+        position: absolute;
+        right: -5px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 2.5px;
+        height: 5px;
+        background: rgba(255,255,255,0.5);
+        border-radius: 0 1px 1px 0;
+    }
+    .sb-battery-inner {
+        height: 100%;
+        width: 70%;
+        background: #4ade80;
+        border-radius: 1.5px;
+    }
+    /* 主屏幕 */
+    .iphone-screen {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        border-radius: 50px;
+        overflow: hidden;
+        background: #0a0f1e;
+    }
+    /* home indicator */
+    .iphone-home-bar {
+        position: absolute;
+        bottom: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 120px;
+        height: 4px;
+        background: rgba(255,255,255,0.3);
+        border-radius: 2px;
+        z-index: 200;
+    }
+    /* ---- 小程序容器 ---- */
+    .miniapp-container {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        overflow: hidden;
+        border-radius: 50px;
+    }
+    /* 页面 */
+    .mp-page {
+        position: absolute;
+        top: 52px; left: 0; right: 0;
+        bottom: 56px;
+        overflow-y: auto;
+        opacity: 0;
+        transform: translateX(20px);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        pointer-events: none;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    .mp-page::-webkit-scrollbar { display: none; }
+    .mp-page.active {
+        opacity: 1;
+        transform: translateX(0);
+        pointer-events: auto;
+    }
+    /* TabBar */
+    .mp-tabbar {
+        position: absolute;
+        bottom: 0; left: 0; right: 0;
+        height: 56px;
+        background: rgba(10, 15, 30, 0.95);
+        border-top: 1px solid rgba(255,255,255,0.08);
+        display: flex;
+        align-items: stretch;
+        z-index: 150;
+        backdrop-filter: blur(10px);
+    }
+    .mp-tab {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        cursor: pointer;
+        transition: all 0.2s;
+        padding-bottom: 4px;
+    }
+    .mp-tab:active { background: rgba(255,255,255,0.04); }
+    .mp-tab-icon {
+        font-size: 20px;
+        line-height: 1;
+        transition: transform 0.2s;
+    }
+    .mp-tab.active .mp-tab-icon { transform: scale(1.1); }
+    .mp-tab-label {
+        font-size: 9px;
+        color: #4b5563;
+        transition: color 0.2s;
+    }
+    .mp-tab.active .mp-tab-label { color: #22d3ee; }
+
+    /* ==== 首页 ==== */
+    .mp-home-header {
+        padding: 14px 16px 10px;
+        background: linear-gradient(135deg, rgba(6,182,212,0.12) 0%, rgba(59,130,246,0.08) 100%);
+        border-bottom: 1px solid rgba(6,182,212,0.12);
+    }
+    .mp-home-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: #e2e8f0;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .mp-home-title-badge {
+        font-size: 8px;
+        background: rgba(6,182,212,0.2);
+        color: #22d3ee;
+        border: 1px solid rgba(6,182,212,0.3);
+        padding: 1px 5px;
+        border-radius: 4px;
+        letter-spacing: 1px;
+    }
+    .mp-home-subtitle {
+        font-size: 10px;
+        color: #64748b;
+        margin-top: 2px;
+    }
+    .mp-status-strip {
+        display: flex;
+        gap: 6px;
+        padding: 10px 16px;
+    }
+    .mp-status-card {
+        flex: 1;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 10px;
+        padding: 10px 8px;
+        text-align: center;
+    }
+    .mp-status-card.danger { border-color: rgba(239,68,68,0.3); background: rgba(239,68,68,0.05); }
+    .mp-status-card.warn  { border-color: rgba(245,158,11,0.3); background: rgba(245,158,11,0.05); }
+    .mp-status-card.safe  { border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.05); }
+    .mp-sc-val {
+        font-size: 18px;
+        font-weight: 700;
+        font-family: 'Orbitron', monospace;
+        line-height: 1;
+    }
+    .mp-status-card.danger .mp-sc-val { color: #f87171; }
+    .mp-status-card.warn  .mp-sc-val  { color: #fbbf24; }
+    .mp-status-card.safe  .mp-sc-val  { color: #34d399; }
+    .mp-sc-label { font-size: 9px; color: #6b7280; margin-top: 3px; }
+    /* 快速入口 */
+    .mp-quick-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        padding: 10px 16px;
+    }
+    .mp-quick-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+    }
+    .mp-quick-icon-wrap {
+        width: 44px; height: 44px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        transition: transform 0.15s;
+    }
+    .mp-quick-item:active .mp-quick-icon-wrap { transform: scale(0.9); }
+    .mp-quick-label { font-size: 9px; color: #9ca3af; text-align: center; }
+    /* 最新预警 */
+    .mp-section-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 16px 6px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #cbd5e1;
+    }
+    .mp-section-more { font-size: 9px; color: #22d3ee; cursor: pointer; }
+    .mp-alert-mini-list { padding: 0 16px; display: flex; flex-direction: column; gap: 6px; }
+    .mp-alert-mini-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        background: rgba(255,255,255,0.025);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background 0.15s;
+    }
+    .mp-alert-mini-item:active { background: rgba(255,255,255,0.05); }
+    .mp-ami-dot {
+        width: 8px; height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+    .mp-ami-dot.red    { background: #ef4444; box-shadow: 0 0 4px #ef4444; }
+    .mp-ami-dot.orange { background: #f97316; box-shadow: 0 0 4px #f97316; }
+    .mp-ami-dot.yellow { background: #eab308; box-shadow: 0 0 4px #eab308; }
+    .mp-ami-dot.green  { background: #22c55e; box-shadow: 0 0 4px #22c55e; }
+    .mp-ami-content { flex: 1; min-width: 0; }
+    .mp-ami-name { font-size: 11px; font-weight: 600; color: #e2e8f0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mp-ami-meta { font-size: 9px; color: #64748b; margin-top: 1px; }
+    .mp-ami-level {
+        font-size: 9px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-weight: 600;
+        flex-shrink: 0;
+    }
+    .mp-ami-level.red    { background: rgba(239,68,68,0.15);  color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+    .mp-ami-level.orange { background: rgba(249,115,22,0.15); color: #fb923c; border: 1px solid rgba(249,115,22,0.3); }
+    .mp-ami-level.yellow { background: rgba(234,179,8,0.15);  color: #facc15; border: 1px solid rgba(234,179,8,0.3); }
+    .mp-ami-level.green  { background: rgba(34,197,94,0.15);  color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+    /* 分钟雨量预报小图 */
+    .mp-precip-mini { padding: 6px 16px 10px; }
+    .mp-pm-card {
+        background: rgba(6,182,212,0.05);
+        border: 1px solid rgba(6,182,212,0.15);
+        border-radius: 12px;
+        padding: 10px;
+    }
+    .mp-pm-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 6px;
+    }
+    .mp-pm-title { font-size: 10px; font-weight: 600; color: #94a3b8; }
+    .mp-pm-tag {
+        font-size: 8px;
+        background: rgba(6,182,212,0.15);
+        color: #22d3ee;
+        padding: 1px 5px;
+        border-radius: 4px;
+    }
+    .mp-pm-canvas { width: 100%; height: 60px; display: block; }
+
+    /* ==== 预警页 ==== */
+    .mp-alert-page-header {
+        padding: 14px 16px 10px;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .mp-alert-page-title { font-size: 14px; font-weight: 700; color: #e2e8f0; }
+    .mp-alert-filter-row {
+        display: flex;
+        gap: 6px;
+        padding: 8px 16px;
+        overflow-x: auto;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    .mp-alert-filter-row::-webkit-scrollbar { display: none; }
+    .mp-afilter {
+        flex-shrink: 0;
+        font-size: 9px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(255,255,255,0.1);
+        color: #6b7280;
+        cursor: pointer;
+        transition: all 0.2s;
+        white-space: nowrap;
+    }
+    .mp-afilter.active {
+        background: rgba(6,182,212,0.15);
+        border-color: rgba(6,182,212,0.4);
+        color: #22d3ee;
+    }
+    .mp-alert-list { padding: 4px 16px; display: flex; flex-direction: column; gap: 8px; }
+    .mp-alert-card {
+        background: rgba(255,255,255,0.025);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 12px;
+        padding: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .mp-alert-card:active { transform: scale(0.98); background: rgba(255,255,255,0.04); }
+    .mp-ac-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 6px;
+    }
+    .mp-ac-name { font-size: 12px; font-weight: 700; color: #e2e8f0; }
+    .mp-ac-badge {
+        font-size: 9px;
+        padding: 2px 7px;
+        border-radius: 5px;
+        font-weight: 600;
+    }
+    .mp-ac-badge.level-i   { background: rgba(239,68,68,0.2);  color: #f87171; border: 1px solid rgba(239,68,68,0.4); }
+    .mp-ac-badge.level-ii  { background: rgba(249,115,22,0.2); color: #fb923c; border: 1px solid rgba(249,115,22,0.4); }
+    .mp-ac-badge.level-iii { background: rgba(234,179,8,0.2);  color: #facc15; border: 1px solid rgba(234,179,8,0.4); }
+    .mp-ac-badge.level-iv  { background: rgba(34,197,94,0.2);  color: #4ade80; border: 1px solid rgba(34,197,94,0.4); }
+    .mp-ac-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    .mp-ac-tag {
+        font-size: 9px;
+        color: #64748b;
+        background: rgba(255,255,255,0.04);
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+    .mp-ac-progress-wrap {
+        margin-top: 8px;
+        height: 4px;
+        background: rgba(255,255,255,0.06);
+        border-radius: 2px;
+        overflow: hidden;
+    }
+    .mp-ac-progress {
+        height: 100%;
+        border-radius: 2px;
+        background: linear-gradient(90deg, #22d3ee, #3b82f6);
+    }
+
+    /* ==== 地图页 ==== */
+    .mp-map-header {
+        padding: 14px 16px 10px;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .mp-map-title-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .mp-map-title { font-size: 14px; font-weight: 700; color: #e2e8f0; }
+    .mp-map-live {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 9px;
+        color: #4ade80;
+    }
+    .mp-map-live-dot {
+        width: 5px; height: 5px;
+        border-radius: 50%;
+        background: #4ade80;
+        animation: wxapp-pulse 1.5s infinite;
+    }
+    .mp-map-area {
+        position: relative;
+        margin: 10px 16px;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid rgba(6,182,212,0.2);
+    }
+    .mp-map-canvas { width: 100%; height: 160px; display: block; }
+    .mp-map-overlay {
+        position: absolute;
+        top: 8px; right: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    .mp-map-btn {
+        width: 26px; height: 26px;
+        background: rgba(10,15,30,0.8);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        cursor: pointer;
+        color: #94a3b8;
+        transition: all 0.15s;
+    }
+    .mp-map-btn:active { background: rgba(6,182,212,0.2); color: #22d3ee; }
+    .mp-map-legend {
+        margin: 0 16px 8px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .mp-legend-title { font-size: 9px; color: #64748b; }
+    .mp-legend-item {
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        font-size: 9px;
+        color: #9ca3af;
+    }
+    .mp-legend-dot {
+        width: 8px; height: 8px;
+        border-radius: 50%;
+    }
+    .mp-risk-list { padding: 0 16px; display: flex; flex-direction: column; gap: 6px; }
+    .mp-risk-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 10px;
+        background: rgba(255,255,255,0.025);
+        border-radius: 8px;
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+    .mp-risk-idx {
+        width: 20px; height: 20px;
+        border-radius: 50%;
+        background: rgba(6,182,212,0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 9px;
+        color: #22d3ee;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+    .mp-risk-name { font-size: 10px; color: #e2e8f0; flex: 1; }
+    .mp-risk-score {
+        font-size: 10px;
+        font-weight: 700;
+        font-family: 'Orbitron', monospace;
+    }
+    .mp-risk-bar {
+        width: 50px;
+        height: 4px;
+        background: rgba(255,255,255,0.06);
+        border-radius: 2px;
+        overflow: hidden;
+    }
+    .mp-risk-bar-inner {
+        height: 100%;
+        border-radius: 2px;
+        background: linear-gradient(90deg, #22d3ee, #3b82f6);
+    }
+
+    /* ==== 无人机页 ==== */
+    .mp-uav-header {
+        padding: 14px 16px 10px;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .mp-uav-title { font-size: 14px; font-weight: 700; color: #e2e8f0; }
+    .mp-uav-feed {
+        margin: 10px 16px;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid rgba(6,182,212,0.2);
+        position: relative;
+        height: 140px;
+        background: #050a12;
+    }
+    .mp-uav-feed-canvas { width: 100%; height: 100%; display: block; }
+    .mp-uav-feed-hud {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        pointer-events: none;
+    }
+    .mp-uav-hud-corner {
+        position: absolute;
+        width: 14px; height: 14px;
+        border-color: rgba(6,182,212,0.6);
+        border-style: solid;
+    }
+    .mp-uav-hud-corner.tl { top: 8px; left: 8px; border-width: 2px 0 0 2px; }
+    .mp-uav-hud-corner.tr { top: 8px; right: 8px; border-width: 2px 2px 0 0; }
+    .mp-uav-hud-corner.bl { bottom: 8px; left: 8px; border-width: 0 0 2px 2px; }
+    .mp-uav-hud-corner.br { bottom: 8px; right: 8px; border-width: 0 2px 2px 0; }
+    .mp-uav-hud-text {
+        position: absolute;
+        bottom: 8px;
+        left: 10px;
+        font-size: 8px;
+        color: rgba(34,211,238,0.8);
+        font-family: 'Orbitron', monospace;
+        line-height: 1.5;
+    }
+    .mp-uav-hud-status {
+        position: absolute;
+        top: 8px;
+        right: 10px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 8px;
+        color: #4ade80;
+        font-family: 'Orbitron', monospace;
+    }
+    .mp-uav-hud-status-dot {
+        width: 5px; height: 5px;
+        border-radius: 50%;
+        background: #4ade80;
+        animation: wxapp-pulse 1s infinite;
+    }
+    .mp-uav-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+        margin: 0 16px 10px;
+    }
+    .mp-uav-stat {
+        background: rgba(255,255,255,0.025);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 10px;
+        padding: 8px 6px;
+        text-align: center;
+    }
+    .mp-uav-stat-val {
+        font-size: 14px;
+        font-weight: 700;
+        font-family: 'Orbitron', monospace;
+        color: #22d3ee;
+    }
+    .mp-uav-stat-label { font-size: 8px; color: #6b7280; margin-top: 2px; }
+    .mp-uav-task-list { padding: 0 16px; display: flex; flex-direction: column; gap: 6px; }
+    .mp-uav-task {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 10px;
+        background: rgba(255,255,255,0.025);
+        border: 1px solid rgba(255,255,255,0.05);
+        border-radius: 8px;
+    }
+    .mp-uav-task-icon { font-size: 16px; }
+    .mp-uav-task-info { flex: 1; min-width: 0; }
+    .mp-uav-task-name { font-size: 10px; font-weight: 600; color: #e2e8f0; }
+    .mp-uav-task-meta { font-size: 9px; color: #64748b; margin-top: 1px; }
+    .mp-uav-task-status {
+        font-size: 9px;
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+    .mp-uav-task-status.running { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+    .mp-uav-task-status.standby { background: rgba(100,116,139,0.15); color: #94a3b8; border: 1px solid rgba(100,116,139,0.2); }
+    .mp-uav-task-status.queued { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+
+    /* ==== 个人中心 ==== */
+    .mp-profile-top {
+        padding: 20px 16px 14px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .mp-avatar {
+        width: 56px; height: 56px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #22d3ee 0%, #3b82f6 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        margin-bottom: 8px;
+        box-shadow: 0 0 16px rgba(34,211,238,0.3);
+    }
+    .mp-profile-name { font-size: 14px; font-weight: 700; color: #e2e8f0; }
+    .mp-profile-role { font-size: 10px; color: #64748b; margin-top: 2px; }
+    .mp-profile-stats {
+        display: flex;
+        gap: 0;
+        width: 100%;
+        margin-top: 14px;
+        background: rgba(255,255,255,0.025);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    .mp-ps-item {
+        flex: 1;
+        text-align: center;
+        padding: 10px 0;
+        border-right: 1px solid rgba(255,255,255,0.06);
+    }
+    .mp-ps-item:last-child { border-right: none; }
+    .mp-ps-val { font-size: 16px; font-weight: 700; color: #22d3ee; font-family: 'Orbitron', monospace; }
+    .mp-ps-label { font-size: 9px; color: #6b7280; margin-top: 2px; }
+    .mp-menu-group { padding: 10px 16px 4px; }
+    .mp-menu-group-title { font-size: 10px; color: #4b5563; margin-bottom: 6px; letter-spacing: 1px; text-transform: uppercase; }
+    .mp-menu-list { display: flex; flex-direction: column; gap: 4px; }
+    .mp-menu-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 12px;
+        background: rgba(255,255,255,0.025);
+        border: 1px solid rgba(255,255,255,0.05);
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background 0.15s;
+    }
+    .mp-menu-item:active { background: rgba(255,255,255,0.05); }
+    .mp-menu-icon {
+        width: 30px; height: 30px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+    }
+    .mp-menu-text { flex: 1; font-size: 11px; color: #cbd5e1; }
+    .mp-menu-arrow { font-size: 10px; color: #374151; }
+
+    /* 浮动说明标签 */
+    .wxapp-float-hint {
+        position: absolute;
+        top: 20px;
+        right: -130px;
+        background: rgba(6,182,212,0.1);
+        border: 1px solid rgba(6,182,212,0.25);
+        border-radius: 8px;
+        padding: 8px 12px;
+        font-size: 10px;
+        color: #94a3b8;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        pointer-events: none;
+    }
+    .wxapp-float-hint::before {
+        content: '';
+        position: absolute;
+        left: -6px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 0; height: 0;
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        border-right: 6px solid rgba(6,182,212,0.25);
+    }
+
+    @media (max-width: 900px) {
+        .wxapp-inner { flex-direction: column; gap: 48px; }
+        .wxapp-desc { text-align: center; }
+        .wxapp-subtitle { margin-left: auto; margin-right: auto; }
+        .wxapp-float-hint { display: none; }
+    }
+    </style>
+
+    <!-- 微信小程序预览区块 HTML -->
+    <section class="wxapp-section">
+        <div class="wxapp-inner">
+            <!-- 左侧描述 -->
+            <div class="wxapp-desc">
+                <div class="wxapp-badge">
+                    <div class="wxapp-badge-dot"></div>
+                    手机端小程序
+                </div>
+                <h2 class="wxapp-title">智驭苍穹<br>移动端预警</h2>
+                <p class="wxapp-subtitle">基于 LoongClaw 动态路由空天地多模态融合的铁路短临致灾风险预警微信小程序，随时随地掌握沿线灾害态势。</p>
+                <div class="wxapp-features">
+                    <div class="wxapp-feature-item">
+                        <div class="wxapp-feature-icon">⚡</div>
+                        <div class="wxapp-feature-text">
+                            <h4>分钟级预报</h4>
+                            <p>融合 C 波段雷达与 SCS-CN 水文模型，提前 30~60 分钟预报短临降水</p>
+                        </div>
+                    </div>
+                    <div class="wxapp-feature-item">
+                        <div class="wxapp-feature-icon">🛰</div>
+                        <div class="wxapp-feature-text">
+                            <h4>无人机巡检</h4>
+                            <p>空地协同路径规划，AI 视觉自动识别危岩落石、路基沉降等隐患</p>
+                        </div>
+                    </div>
+                    <div class="wxapp-feature-item">
+                        <div class="wxapp-feature-icon">🗺</div>
+                        <div class="wxapp-feature-text">
+                            <h4>风险热力图</h4>
+                            <p>动态孪生风险评分，逐 10 分钟刷新沿线各区段灾害概率分布</p>
+                        </div>
+                    </div>
+                    <div class="wxapp-feature-item">
+                        <div class="wxapp-feature-icon">🔔</div>
+                        <div class="wxapp-feature-text">
+                            <h4>分级预警推送</h4>
+                            <p>红橙黄绿四级预警体系，微信消息实时推送，联动行车调度指令</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧 iPhone -->
+            <div class="wxapp-phone-wrap">
+                <div class="iphone-frame" style="position:relative;">
+                    <!-- 灵动岛 -->
+                    <div class="iphone-island">
+                        <div class="island-camera"></div>
+                        <div class="island-dot"></div>
+                    </div>
+                    <!-- 状态栏 -->
+                    <div class="iphone-statusbar">
+                        <div class="sb-time" id="mp-clock">12:00</div>
+                        <div class="sb-icons">
+                            <svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+                            <div class="sb-battery">
+                                <div class="sb-battery-inner"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 主屏幕 -->
+                    <div class="iphone-screen">
+                        <div class="miniapp-container" id="mpContainer">
+
+                            <!-- 首页 -->
+                            <div class="mp-page active" id="mp-page-home">
+                                <div class="mp-home-header">
+                                    <div class="mp-home-title">
+                                        铁路灾害预警 <span class="mp-home-title-badge">LIVE</span>
+                                    </div>
+                                    <div class="mp-home-subtitle">兰州—白银段实时监测</div>
+                                </div>
+                                <!-- 状态卡片 -->
+                                <div class="mp-status-strip">
+                                    <div class="mp-status-card danger">
+                                        <div class="mp-sc-val">3</div>
+                                        <div class="mp-sc-label">红色预警</div>
+                                    </div>
+                                    <div class="mp-status-card warn">
+                                        <div class="mp-sc-val">7</div>
+                                        <div class="mp-sc-label">橙色预警</div>
+                                    </div>
+                                    <div class="mp-status-card safe">
+                                        <div class="mp-sc-val">94%</div>
+                                        <div class="mp-sc-label">线路安全</div>
+                                    </div>
+                                </div>
+                                <!-- 快捷入口 -->
+                                <div class="mp-quick-grid">
+                                    <div class="mp-quick-item" onclick="mpSwitchTab(1)">
+                                        <div class="mp-quick-icon-wrap" style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.25);">🔔</div>
+                                        <div class="mp-quick-label">实时预警</div>
+                                    </div>
+                                    <div class="mp-quick-item" onclick="mpSwitchTab(2)">
+                                        <div class="mp-quick-icon-wrap" style="background:rgba(6,182,212,0.12);border:1px solid rgba(6,182,212,0.25);">🗺</div>
+                                        <div class="mp-quick-label">风险地图</div>
+                                    </div>
+                                    <div class="mp-quick-item" onclick="mpSwitchTab(3)">
+                                        <div class="mp-quick-icon-wrap" style="background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.25);">🚁</div>
+                                        <div class="mp-quick-label">无人机</div>
+                                    </div>
+                                    <div class="mp-quick-item" onclick="mpSwitchTab(4)">
+                                        <div class="mp-quick-icon-wrap" style="background:rgba(168,85,247,0.12);border:1px solid rgba(168,85,247,0.25);">👤</div>
+                                        <div class="mp-quick-label">个人中心</div>
+                                    </div>
+                                </div>
+                                <!-- 最新预警 -->
+                                <div class="mp-section-title">
+                                    <span>最新预警</span>
+                                    <span class="mp-section-more" onclick="mpSwitchTab(1)">查看全部 ›</span>
+                                </div>
+                                <div class="mp-alert-mini-list">
+                                    <div class="mp-alert-mini-item">
+                                        <div class="mp-ami-dot red"></div>
+                                        <div class="mp-ami-content">
+                                            <div class="mp-ami-name">K128+500 危岩落石</div>
+                                            <div class="mp-ami-meta">2分钟前 · 兰白段</div>
+                                        </div>
+                                        <div class="mp-ami-level red">Ⅰ级</div>
+                                    </div>
+                                    <div class="mp-alert-mini-item">
+                                        <div class="mp-ami-dot orange"></div>
+                                        <div class="mp-ami-content">
+                                            <div class="mp-ami-name">K215+200 短临强降水</div>
+                                            <div class="mp-ami-meta">8分钟前 · 白兰段</div>
+                                        </div>
+                                        <div class="mp-ami-level orange">Ⅱ级</div>
+                                    </div>
+                                    <div class="mp-alert-mini-item">
+                                        <div class="mp-ami-dot yellow"></div>
+                                        <div class="mp-ami-content">
+                                            <div class="mp-ami-name">K067+800 坡面泥石流</div>
+                                            <div class="mp-ami-meta">15分钟前 · 兰白段</div>
+                                        </div>
+                                        <div class="mp-ami-level yellow">Ⅲ级</div>
+                                    </div>
+                                </div>
+                                <!-- 降水小图 -->
+                                <div class="mp-precip-mini">
+                                    <div class="mp-pm-card">
+                                        <div class="mp-pm-head">
+                                            <span class="mp-pm-title">☁ 未来60分钟降水预报</span>
+                                            <span class="mp-pm-tag">SCS-CN</span>
+                                        </div>
+                                        <canvas class="mp-pm-canvas" id="mpPrecipChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 预警页 -->
+                            <div class="mp-page" id="mp-page-alert">
+                                <div class="mp-alert-page-header">
+                                    <div class="mp-alert-page-title">⚡ 实时预警列表</div>
+                                </div>
+                                <div class="mp-alert-filter-row">
+                                    <div class="mp-afilter active" onclick="mpAlertTab(this,'all')">全部</div>
+                                    <div class="mp-afilter" onclick="mpAlertTab(this,'i')">Ⅰ级红色</div>
+                                    <div class="mp-afilter" onclick="mpAlertTab(this,'ii')">Ⅱ级橙色</div>
+                                    <div class="mp-afilter" onclick="mpAlertTab(this,'iii')">Ⅲ级黄色</div>
+                                    <div class="mp-afilter" onclick="mpAlertTab(this,'iv')">Ⅳ级绿色</div>
+                                </div>
+                                <div class="mp-alert-list" id="mpAlertList">
+                                    <div class="mp-alert-card" data-level="i">
+                                        <div class="mp-ac-top">
+                                            <div class="mp-ac-name">K128+500 危岩落石</div>
+                                            <div class="mp-ac-badge level-i">Ⅰ级红色</div>
+                                        </div>
+                                        <div class="mp-ac-row">
+                                            <div class="mp-ac-tag">🕐 2分钟前</div>
+                                            <div class="mp-ac-tag">📍 兰白段</div>
+                                            <div class="mp-ac-tag">⚠ 危岩</div>
+                                        </div>
+                                        <div class="mp-ac-progress-wrap"><div class="mp-ac-progress" style="width:92%;background:linear-gradient(90deg,#ef4444,#f97316);"></div></div>
+                                    </div>
+                                    <div class="mp-alert-card" data-level="i">
+                                        <div class="mp-ac-top">
+                                            <div class="mp-ac-name">K093+100 路基沉降</div>
+                                            <div class="mp-ac-badge level-i">Ⅰ级红色</div>
+                                        </div>
+                                        <div class="mp-ac-row">
+                                            <div class="mp-ac-tag">🕐 5分钟前</div>
+                                            <div class="mp-ac-tag">📍 兰白段</div>
+                                            <div class="mp-ac-tag">⚠ 沉降</div>
+                                        </div>
+                                        <div class="mp-ac-progress-wrap"><div class="mp-ac-progress" style="width:88%;background:linear-gradient(90deg,#ef4444,#f97316);"></div></div>
+                                    </div>
+                                    <div class="mp-alert-card" data-level="ii">
+                                        <div class="mp-ac-top">
+                                            <div class="mp-ac-name">K215+200 短临强降水</div>
+                                            <div class="mp-ac-badge level-ii">Ⅱ级橙色</div>
+                                        </div>
+                                        <div class="mp-ac-row">
+                                            <div class="mp-ac-tag">🕐 8分钟前</div>
+                                            <div class="mp-ac-tag">📍 白兰段</div>
+                                            <div class="mp-ac-tag">🌧 强降水</div>
+                                        </div>
+                                        <div class="mp-ac-progress-wrap"><div class="mp-ac-progress" style="width:74%;background:linear-gradient(90deg,#f97316,#fbbf24);"></div></div>
+                                    </div>
+                                    <div class="mp-alert-card" data-level="ii">
+                                        <div class="mp-ac-top">
+                                            <div class="mp-ac-name">K301+650 坡体变形</div>
+                                            <div class="mp-ac-badge level-ii">Ⅱ级橙色</div>
+                                        </div>
+                                        <div class="mp-ac-row">
+                                            <div class="mp-ac-tag">🕐 12分钟前</div>
+                                            <div class="mp-ac-tag">📍 白兰段</div>
+                                            <div class="mp-ac-tag">⛰ 变形</div>
+                                        </div>
+                                        <div class="mp-ac-progress-wrap"><div class="mp-ac-progress" style="width:68%;background:linear-gradient(90deg,#f97316,#fbbf24);"></div></div>
+                                    </div>
+                                    <div class="mp-alert-card" data-level="iii">
+                                        <div class="mp-ac-top">
+                                            <div class="mp-ac-name">K067+800 坡面泥石流</div>
+                                            <div class="mp-ac-badge level-iii">Ⅲ级黄色</div>
+                                        </div>
+                                        <div class="mp-ac-row">
+                                            <div class="mp-ac-tag">🕐 15分钟前</div>
+                                            <div class="mp-ac-tag">📍 兰白段</div>
+                                            <div class="mp-ac-tag">💧 泥石流</div>
+                                        </div>
+                                        <div class="mp-ac-progress-wrap"><div class="mp-ac-progress" style="width:55%;background:linear-gradient(90deg,#eab308,#84cc16);"></div></div>
+                                    </div>
+                                    <div class="mp-alert-card" data-level="iv">
+                                        <div class="mp-ac-top">
+                                            <div class="mp-ac-name">K178+300 风速偏高</div>
+                                            <div class="mp-ac-badge level-iv">Ⅳ级绿色</div>
+                                        </div>
+                                        <div class="mp-ac-row">
+                                            <div class="mp-ac-tag">🕐 22分钟前</div>
+                                            <div class="mp-ac-tag">📍 兰白段</div>
+                                            <div class="mp-ac-tag">💨 大风</div>
+                                        </div>
+                                        <div class="mp-ac-progress-wrap"><div class="mp-ac-progress" style="width:35%;background:linear-gradient(90deg,#22c55e,#06b6d4);"></div></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 地图页 -->
+                            <div class="mp-page" id="mp-page-map">
+                                <div class="mp-map-header">
+                                    <div class="mp-map-title-row">
+                                        <div class="mp-map-title">🗺 风险地图</div>
+                                        <div class="mp-map-live"><div class="mp-map-live-dot"></div>实时</div>
+                                    </div>
+                                </div>
+                                <div class="mp-map-area">
+                                    <canvas class="mp-map-canvas" id="mpMiniMap"></canvas>
+                                    <div class="mp-map-overlay">
+                                        <div class="mp-map-btn" title="放大">＋</div>
+                                        <div class="mp-map-btn" title="缩小">－</div>
+                                        <div class="mp-map-btn" title="定位">◎</div>
+                                    </div>
+                                </div>
+                                <div class="mp-map-legend">
+                                    <span class="mp-legend-title">风险等级：</span>
+                                    <div class="mp-legend-item"><div class="mp-legend-dot" style="background:#ef4444;"></div>极高</div>
+                                    <div class="mp-legend-item"><div class="mp-legend-dot" style="background:#f97316;"></div>高</div>
+                                    <div class="mp-legend-item"><div class="mp-legend-dot" style="background:#eab308;"></div>中</div>
+                                    <div class="mp-legend-item"><div class="mp-legend-dot" style="background:#22c55e;"></div>低</div>
+                                </div>
+                                <div class="mp-section-title"><span>风险排名 Top5</span></div>
+                                <div class="mp-risk-list">
+                                    <div class="mp-risk-row">
+                                        <div class="mp-risk-idx">1</div>
+                                        <div class="mp-risk-name">K128+500</div>
+                                        <div class="mp-risk-score" style="color:#ef4444;">92</div>
+                                        <div class="mp-risk-bar"><div class="mp-risk-bar-inner" style="width:92%;background:linear-gradient(90deg,#ef4444,#f97316);"></div></div>
+                                    </div>
+                                    <div class="mp-risk-row">
+                                        <div class="mp-risk-idx">2</div>
+                                        <div class="mp-risk-name">K093+100</div>
+                                        <div class="mp-risk-score" style="color:#ef4444;">88</div>
+                                        <div class="mp-risk-bar"><div class="mp-risk-bar-inner" style="width:88%;background:linear-gradient(90deg,#ef4444,#f97316);"></div></div>
+                                    </div>
+                                    <div class="mp-risk-row">
+                                        <div class="mp-risk-idx">3</div>
+                                        <div class="mp-risk-name">K215+200</div>
+                                        <div class="mp-risk-score" style="color:#f97316;">74</div>
+                                        <div class="mp-risk-bar"><div class="mp-risk-bar-inner" style="width:74%;background:linear-gradient(90deg,#f97316,#fbbf24);"></div></div>
+                                    </div>
+                                    <div class="mp-risk-row">
+                                        <div class="mp-risk-idx">4</div>
+                                        <div class="mp-risk-name">K301+650</div>
+                                        <div class="mp-risk-score" style="color:#f97316;">68</div>
+                                        <div class="mp-risk-bar"><div class="mp-risk-bar-inner" style="width:68%;background:linear-gradient(90deg,#f97316,#fbbf24);"></div></div>
+                                    </div>
+                                    <div class="mp-risk-row">
+                                        <div class="mp-risk-idx">5</div>
+                                        <div class="mp-risk-name">K067+800</div>
+                                        <div class="mp-risk-score" style="color:#eab308;">55</div>
+                                        <div class="mp-risk-bar"><div class="mp-risk-bar-inner" style="width:55%;background:linear-gradient(90deg,#eab308,#84cc16);"></div></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 无人机页 -->
+                            <div class="mp-page" id="mp-page-uav">
+                                <div class="mp-uav-header">
+                                    <div class="mp-uav-title">🚁 无人机巡检</div>
+                                </div>
+                                <div class="mp-uav-feed">
+                                    <canvas class="mp-uav-feed-canvas" id="mpUavFeed"></canvas>
+                                    <div class="mp-uav-feed-hud">
+                                        <div class="mp-uav-hud-corner tl"></div>
+                                        <div class="mp-uav-hud-corner tr"></div>
+                                        <div class="mp-uav-hud-corner bl"></div>
+                                        <div class="mp-uav-hud-corner br"></div>
+                                        <div class="mp-uav-hud-text">
+                                            <div>ALT: 120m</div>
+                                            <div>SPD: 14m/s</div>
+                                        </div>
+                                        <div class="mp-uav-hud-status">
+                                            <div class="mp-uav-hud-status-dot"></div>
+                                            LIVE
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mp-uav-stats">
+                                    <div class="mp-uav-stat">
+                                        <div class="mp-uav-stat-val">4</div>
+                                        <div class="mp-uav-stat-label">在飞架次</div>
+                                    </div>
+                                    <div class="mp-uav-stat">
+                                        <div class="mp-uav-stat-val">87%</div>
+                                        <div class="mp-uav-stat-label">平均电量</div>
+                                    </div>
+                                    <div class="mp-uav-stat">
+                                        <div class="mp-uav-stat-val">12</div>
+                                        <div class="mp-uav-stat-label">今日架次</div>
+                                    </div>
+                                </div>
+                                <div class="mp-section-title"><span>巡检任务</span></div>
+                                <div class="mp-uav-task-list">
+                                    <div class="mp-uav-task">
+                                        <div class="mp-uav-task-icon">🚁</div>
+                                        <div class="mp-uav-task-info">
+                                            <div class="mp-uav-task-name">K128 危岩落石核查</div>
+                                            <div class="mp-uav-task-meta">UAV-03 · 预计返航 14:32</div>
+                                        </div>
+                                        <div class="mp-uav-task-status running">执行中</div>
+                                    </div>
+                                    <div class="mp-uav-task">
+                                        <div class="mp-uav-task-icon">🚁</div>
+                                        <div class="mp-uav-task-info">
+                                            <div class="mp-uav-task-name">K215 降水实时监测</div>
+                                            <div class="mp-uav-task-meta">UAV-01 · 预计返航 14:45</div>
+                                        </div>
+                                        <div class="mp-uav-task-status running">执行中</div>
+                                    </div>
+                                    <div class="mp-uav-task">
+                                        <div class="mp-uav-task-icon">🚁</div>
+                                        <div class="mp-uav-task-info">
+                                            <div class="mp-uav-task-name">K093 路基沉降复查</div>
+                                            <div class="mp-uav-task-meta">UAV-02 · 待命起飞</div>
+                                        </div>
+                                        <div class="mp-uav-task-status queued">排队中</div>
+                                    </div>
+                                    <div class="mp-uav-task">
+                                        <div class="mp-uav-task-icon">🚁</div>
+                                        <div class="mp-uav-task-info">
+                                            <div class="mp-uav-task-name">常规线路巡检</div>
+                                            <div class="mp-uav-task-meta">UAV-04 · 充电中</div>
+                                        </div>
+                                        <div class="mp-uav-task-status standby">待机</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 个人中心页 -->
+                            <div class="mp-page" id="mp-page-profile">
+                                <div class="mp-profile-top">
+                                    <div class="mp-avatar">👤</div>
+                                    <div class="mp-profile-name">彭小溪</div>
+                                    <div class="mp-profile-role">铁路灾害预警 · 调度员</div>
+                                    <div class="mp-profile-stats">
+                                        <div class="mp-ps-item">
+                                            <div class="mp-ps-val">128</div>
+                                            <div class="mp-ps-label">处理预警</div>
+                                        </div>
+                                        <div class="mp-ps-item">
+                                            <div class="mp-ps-val">34</div>
+                                            <div class="mp-ps-label">巡检任务</div>
+                                        </div>
+                                        <div class="mp-ps-item">
+                                            <div class="mp-ps-val">99%</div>
+                                            <div class="mp-ps-label">准确率</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mp-menu-group">
+                                    <div class="mp-menu-group-title">预警设置</div>
+                                    <div class="mp-menu-list">
+                                        <div class="mp-menu-item">
+                                            <div class="mp-menu-icon" style="background:rgba(239,68,68,0.1);">🔔</div>
+                                            <div class="mp-menu-text">推送通知设置</div>
+                                            <div class="mp-menu-arrow">›</div>
+                                        </div>
+                                        <div class="mp-menu-item">
+                                            <div class="mp-menu-icon" style="background:rgba(6,182,212,0.1);">📍</div>
+                                            <div class="mp-menu-text">责任区段管理</div>
+                                            <div class="mp-menu-arrow">›</div>
+                                        </div>
+                                        <div class="mp-menu-item">
+                                            <div class="mp-menu-icon" style="background:rgba(245,158,11,0.1);">⚙</div>
+                                            <div class="mp-menu-text">预警阈值配置</div>
+                                            <div class="mp-menu-arrow">›</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mp-menu-group">
+                                    <div class="mp-menu-group-title">系统</div>
+                                    <div class="mp-menu-list">
+                                        <div class="mp-menu-item">
+                                            <div class="mp-menu-icon" style="background:rgba(59,130,246,0.1);">📊</div>
+                                            <div class="mp-menu-text">数据报告</div>
+                                            <div class="mp-menu-arrow">›</div>
+                                        </div>
+                                        <div class="mp-menu-item">
+                                            <div class="mp-menu-icon" style="background:rgba(168,85,247,0.1);">🛰</div>
+                                            <div class="mp-menu-text">关于 LoongClaw</div>
+                                            <div class="mp-menu-arrow">›</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- TabBar -->
+                            <div class="mp-tabbar">
+                                <div class="mp-tab active" id="mp-tab-0" onclick="mpSwitchTab(0)">
+                                    <div class="mp-tab-icon">🏠</div>
+                                    <div class="mp-tab-label">首页</div>
+                                </div>
+                                <div class="mp-tab" id="mp-tab-1" onclick="mpSwitchTab(1)">
+                                    <div class="mp-tab-icon">⚡</div>
+                                    <div class="mp-tab-label">预警</div>
+                                </div>
+                                <div class="mp-tab" id="mp-tab-2" onclick="mpSwitchTab(2)">
+                                    <div class="mp-tab-icon">🗺</div>
+                                    <div class="mp-tab-label">地图</div>
+                                </div>
+                                <div class="mp-tab" id="mp-tab-3" onclick="mpSwitchTab(3)">
+                                    <div class="mp-tab-icon">🚁</div>
+                                    <div class="mp-tab-label">无人机</div>
+                                </div>
+                                <div class="mp-tab" id="mp-tab-4" onclick="mpSwitchTab(4)">
+                                    <div class="mp-tab-icon">👤</div>
+                                    <div class="mp-tab-label">我的</div>
+                                </div>
+                            </div>
+                        </div><!-- /miniapp-container -->
+                    </div><!-- /iphone-screen -->
+                    <div class="iphone-home-bar"></div>
+                </div><!-- /iphone-frame -->
+                <div style="font-size:11px;color:#374151;text-align:center;letter-spacing:1px;">iPhone 15 Pro · 铁路预警小程序</div>
+            </div><!-- /wxapp-phone-wrap -->
+        </div><!-- /wxapp-inner -->
+    </section>
+    <!-- ===== /微信小程序手机端预览 ===== -->
+
+    <script>
+    /* ---- 手机端时钟 ---- */
+    (function mpClock() {
+        function updateClock() {
+            var d = new Date();
+            var h = d.getHours().toString().padStart(2,'0');
+            var m = d.getMinutes().toString().padStart(2,'0');
+            var el = document.getElementById('mp-clock');
+            if (el) el.textContent = h + ':' + m;
+        }
+        updateClock();
+        setInterval(updateClock, 10000);
+    })();
+
+    /* ---- Tab 切换 ---- */
+    function mpSwitchTab(idx) {
+        var pages = ['mp-page-home','mp-page-alert','mp-page-map','mp-page-uav','mp-page-profile'];
+        pages.forEach(function(id, i) {
+            var pg = document.getElementById(id);
+            var tb = document.getElementById('mp-tab-' + i);
+            if (!pg || !tb) return;
+            if (i === idx) {
+                pg.classList.add('active');
+                tb.classList.add('active');
+            } else {
+                pg.classList.remove('active');
+                tb.classList.remove('active');
+            }
+        });
+        /* 切到地图页时重绘 */
+        if (idx === 2) setTimeout(drawMiniMap, 50);
+        /* 切到无人机页时重绘 */
+        if (idx === 3) setTimeout(drawUavFeed, 50);
+    }
+
+    /* ---- 预警筛选 ---- */
+    function mpAlertTab(el, level) {
+        var filters = document.querySelectorAll('.mp-afilter');
+        filters.forEach(function(f) { f.classList.remove('active'); });
+        el.classList.add('active');
+        var cards = document.querySelectorAll('#mpAlertList .mp-alert-card');
+        cards.forEach(function(c) {
+            c.style.display = (level === 'all' || c.dataset.level === level) ? 'block' : 'none';
+        });
+    }
+
+    /* ---- 降水预报小图 ---- */
+    function drawPrecipChart() {
+        var canvas = document.getElementById('mpPrecipChart');
+        if (!canvas) return;
+        var dpr = window.devicePixelRatio || 1;
+        var w = canvas.offsetWidth || 260, h = 60;
+        canvas.width = w * dpr; canvas.height = h * dpr;
+        canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+        var ctx = canvas.getContext('2d');
+        ctx.scale(dpr, dpr);
+
+        var vals = [0.2, 0.8, 2.1, 4.5, 6.2, 8.4, 7.1, 5.3, 3.8, 2.4, 1.6, 1.0];
+        var labels = ['0','5','10','15','20','25','30','35','40','45','50','55'];
+        var n = vals.length;
+        var maxV = Math.max.apply(null, vals);
+        var barW = (w - 16) / n;
+        var padB = 14, padT = 4;
+        var chartH = h - padB - padT;
+
+        /* 网格 */
+        ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+        ctx.lineWidth = 1;
+        [0.25,0.5,0.75,1].forEach(function(r) {
+            var y = padT + chartH * (1 - r);
+            ctx.beginPath(); ctx.moveTo(8, y); ctx.lineTo(w - 8, y); ctx.stroke();
+        });
+
+        /* 柱子 */
+        vals.forEach(function(v, i) {
+            var ratio = v / maxV;
+            var bh = chartH * ratio;
+            var x = 8 + i * barW + barW * 0.15;
+            var bwReal = barW * 0.7;
+            var y = padT + chartH - bh;
+            var grad = ctx.createLinearGradient(x, y, x, y + bh);
+            if (v > 5) {
+                grad.addColorStop(0, 'rgba(239,68,68,0.9)');
+                grad.addColorStop(1, 'rgba(249,115,22,0.6)');
+            } else if (v > 2) {
+                grad.addColorStop(0, 'rgba(245,158,11,0.9)');
+                grad.addColorStop(1, 'rgba(234,179,8,0.6)');
+            } else {
+                grad.addColorStop(0, 'rgba(34,211,238,0.9)');
+                grad.addColorStop(1, 'rgba(59,130,246,0.5)');
+            }
+            ctx.fillStyle = grad;
+            var r = Math.min(2, bwReal / 2);
+            ctx.beginPath();
+            ctx.roundRect ? ctx.roundRect(x, y, bwReal, bh, [r, r, 0, 0])
+                          : ctx.rect(x, y, bwReal, bh);
+            ctx.fill();
+
+            /* 时间标签 */
+            if (i % 3 === 0) {
+                ctx.fillStyle = 'rgba(100,116,139,0.8)';
+                ctx.font = '7px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(labels[i]+'m', x + bwReal / 2, h - 2);
+            }
+        });
+    }
+
+    /* ---- 风险热力小地图 ---- */
+    function drawMiniMap() {
+        var canvas = document.getElementById('mpMiniMap');
+        if (!canvas) return;
+        var dpr = window.devicePixelRatio || 1;
+        var w = canvas.offsetWidth || 288, h = 160;
+        canvas.width = w * dpr; canvas.height = h * dpr;
+        canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+        var ctx = canvas.getContext('2d');
+        ctx.scale(dpr, dpr);
+
+        /* 背景 */
+        var bg = ctx.createLinearGradient(0, 0, w, h);
+        bg.addColorStop(0, '#050a15');
+        bg.addColorStop(1, '#080f1e');
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, w, h);
+
+        /* 网格 */
+        ctx.strokeStyle = 'rgba(6,182,212,0.06)';
+        ctx.lineWidth = 1;
+        for (var gx = 0; gx < w; gx += 20) { ctx.beginPath(); ctx.moveTo(gx,0); ctx.lineTo(gx,h); ctx.stroke(); }
+        for (var gy = 0; gy < h; gy += 20) { ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(w,gy); ctx.stroke(); }
+
+        /* 铁路主线（从左到右弯曲） */
+        ctx.beginPath();
+        ctx.moveTo(10, h * 0.55);
+        ctx.bezierCurveTo(w*0.25, h*0.45, w*0.5, h*0.6, w*0.75, h*0.5);
+        ctx.bezierCurveTo(w*0.88, h*0.45, w*0.95, h*0.48, w-10, h*0.5);
+        ctx.strokeStyle = 'rgba(148,163,184,0.5)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        /* 热力点 */
+        var hots = [
+            {x:0.28, y:0.45, r:22, color:[239,68,68]},
+            {x:0.48, y:0.60, r:18, color:[249,115,22]},
+            {x:0.68, y:0.50, r:14, color:[234,179,8]},
+            {x:0.15, y:0.55, r:10, color:[249,115,22]},
+            {x:0.82, y:0.48, r:8,  color:[34,197,94]},
+        ];
+        hots.forEach(function(p) {
+            var cx = p.x * w, cy = p.y * h;
+            var grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, p.r);
+            grad.addColorStop(0, 'rgba('+p.color[0]+','+p.color[1]+','+p.color[2]+',0.55)');
+            grad.addColorStop(1, 'rgba('+p.color[0]+','+p.color[1]+','+p.color[2]+',0)');
+            ctx.fillStyle = grad;
+            ctx.beginPath(); ctx.arc(cx, cy, p.r, 0, Math.PI*2); ctx.fill();
+        });
+
+        /* 标记点 */
+        var marks = [
+            {x:0.28, y:0.45, c:'#ef4444', label:'K128'},
+            {x:0.48, y:0.60, c:'#f97316', label:'K215'},
+            {x:0.68, y:0.50, c:'#eab308', label:'K301'},
+        ];
+        marks.forEach(function(m) {
+            var mx = m.x * w, my = m.y * h;
+            ctx.fillStyle = m.c;
+            ctx.beginPath(); ctx.arc(mx, my, 4, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = 'rgba(255,255,255,0.75)';
+            ctx.font = '8px Orbitron, monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText(m.label, mx, my - 7);
+        });
+
+        /* 当前位置光标 */
+        var px = w*0.15, py = h*0.55;
+        ctx.beginPath(); ctx.arc(px, py, 5, 0, Math.PI*2);
+        ctx.fillStyle = '#22d3ee';
+        ctx.fill();
+        ctx.beginPath(); ctx.arc(px, py, 9, 0, Math.PI*2);
+        ctx.strokeStyle = 'rgba(34,211,238,0.4)';
+        ctx.lineWidth = 1.5; ctx.stroke();
+    }
+
+    /* ---- UAV 模拟画面 ---- */
+    var _uavFrame = 0;
+    function drawUavFeed() {
+        var canvas = document.getElementById('mpUavFeed');
+        if (!canvas) return;
+        var dpr = window.devicePixelRatio || 1;
+        var w = canvas.offsetWidth || 256, h = canvas.offsetHeight || 140;
+        if (canvas.width !== w*dpr) {
+            canvas.width = w*dpr; canvas.height = h*dpr;
+            canvas.style.width = w+'px'; canvas.style.height = h+'px';
+        }
+        var ctx = canvas.getContext('2d');
+        ctx.scale(dpr, dpr); ctx.save();
+
+        var t = _uavFrame * 0.03;
+        /* 地面背景 */
+        var bg = ctx.createLinearGradient(0,0,0,h);
+        bg.addColorStop(0,'#0a1628'); bg.addColorStop(1,'#1a2e4a');
+        ctx.fillStyle = bg; ctx.fillRect(0,0,w,h);
+
+        /* 地形线 */
+        ctx.beginPath(); ctx.moveTo(0, h*0.65);
+        for (var xi = 0; xi <= w; xi+=4) {
+            ctx.lineTo(xi, h*0.65 + Math.sin(xi*0.04 + t)*6 + Math.sin(xi*0.015)*10);
+        }
+        ctx.lineTo(w,h); ctx.lineTo(0,h); ctx.closePath();
+        ctx.fillStyle = '#1e3a2a'; ctx.fill();
+
+        /* 铁路 */
+        ctx.beginPath(); ctx.moveTo(0, h*0.62 + Math.sin(t)*3);
+        ctx.lineTo(w, h*0.60 + Math.sin(t+1)*3);
+        ctx.strokeStyle = 'rgba(200,180,140,0.6)'; ctx.lineWidth = 2; ctx.stroke();
+
+        /* 扫描线 */
+        var scanY = ((t * 30) % h);
+        ctx.fillStyle = 'rgba(6,182,212,0.06)';
+        ctx.fillRect(0, scanY, w, 2);
+
+        /* 绿色热成像噪点 */
+        for (var ni=0;ni<8;ni++) {
+            var nx = (Math.sin(ni*17.3+t)*0.5+0.5)*w;
+            var ny = (Math.sin(ni*9.7+t*0.7)*0.5+0.5)*h*0.7;
+            var nr = 3+Math.sin(ni+t)*1.5;
+            var ng = ctx.createRadialGradient(nx,ny,0,nx,ny,nr);
+            ng.addColorStop(0,'rgba(34,197,94,0.5)');
+            ng.addColorStop(1,'rgba(34,197,94,0)');
+            ctx.fillStyle = ng;
+            ctx.beginPath(); ctx.arc(nx,ny,nr,0,Math.PI*2); ctx.fill();
+        }
+
+        ctx.restore();
+        _uavFrame++;
+        /* 仅在无人机页时循环 */
+        var uavPage = document.getElementById('mp-page-uav');
+        if (uavPage && uavPage.classList.contains('active')) {
+            requestAnimationFrame(drawUavFeed);
+        }
+    }
+
+    /* ---- 初始化 ---- */
+    (function mpInit() {
+        function init() {
+            drawPrecipChart();
+            /* 地图页初次不可见，切换后再画 */
+        }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            setTimeout(init, 200);
+        }
+    })();
+    </script>
+
+    <!-- 页脚 -->
+    <footer class="relative py-20 border-t border-white/10">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-12 mb-12">
+                <div class="col-span-2">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600"></div>
+                        <span class="font-orbitron font-bold text-xl">LoongClaw</span>
+                    </div>
+                    <p class="text-gray-400 text-sm leading-relaxed max-w-md">
+                        智驭苍穹 · 守路安澜——基于LoongClaw动态路由空天地多模态铁路短临致灾风险孪生预警系统，守护铁路大动脉安全。
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4 text-cyan-400 font-orbitron">系统</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="javascript:void(0)" onclick="navigateTo('core.html')" class="hover:text-white transition-colors">LoongClaw框架</a></li>
+                        <li><a href="javascript:void(0)" onclick="navigateTo('system.html')" class="hover:text-white transition-colors">数字孪生</a></li>
+                        <li><a href="javascript:void(0)" onclick="navigateTo('universe.html')" class="hover:text-white transition-colors">无人机系统</a></li>
+                        <li><a href="javascript:void(0)" onclick="navigateTo('core.html')" class="hover:text-white transition-colors">数据融合</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4 text-cyan-400 font-orbitron">联系</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><span onclick="openResumeModal()" class="hover:text-white transition-colors cursor-pointer">兰州大学 · 萃英学院 · 彭小溪</span></li>
+                        <li><a href="https://atmos.lzu.edu.cn/html/dqxy/lddqxy/shizitd/jiaoshou/1826800416966328321.html" target="_blank" class="hover:text-white transition-colors">指导老师：大气科学学院 胡淑娟教授</a></li>
+                        <li>其他</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
+                <p>&copy; 2026 智驭苍穹 · 守路安澜. All rights reserved.</p>
+                <div class="flex gap-6">
+                    <span class="font-orbitron">AI + METEOROLOGY + RAILWAY + AEROSPACE</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ==================== 登录验证逻辑 ====================
+        const VALID_ACCOUNT = "pxx";
+        const VALID_PASSWORD = "2023";
+
+        function validateLogin() {
+            const accInput = document.getElementById('acc').value.trim();
+            const pwdInput = document.getElementById('pwd').value;
+            const tishi = document.getElementById('login-tishi');
+            
+            if (accInput === VALID_ACCOUNT && pwdInput === VALID_PASSWORD) {
+                tishi.innerHTML = "<font color='#00ffaa'>✓ 身份验证通过，进入系统...</font>";
+                const overlay = document.getElementById('login-overlay');
+                overlay.classList.add('login-hidden');
+                setTimeout(() => {
+                    document.getElementById('loader').classList.add('loader-hidden');
+                }, 200);
+                localStorage.setItem('openclaw_session', 'true');
+            } else {
+                tishi.innerHTML = "<font color='#ff5555'>✗ 账号或密码错误，请重试</font>";
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+                        const pwdField = document.getElementById('pwd');
+            const accField = document.getElementById('acc');
+            if(pwdField) {
+                pwdField.addEventListener('keypress', (e) => { if(e.key === 'Enter') validateLogin(); });
+                accField.addEventListener('keypress', (e) => { if(e.key === 'Enter') validateLogin(); });
+            }
+        });
+
+        // ==================== PDF项目书预览弹窗逻辑 ====================
+        function openPdfModal() {
+            var overlay = document.getElementById('pdf-modal-overlay');
+            var iframe = document.getElementById('pdf-viewer');
+            var loading = document.getElementById('pdf-modal-loading');
+            var win = document.getElementById('pdf-modal-window');
+            
+            iframe.src = 'assets/pdf/萃英基金申报书.pdf';
+            
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            loading.classList.add('active');
+            
+            iframe.onload = function() {
+                loading.classList.remove('active');
+            };
+            iframe.onerror = function() {
+                loading.textContent = 'PDF加载失败，请检查文件路径';
+            };
+            
+            if (win) {
+                win.style.position = '';
+                win.style.left = '';
+                win.style.top = '';
+                win.style.margin = '';
+                win.style.transform = '';
+            }
+        }
+
+        function closePdfModal(e) {
+            if (e && e.target !== e.currentTarget && e.target.id !== 'pdf-modal-overlay' && e.target.id !== 'pdf-modal-close') return;
+            
+            var overlay = document.getElementById('pdf-modal-overlay');
+            var iframe = document.getElementById('pdf-viewer');
+            var loading = document.getElementById('pdf-modal-loading');
+            
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+            if (loading) loading.classList.remove('active');
+            
+            setTimeout(function() {
+                if (iframe) iframe.src = '';
+            }, 350);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var header = document.getElementById('pdf-modal-header');
+            var win = document.getElementById('pdf-modal-window');
+            if (!header || !win) return;
+            
+            var isDragging = false;
+            var startX, startY, initialLeft, initialTop;
+            
+            header.addEventListener('mousedown', function(e) {
+                if (e.target.id === 'pdf-modal-close') return;
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                var rect = win.getBoundingClientRect();
+                initialLeft = rect.left;
+                initialTop = rect.top;
+                
+                win.style.position = 'fixed';
+                win.style.left = initialLeft + 'px';
+                win.style.top = initialTop + 'px';
+                win.style.margin = '0';
+                win.style.transform = 'none';
+                win.style.transition = 'none';
+            });
+            
+            document.addEventListener('mousemove', function(e) {
+                if (!isDragging) return;
+                e.preventDefault();
+                var dx = e.clientX - startX;
+                var dy = e.clientY - startY;
+                win.style.left = (initialLeft + dx) + 'px';
+                win.style.top = (initialTop + dy) + 'px';
+            });
+            
+            document.addEventListener('mouseup', function() {
+                isDragging = false;
+            });
+        });
+
+        // ==================== 个人简历PDF预览弹窗逻辑 ====================
+        function openResumeModal() {
+            var overlay = document.getElementById('resume-modal-overlay');
+            var iframe = document.getElementById('resume-viewer');
+            var loading = document.getElementById('resume-modal-loading');
+            var win = document.getElementById('resume-modal-window');
+            
+            iframe.src = 'assets/pdf/个人简历.pdf';
+            
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            loading.classList.add('active');
+            
+            iframe.onload = function() {
+                loading.classList.remove('active');
+            };
+            iframe.onerror = function() {
+                loading.textContent = 'PDF加载失败，请检查文件路径';
+            };
+            
+            if (win) {
+                win.style.position = '';
+                win.style.left = '';
+                win.style.top = '';
+                win.style.margin = '';
+                win.style.transform = '';
+            }
+        }
+
+        function closeResumeModal(e) {
+            if (e && e.target !== e.currentTarget && e.target.id !== 'resume-modal-overlay' && e.target.id !== 'resume-modal-close') return;
+            
+            var overlay = document.getElementById('resume-modal-overlay');
+            var iframe = document.getElementById('resume-viewer');
+            var loading = document.getElementById('resume-modal-loading');
+            
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+            if (loading) loading.classList.remove('active');
+            
+            setTimeout(function() {
+                if (iframe) iframe.src = '';
+            }, 350);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var header = document.getElementById('resume-modal-header');
+            var win = document.getElementById('resume-modal-window');
+            if (!header || !win) return;
+            
+            var isDragging = false;
+            var startX, startY, initialLeft, initialTop;
+            
+            header.addEventListener('mousedown', function(e) {
+                if (e.target.id === 'resume-modal-close') return;
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                var rect = win.getBoundingClientRect();
+                initialLeft = rect.left;
+                initialTop = rect.top;
+                
+                win.style.position = 'fixed';
+                win.style.left = initialLeft + 'px';
+                win.style.top = initialTop + 'px';
+                win.style.margin = '0';
+                win.style.transform = 'none';
+                win.style.transition = 'none';
+            });
+            
+            document.addEventListener('mousemove', function(e) {
+                if (!isDragging) return;
+                e.preventDefault();
+                var dx = e.clientX - startX;
+                var dy = e.clientY - startY;
+                win.style.left = (initialLeft + dx) + 'px';
+                win.style.top = (initialTop + dy) + 'px';
+            });
+            
+            document.addEventListener('mouseup', function() {
+                isDragging = false;
+            });
+        });
+
+        // ==================== 多模态监测大屏跳转 ====================
+        function openMonitorModal() {
+            window.open('dashboard.html', '_blank');
+        }
+
+        function closeMonitorModal() {}
+
+        function closeParamPanel() {}
+
+        // ==================== 原有代码逻辑（未修改）====================
+        gsap.registerPlugin(ScrollTrigger);
+
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
+            setTimeout(() => {
+                loader.classList.add('loader-hidden');
+            }, 1500);
+        });
+
+        // 星空背景生成
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+        
+        let width, height;
+        let stars = [];
+        let shootingStars = [];
+        
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+            initStars();
+        }
+        
+        function initStars() {
+            stars = [];
+            var densityFactor = window.starDensityFactor || 1;
+            const numStars = Math.floor((width * height) / 3000 * densityFactor);
+            
+            for (let i = 0; i < numStars; i++) {
+                stars.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    radius: Math.random() * 1.5,
+                    alpha: Math.random(),
+                    speed: Math.random() * 0.05
+                });
+            }
+        }
+        
+        class ShootingStar {
+            constructor() {
+                this.reset();
+            }
+            
+            reset() {
+                this.x = Math.random() * width;
+                this.y = 0;
+                this.length = Math.random() * 80 + 20;
+                this.speed = Math.random() * 10 + 5;
+                this.angle = Math.PI / 4;
+                this.alpha = 1;
+                this.active = true;
+            }
+            
+            update() {
+                this.x += Math.cos(this.angle) * this.speed;
+                this.y += Math.sin(this.angle) * this.speed;
+                this.alpha -= 0.02;
+                
+                if (this.alpha <= 0 || this.x > width || this.y > height) {
+                    this.active = false;
+                }
+            }
+            
+            draw() {
+                if (!this.active) return;
+                
+                ctx.save();
+                ctx.strokeStyle = `rgba(255, 255, 255, ${this.alpha})`;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y);
+                ctx.lineTo(this.x - this.length * Math.cos(this.angle), this.y - this.length * Math.sin(this.angle));
+                ctx.stroke();
+                
+                ctx.fillStyle = `rgba(0, 212, 255, ${this.alpha})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+        
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            
+            stars.forEach(star => {
+                star.alpha += star.speed;
+                if (star.alpha > 1 || star.alpha < 0.2) star.speed *= -1;
+                
+                ctx.save();
+                ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha})`;
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            });
+            
+            if (Math.random() < 0.02) {
+                shootingStars.push(new ShootingStar());
+            }
+            
+            shootingStars = shootingStars.filter(star => star.active);
+            shootingStars.forEach(star => {
+                star.update();
+                star.draw();
+            });
+            
+            requestAnimationFrame(animate);
+        }
+        
+        window.addEventListener('resize', resize);
+        resize();
+        animate();
+        
+        // 导航栏滚动效果
+        let lastScroll = 0;
+        const navbar = document.getElementById('navbar');
+        
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            
+            if (currentScroll > 100) {
+                navbar.classList.add('bg-black/80', 'backdrop-blur-md');
+            } else {
+                navbar.classList.remove('bg-black/80', 'backdrop-blur-md');
+            }
+            
+            lastScroll = currentScroll;
+        });
+        
+        // 移动端菜单切换
+        function toggleMenu() {
+            const menu = document.getElementById('mobile-menu');
+            if (menu.classList.contains('translate-x-full')) {
+                menu.classList.remove('translate-x-full');
+            } else {
+                menu.classList.add('translate-x-full');
+            }
+        }
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+        
+        // 鼠标跟随视差效果（仅桌面端）
+        if (window.matchMedia('(pointer: fine)').matches) {
+            document.addEventListener('mousemove', (e) => {
+                const x = (window.innerWidth / 2 - e.clientX) / 50;
+                const y = (window.innerHeight / 2 - e.clientY) / 50;
+                
+                document.querySelectorAll('.glass-card').forEach((card) => {
+                    if (card.closest('#universe')) return;
+                    card.style.transform = `perspective(1000px) rotateY(${x * 0.05}deg) rotateX(${y * 0.05}deg)`;
+                });
+            });
+        }
+
+        // ==================== 鼠标拖尾粒子特效逻辑 ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            const trailContainer = document.getElementById('trail-container');
+            const particles = [];
+
+            document.addEventListener('mousemove', (e) => {
+                createParticle(e.clientX, e.clientY);
+            });
+
+            function createParticle(x, y) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                particle.style.left = `${x}px`;
+                particle.style.top = `${y}px`;
+                particle.style.backgroundColor = getRandomColor();
+                trailContainer.appendChild(particle);
+                particles.push(particle);
+
+                setTimeout(() => {
+                    particle.classList.add('fade');
+                    particle.addEventListener('animationend', () => {
+                        particle.remove();
+                        particles.splice(particles.indexOf(particle), 1);
+                    });
+                }, 100);
+            }
+
+            function getRandomColor() {
+                const letters = '0123456789ABCDEF';
+                let color = '#';
+                for (let i = 0; i < 6; i++) {
+                    color += letters[Math.floor(Math.random() * 16)];
+                }
+                return color;
+            }
+
+            setInterval(() => {
+                particles.forEach(particle => {
+                    if (particle.classList.contains('fade')) {
+                        particle.remove();
+                        particles.splice(particles.indexOf(particle), 1);
+                    }
+                });
+            }, 1000);
+        });
+
+        // ==================== 音乐触发逻辑 ====================
+        (function() {
+            var audio = null;
+            var isPlaying = false;
+            var noteInterval = null;
+            var orbital = document.getElementById('musicNoteOrbital');
+            var trigger = document.getElementById('musicTrigger');
+
+            window.toggleMusic = function() {
+                if (!audio) {
+                    audio = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+                    audio.loop = true;
+                    audio.volume = 0.4;
+                }
+
+                if (isPlaying) {
+                    audio.pause();
+                    isPlaying = false;
+                    trigger.classList.remove('playing');
+                    if (orbital) orbital.classList.remove('playing');
+                    document.getElementById('musicIconPlay').style.display = '';
+                    document.getElementById('musicIconPause').style.display = 'none';
+                    stopFloatingNotes();
+                } else {
+                    audio.play().catch(function(e) {
+                        console.log('音频播放需要用户交互:', e);
+                    });
+                    isPlaying = true;
+                    trigger.classList.add('playing');
+                    if (orbital) orbital.classList.add('playing');
+                    document.getElementById('musicIconPlay').style.display = 'none';
+                    document.getElementById('musicIconPause').style.display = '';
+                    startFloatingNotes();
+                }
+            };
+
+            function startFloatingNotes() {
+                var notes = ['♪', '♫', '♬', '♩', '♭', '♮'];
+                noteInterval = setInterval(function() {
+                    createFloatingNote(notes[Math.floor(Math.random() * notes.length)]);
+                }, 800);
+            }
+
+            function stopFloatingNotes() {
+                if (noteInterval) {
+                    clearInterval(noteInterval);
+                    noteInterval = null;
+                }
+            }
+
+            function createFloatingNote(noteChar) {
+                var note = document.createElement('div');
+                note.className = 'music-note';
+                note.textContent = noteChar;
+                note.style.left = (Math.random() * window.innerWidth) + 'px';
+                note.style.bottom = '80px';
+
+                var colors = ['#00d4ff', '#a855f7', '#ffd700', '#34d399', '#f472b6'];
+                note.style.color = colors[Math.floor(Math.random() * colors.length)];
+                note.style.fontSize = (16 + Math.random() * 16) + 'px';
+
+                document.body.appendChild(note);
+
+                requestAnimationFrame(function() {
+                    note.classList.add('active');
+                });
+
+                setTimeout(function() {
+                    note.remove();
+                }, 4000);
+            }
+        })();
+    
+        // ==================== SPA 页面导航（丝滑过渡）====================
+                function navigateTo(targetPage) {
+            var overlay = document.getElementById('page-transition-overlay');
+            if (overlay) {
+                overlay.classList.add('active');
+                setTimeout(function() {
+                    localStorage.setItem('openclaw_session', 'true');
+                    window.location.href = targetPage;
+                }, 600);
+            } else {
+                localStorage.setItem('openclaw_session', 'true');
+                window.location.href = targetPage;
+            }
+        }
+
+</script>
+
+<!-- ========== UI Enhancement Layer (non-destructive) ========== -->
+<style>
+/* ── 1. 移动端菜单关闭按钮 ── */
+#mobile-menu .menu-close-btn {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: rgba(224,231,255,0.7);
+    cursor: pointer;
+    transition: all 0.3s;
+    z-index: 10;
+}
+#mobile-menu .menu-close-btn:hover {
+    background: rgba(0,212,255,0.15);
+    border-color: rgba(0,212,255,0.5);
+    color: #00d4ff;
+    transform: rotate(90deg);
+}
+#mobile-menu .menu-close-btn:active {
+    transform: rotate(90deg) scale(0.92);
+}
+
+/* ── 2. 平滑滚动 ── */
+html { scroll-behavior: smooth; }
+
+/* ── 3. 文字选择样式 ── */
+::selection {
+    background: rgba(0, 212, 255, 0.3);
+    color: #fff;
+}
+::-moz-selection {
+    background: rgba(0, 212, 255, 0.3);
+    color: #fff;
+}
+
+/* ── 4. 键盘焦点样式 ── */
+*:focus-visible {
+    outline: 2px solid rgba(0, 212, 255, 0.7);
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+a:focus-visible, button:focus-visible {
+    outline: 2px solid rgba(0, 212, 255, 0.7);
+    outline-offset: 3px;
+}
+
+/* ── 5. 减少动画偏好 ── */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    #page-transition-overlay { display: none !important; }
+}
+
+/* ── 6. Firefox 滚动条 ── */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,212,255,0.3) var(--space-black, #050508);
+}
+
+/* ── 7. 导航栏汉堡按钮触摸反馈 ── */
+.nav-hamburger {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+.nav-hamburger:active svg {
+    transform: scale(0.85);
+    transition: transform 0.1s;
+}
+
+/* ── 8. 移动端菜单链接触摸反馈 ── */
+#mobile-menu a, #mobile-menu button {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: all 0.2s;
+}
+#mobile-menu a:active, #mobile-menu button:active {
+    transform: scale(0.95);
+}
+
+/* ── 9. 导航链接平滑下划线过渡增强 ── */
+nav a span {
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── 10. 按钮全局触摸反馈 ── */
+button, .glass-card, a[class*="glass"] {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* ── 11. 打印样式 ── */
+@media print {
+    html { scroll-behavior: auto !important; }
+    body { background: #fff !important; color: #111 !important; overflow: visible !important; }
+    #starfield, .scan-line, .nebula-bg, #page-transition-overlay, .music-trigger,
+    .loader, #mouse-trail-container, nav, #mobile-menu, video, canvas { display: none !important; }
+    .glass-panel, .glass-card { background: #f8f9fa !important; border: 1px solid #ddd !important; backdrop-filter: none !important; box-shadow: none !important; }
+    .text-glow { text-shadow: none !important; }
+    .font-orbitron { font-family: 'Noto Sans SC', sans-serif !important; }
+    a[href]::after { content: ' (' attr(href) ')'; font-size: 0.8em; color: #555; }
+    section { break-inside: avoid; }
+}
+</style>
+
+<script>
+(function(){
+    /* ── A. 移动端菜单：添加关闭按钮 ── */
+    var menu = document.getElementById('mobile-menu');
+    if (menu && !menu.querySelector('.menu-close-btn')) {
+        var closeBtn = document.createElement('button');
+        closeBtn.className = 'menu-close-btn';
+        closeBtn.setAttribute('aria-label', '关闭菜单');
+        closeBtn.innerHTML = '<svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>';
+        closeBtn.addEventListener('click', function(){
+            if (typeof toggleMenu === 'function') toggleMenu();
+            else {
+                menu.classList.add('translate-x-full');
+                menu.classList.remove('translate-x-0');
+            }
+        });
+        menu.insertBefore(closeBtn, menu.firstChild);
+    }
+
+    /* ── B. ESC 键关闭移动端菜单 ── */
+    document.addEventListener('keydown', function(e){
+        if (e.key === 'Escape') {
+            var m = document.getElementById('mobile-menu');
+            if (m && !m.classList.contains('translate-x-full')) {
+                if (typeof toggleMenu === 'function') toggleMenu();
+                else { m.classList.add('translate-x-full'); m.classList.remove('translate-x-0'); }
+                e.preventDefault();
+            }
+        }
+    });
+
+    /* ── C. 汉堡按钮添加 aria 属性 ── */
+    document.querySelectorAll('.nav-hamburger, button[onclick*="toggleMenu"]').forEach(function(btn){
+        if (!btn.getAttribute('aria-label')) btn.setAttribute('aria-label', '打开导航菜单');
+        if (!btn.getAttribute('aria-expanded')) btn.setAttribute('aria-expanded', 'false');
+        var origOnclick = btn.getAttribute('onclick');
+        if (origOnclick) {
+            btn.setAttribute('onclick', origOnclick + '; this.setAttribute("aria-expanded", !document.getElementById("mobile-menu").classList.contains("translate-x-full"))');
+        }
+    });
+
+    /* ── D. 导航添加 aria-label ── */
+    document.querySelectorAll('nav').forEach(function(n){
+        if (!n.getAttribute('role')) n.setAttribute('role', 'navigation');
+        if (!n.getAttribute('aria-label')) n.setAttribute('aria-label', '主导航');
+    });
+
+    /* ── E. 所有交互元素添加 role / title 增强 ── */
+    document.querySelectorAll('a[onclick], button[onclick]').forEach(function(el){
+        var txt = (el.textContent || '').trim();
+        if (txt && !el.getAttribute('aria-label') && !el.getAttribute('title')) {
+            el.setAttribute('aria-label', txt);
+        }
+    });
+
+    /* ── F. 图片懒加载 + onError 兜底 ── */
+    document.querySelectorAll('img:not([loading])').forEach(function(img){
+        img.setAttribute('loading', 'lazy');
+    });
+    document.querySelectorAll('img').forEach(function(img){
+        if (!img.dataset.errorBound) {
+            img.dataset.errorBound = '1';
+            img.addEventListener('error', function(){
+                if (!img.dataset.fallback) {
+                    img.dataset.fallback = '1';
+                    img.style.opacity = '0.15';
+                    img.style.minHeight = '120px';
+                    img.alt = img.alt || '(图片加载失败)';
+                }
+            });
+        }
+    });
+
+    /* ── G. 点击移动端菜单空白区域关闭 ── */
+    if (menu) {
+        menu.addEventListener('click', function(e){
+            if (e.target === menu && !menu.classList.contains('translate-x-full')) {
+                if (typeof toggleMenu === 'function') toggleMenu();
+                else { menu.classList.add('translate-x-full'); menu.classList.remove('translate-x-0'); }
+            }
+        });
+    }
+
+    /* ── H. 后台标签页暂停 Canvas 动画 ── */
+    var _originalRAF = window.requestAnimationFrame;
+    var _rafCallbacks = [];
+    window.requestAnimationFrame = function(cb) {
+        if (document.hidden) { _rafCallbacks.push(cb); return 0; }
+        return _originalRAF.call(window, cb);
+    };
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+            var pending = _rafCallbacks.splice(0);
+            pending.forEach(function(cb) { _originalRAF.call(window, cb); });
+        }
+    });
+})();
+</script>
+
+</body>
+</html>

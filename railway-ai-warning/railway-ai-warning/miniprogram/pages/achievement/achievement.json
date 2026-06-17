@@ -1,8 +1,0 @@
-{
-  "navigationBarTitleText": "成果验证",
-  "navigationBarBackgroundColor": "#00CC99",
-  "navigationBarTextStyle": "white",
-  "backgroundColor": "#F8F9FA",
-  "enablePullDownRefresh": false,
-  "usingComponents": {}
-}

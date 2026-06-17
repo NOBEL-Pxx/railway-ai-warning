@@ -1,24 +1,80 @@
-# 备份文件
-*-backup/
-*.tar.gz
-*.zip
+# ============================================
+# 智驭苍穹 · 守路安澜 — Railway AI Warning
+# ============================================
 
-# 私密配置
-project.private.config.json
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+dist/
+build/
 
-# 临时文件
-*.tmp
-*.log
-.DS_Store
-Thumbs.db
-
-# 未知文件
-ziMbfGWz
-ziYXnx90
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
 
 # IDE
 .idea/
 .vscode/
+*.swp
+*.swo
 
-# Node
-node_modules/
+# OS files
+.DS_Store
+Thumbs.db
+*.tmp
+*.log
+
+# AI assistants
+.workbuddy/
+.claude/
+.cursor/
+.copilot/
+
+# ============================================
+# Backend
+# ============================================
+backend/checkpoints/
+backend/outputs/
+backend/wandb/
+backend/logs/*.log
+backend/memory/*.json
+
+# ============================================
+# Web
+# ============================================
+# Generated daily reports (local artifacts)
+web/每日资讯报告_*.html
+
+# ============================================
+# Miniprogram
+# ============================================
+miniprogram/project.private.config.json
+
+# ============================================
+# Data (large files — use DVC or similar)
+# ============================================
+data/raw/
+data/processed/
+data/external/
+
+# ============================================
+# Research
+# ============================================
+research/convlstm/checkpoint_*.csv
+research/convlstm/save_model/
+research/convlstm/runs/
+research/convlstm/data/
+research/convlstm/*.png
+research/convlstm/__pycache__/
+
+# ============================================
+# Binaries & Archives
+# ============================================
+*.exe
+*.tar.gz
+*.zip
+*.docx

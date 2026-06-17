@@ -1,0 +1,93 @@
+# LoongClaw 配置文件
+
+# 项目信息
+project:
+  name: "铁路沿线短临降水智能预测"
+  author: "彭小溪"
+  start_date: "2026-04-01"
+  end_date: "2027-04-30"
+
+# 阶段定义
+phases:
+  - name: "数据治理"
+    start: "2026-04-01"
+    end: "2026-05-31"
+    tasks:
+      - "数据清洗"
+      - "特征工程"
+      - "基线模型验证"
+  
+  - name: "模型训练"
+    start: "2026-05-01"
+    end: "2026-08-31"
+    tasks:
+      - "模型架构设计"
+      - "超参数调优"
+      - "消融实验"
+  
+  - name: "系统集成"
+    start: "2026-08-01"
+    end: "2026-11-30"
+    tasks:
+      - "模块集成"
+      - "风险推演"
+      - "接口开发"
+  
+  - name: "验证评估"
+    start: "2026-12-01"
+    end: "2027-01-31"
+    tasks:
+      - "典型个例验证"
+      - "实地调研"
+      - "可用性评估"
+  
+  - name: "结题验收"
+    start: "2027-02-01"
+    end: "2027-04-30"
+    tasks:
+      - "论文撰写"
+      - "代码整理"
+      - "答辩准备"
+
+# 数据配置
+data:
+  era5:
+    variables: ["t2m", "d2m", "u10", "v10", "sp", "tp"]
+    resolution: 0.25
+  dem:
+    source: "SRTM"
+    resolution: 30
+  rainfall:
+    source: "兰州铁路局"
+    period: "2004-2024"
+
+# 模型配置
+model:
+  name: "MambaSwin-UNet-STA"
+  framework: "PyTorch Lightning"
+  base_channels: 64
+  time_steps: 6
+
+# 训练配置
+training:
+  epochs: 200
+  batch_size: 16
+  learning_rate: 0.0001
+  optimizer: "AdamW"
+  scheduler: "CosineAnnealingLR"
+
+# 评估配置
+evaluation:
+  metrics: ["TS", "POD", "FAR", "CSI"]
+  thresholds: [0.1, 1.0, 5.0, 10.0]
+
+# 记忆配置
+memory:
+  auto_save: true
+  max_entries: 10000
+  backup_interval: 7  # 天
+
+# 日志配置
+logging:
+  level: "INFO"
+  file: "logs/loongclaw.log"

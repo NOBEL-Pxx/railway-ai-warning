@@ -1,0 +1,349 @@
+<view class="page-container starfield-theme">
+  <!-- 星空背景层 -->
+  <view class="starfield-bg">
+    <view class="nebula-layer nebula-1"></view>
+    <view class="nebula-layer nebula-2"></view>
+    <view class="nebula-layer nebula-3"></view>
+    <view class="stars-layer">
+      <view class="star star-1"></view>
+      <view class="star star-2"></view>
+      <view class="star star-3"></view>
+      <view class="star star-4"></view>
+      <view class="star star-5"></view>
+      <view class="star star-6"></view>
+      <view class="star star-7"></view>
+      <view class="star star-8"></view>
+      <view class="star star-9"></view>
+      <view class="star star-10"></view>
+      <view class="star star-11"></view>
+      <view class="star star-12"></view>
+      <view class="star star-13"></view>
+      <view class="star star-14"></view>
+      <view class="star star-15"></view>
+      <view class="star star-16"></view>
+      <view class="star star-17"></view>
+      <view class="star star-18"></view>
+      <view class="star star-19"></view>
+      <view class="star star-20"></view>
+      <view class="star star-21"></view>
+      <view class="star star-22"></view>
+      <view class="star star-23"></view>
+      <view class="star star-24"></view>
+      <view class="star star-25"></view>
+      <view class="star star-26"></view>
+      <view class="star star-27"></view>
+      <view class="star star-28"></view>
+      <view class="star star-29"></view>
+      <view class="star star-30"></view>
+    </view>
+    <view class="milky-way"></view>
+    <view class="shooting-star shooting-1"></view>
+    <view class="shooting-star shooting-2"></view>
+    <view class="shooting-star shooting-3"></view>
+  </view>
+
+  <!-- 页面头部 -->
+  <view class="page-header stellar-header">
+    <view class="header-bg-pattern"></view>
+    <view class="header-content">
+      <view class="header-badge">
+        <view class="badge-star"></view>
+      </view>
+      <text class="header-subtitle stellar-header-sub">星火之证</text>
+      <text class="header-title stellar-header-title">成果验证</text>
+      <text class="header-desc stellar-header-desc">模型精度突破与实战检验</text>
+    </view>
+  </view>
+
+  <!-- 核心指标卡片 -->
+  <view class="section metrics-section stellar-section">
+    <view class="section-header">
+      <view class="header-star-small"></view>
+      <text class="section-label stellar-section-label">核心性能指标</text>
+    </view>
+    <view class="metrics-grid">
+      <view class="metric-card stellar-metric-card highlight">
+        <view class="metric-trend up stellar-trend">
+          <view class="trend-arrow up"></view>
+          15%
+        </view>
+        <text class="metric-value stellar-metric-value">0.82</text>
+        <text class="metric-label stellar-metric-label">强降水命中率</text>
+        <view class="metric-bar stellar-bar">
+          <view class="bar-fill stellar-bar-fill" style="width: 82%;"></view>
+        </view>
+      </view>
+      <view class="metric-card stellar-metric-card">
+        <view class="metric-trend down stellar-trend">
+          <view class="trend-arrow down"></view>
+          35%
+        </view>
+        <text class="metric-value stellar-metric-value low">0.18</text>
+        <text class="metric-label stellar-metric-label">空报率</text>
+        <view class="metric-bar stellar-bar">
+          <view class="bar-fill stellar-bar-fill low" style="width: 18%;"></view>
+        </view>
+      </view>
+      <view class="metric-card stellar-metric-card">
+        <view class="metric-trend up stellar-trend">
+          <view class="trend-arrow up"></view>
+          12%
+        </view>
+        <text class="metric-value stellar-metric-value">76.5%</text>
+        <text class="metric-label stellar-metric-label">灾害回溯吻合度</text>
+        <view class="metric-bar stellar-bar">
+          <view class="bar-fill stellar-bar-fill" style="width: 76.5%;"></view>
+        </view>
+      </view>
+      <view class="metric-card stellar-metric-card">
+        <view class="metric-trend up stellar-trend">
+          <view class="trend-arrow up"></view>
+          20%
+        </view>
+        <text class="metric-value stellar-metric-value">0.71</text>
+        <text class="metric-label stellar-metric-label">TS评分</text>
+        <view class="metric-bar stellar-bar">
+          <view class="bar-fill stellar-bar-fill" style="width: 71%;"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 对比图表 -->
+  <view class="section stellar-section">
+    <view class="section-header">
+      <view class="header-star-small"></view>
+      <text class="section-label stellar-section-label">与传统方法对比</text>
+    </view>
+    <view class="chart-card stellar-chart-card comparison-card">
+      <view class="chart-header">
+        <view class="legend-item">
+          <view class="legend-dot traditional"></view>
+          <text class="legend-text stellar-legend-text">传统方法</text>
+        </view>
+        <view class="legend-item">
+          <view class="legend-dot openclaw"></view>
+          <text class="legend-text stellar-legend-text">LoongClaw</text>
+        </view>
+      </view>
+      <view class="comparison-chart">
+        <view class="chart-row">
+          <text class="row-label stellar-row-label">命中率</text>
+          <view class="row-bars">
+            <view class="bar-wrapper stellar-bar-wrapper">
+              <view class="bar traditional" style="width: 67%;">0.67</view>
+            </view>
+            <view class="bar-wrapper stellar-bar-wrapper">
+              <view class="bar openclaw stellar-bar-openclaw" style="width: 82%;">0.82</view>
+            </view>
+          </view>
+        </view>
+        <view class="chart-row">
+          <text class="row-label stellar-row-label">TS评分</text>
+          <view class="row-bars">
+            <view class="bar-wrapper stellar-bar-wrapper">
+              <view class="bar traditional" style="width: 56%;">0.56</view>
+            </view>
+            <view class="bar-wrapper stellar-bar-wrapper">
+              <view class="bar openclaw stellar-bar-openclaw" style="width: 71%;">0.71</view>
+            </view>
+          </view>
+        </view>
+        <view class="chart-row">
+          <text class="row-label stellar-row-label">空报率</text>
+          <view class="row-bars">
+            <view class="bar-wrapper stellar-bar-wrapper">
+              <view class="bar traditional" style="width: 28%;">0.28</view>
+            </view>
+            <view class="bar-wrapper stellar-bar-wrapper">
+              <view class="bar openclaw stellar-bar-openclaw low" style="width: 18%;">0.18</view>
+            </view>
+          </view>
+        </view>
+        <view class="chart-row">
+          <text class="row-label stellar-row-label">响应时间</text>
+          <view class="row-bars">
+            <view class="bar-wrapper stellar-bar-wrapper">
+              <view class="bar traditional time-bar" style="width: 90%;">45min</view>
+            </view>
+            <view class="bar-wrapper stellar-bar-wrapper">
+              <view class="bar openclaw stellar-bar-openclaw time-bar" style="width: 10%;">5min</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 时间序列图表 -->
+  <view class="section stellar-section">
+    <view class="section-header">
+      <view class="header-star-small"></view>
+      <text class="section-label stellar-section-label">预报精度时间序列</text>
+    </view>
+    <view class="chart-card stellar-chart-card time-card">
+      <view class="time-series-chart">
+        <view class="chart-y-axis">
+          <text class="y-label stellar-axis-label">1.0</text>
+          <text class="y-label stellar-axis-label">0.8</text>
+          <text class="y-label stellar-axis-label">0.6</text>
+          <text class="y-label stellar-axis-label">0.4</text>
+          <text class="y-label stellar-axis-label">0.2</text>
+          <text class="y-label stellar-axis-label">0</text>
+        </view>
+        <view class="chart-area stellar-chart-area">
+          <view class="grid-lines">
+            <view class="grid-line stellar-grid-line"></view>
+            <view class="grid-line stellar-grid-line"></view>
+            <view class="grid-line stellar-grid-line"></view>
+            <view class="grid-line stellar-grid-line"></view>
+            <view class="grid-line stellar-grid-line"></view>
+          </view>
+          <view class="line-traditional stellar-line-trad"></view>
+          <view class="line-openclaw stellar-line-openclaw"></view>
+          <view class="data-points">
+            <view class="point traditional" style="left: 10%; bottom: 67%;"></view>
+            <view class="point traditional" style="left: 30%; bottom: 65%;"></view>
+            <view class="point traditional" style="left: 50%; bottom: 68%;"></view>
+            <view class="point traditional" style="left: 70%; bottom: 64%;"></view>
+            <view class="point traditional" style="left: 90%; bottom: 66%;"></view>
+            <view class="point openclaw stellar-point-openclaw" style="left: 10%; bottom: 80%;"></view>
+            <view class="point openclaw stellar-point-openclaw" style="left: 30%; bottom: 82%;"></view>
+            <view class="point openclaw stellar-point-openclaw" style="left: 50%; bottom: 81%;"></view>
+            <view class="point openclaw stellar-point-openclaw" style="left: 70%; bottom: 83%;"></view>
+            <view class="point openclaw stellar-point-openclaw" style="left: 90%; bottom: 82%;"></view>
+          </view>
+        </view>
+      </view>
+      <view class="chart-x-axis">
+        <text class="x-label stellar-axis-label">1h</text>
+        <text class="x-label stellar-axis-label">3h</text>
+        <text class="x-label stellar-axis-label">6h</text>
+        <text class="x-label stellar-axis-label">12h</text>
+        <text class="x-label stellar-axis-label">24h</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 实战案例 -->
+  <view class="section stellar-section">
+    <view class="section-header">
+      <view class="header-star-small"></view>
+      <text class="section-label stellar-section-label">实战验证案例</text>
+    </view>
+    <view class="case-list">
+      <view class="case-card stellar-case-card">
+        <view class="case-header">
+          <view class="case-icon-wrapper">
+            <view class="weather-star rain"></view>
+          </view>
+          <view class="case-info">
+            <text class="case-name stellar-case-name">2024年7月甘肃暴雨</text>
+            <text class="case-date stellar-case-date">2024.07.15 - 2024.07.18</text>
+          </view>
+          <view class="case-result success stellar-case-result">
+            <view class="check-star"></view>
+            成功预警
+          </view>
+        </view>
+        <view class="case-stats stellar-case-stats">
+          <view class="stat">
+            <text class="stat-value stellar-stat-value">6h</text>
+            <text class="stat-label stellar-stat-label">提前预警</text>
+          </view>
+          <view class="stat-divider stellar-stat-divider"></view>
+          <view class="stat">
+            <text class="stat-value stellar-stat-value">0.85</text>
+            <text class="stat-label stellar-stat-label">预报命中率</text>
+          </view>
+          <view class="stat-divider stellar-stat-divider"></view>
+          <view class="stat">
+            <text class="stat-value stellar-stat-value">0</text>
+            <text class="stat-label stellar-stat-label">伤亡事故</text>
+          </view>
+        </view>
+      </view>
+      
+      <view class="case-card stellar-case-card">
+        <view class="case-header">
+          <view class="case-icon-wrapper wind">
+            <view class="weather-star wind-icon"></view>
+          </view>
+          <view class="case-info">
+            <text class="case-name stellar-case-name">2024年3月横风预警</text>
+            <text class="case-date stellar-case-date">2024.03.22</text>
+          </view>
+          <view class="case-result success stellar-case-result">
+            <view class="check-star"></view>
+            成功预警
+          </view>
+        </view>
+        <view class="case-stats stellar-case-stats">
+          <view class="stat">
+            <text class="stat-value stellar-stat-value">2h</text>
+            <text class="stat-label stellar-stat-label">提前预警</text>
+          </view>
+          <view class="stat-divider stellar-stat-divider"></view>
+          <view class="stat">
+            <text class="stat-value stellar-stat-value">0.88</text>
+            <text class="stat-label stellar-stat-label">风速预报精度</text>
+          </view>
+          <view class="stat-divider stellar-stat-divider"></view>
+          <view class="stat">
+            <text class="stat-value stellar-stat-value">3</text>
+            <text class="stat-label stellar-stat-label">列车限速</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 认证与荣誉 -->
+  <view class="section stellar-section">
+    <view class="section-header">
+      <view class="header-star-small"></view>
+      <text class="section-label stellar-section-label">认证与荣誉</text>
+    </view>
+    <view class="honor-grid">
+      <view class="honor-card stellar-honor-card">
+        <view class="honor-icon-wrapper cert">
+          <view class="honor-star cert-star"></view>
+        </view>
+        <text class="honor-title stellar-honor-title">铁路行业认证</text>
+        <text class="honor-desc stellar-honor-desc">通过中国铁路科学研究院权威检测</text>
+      </view>
+      <view class="honor-card stellar-honor-card">
+        <view class="honor-icon-wrapper copyright">
+          <view class="honor-star copy-star"></view>
+        </view>
+        <text class="honor-title stellar-honor-title">软件著作权</text>
+        <text class="honor-desc stellar-honor-desc">获得3项核心软件著作权登记</text>
+      </view>
+      <view class="honor-card stellar-honor-card">
+        <view class="honor-icon-wrapper paper">
+          <view class="honor-star paper-star"></view>
+        </view>
+        <text class="honor-title stellar-honor-title">学术论文</text>
+        <text class="honor-desc stellar-honor-desc">发表SCI/EI论文5篇</text>
+      </view>
+      <view class="honor-card stellar-honor-card">
+        <view class="honor-icon-wrapper medal">
+          <view class="honor-star medal-star"></view>
+        </view>
+        <text class="honor-title stellar-honor-title">竞赛获奖</text>
+        <text class="honor-desc stellar-honor-desc">挑战杯/互联网+省级金奖</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部按钮 -->
+  <view class="section action-section">
+    <button class="btn btn-primary stellar-btn-primary" bindtap="viewBusiness">
+      <view class="btn-star-icon"></view>
+      <text class="btn-text">了解商业模式</text>
+    </button>
+  </view>
+
+  <!-- 安全区域 -->
+  <view class="safe-area-bottom"></view>
+</view>

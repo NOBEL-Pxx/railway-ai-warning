@@ -1,0 +1,52 @@
+/* 技术标签样式 */
+.tech-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 12rpx 24rpx;
+  border-radius: 32rpx;
+  border: 2rpx solid;
+  transition: all 0.3s ease;
+}
+
+.tech-badge:active {
+  transform: scale(0.95);
+}
+
+.tech-badge.small {
+  padding: 8rpx 16rpx;
+}
+
+.tech-badge.large {
+  padding: 16rpx 32rpx;
+}
+
+.badge-icon {
+  width: 32rpx;
+  height: 32rpx;
+  margin-right: 12rpx;
+}
+
+.tech-badge.small .badge-icon {
+  width: 24rpx;
+  height: 24rpx;
+  margin-right: 8rpx;
+}
+
+.tech-badge.large .badge-icon {
+  width: 40rpx;
+  height: 40rpx;
+  margin-right: 16rpx;
+}
+
+.badge-name {
+  font-size: 24rpx;
+  font-weight: 600;
+}
+
+.tech-badge.small .badge-name {
+  font-size: 20rpx;
+}
+
+.tech-badge.large .badge-name {
+  font-size: 28rpx;
+}
