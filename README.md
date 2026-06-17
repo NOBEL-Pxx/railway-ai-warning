@@ -85,10 +85,13 @@ railway-ai-warning/
 │   │   ├── project_pipeline.png              #     项目流水线
 │   │   ├── ai_natural_systems.png            #     AI+自然系统
 │   │   └── physics_ai.png                    #     物理-AI融合
-│   └── animations/                           #   动态演示 (GIF)
+│   └── animations/                           #   动态演示 (GIF ×10)
 │       ├── data_fusion.gif                   #     多源数据融合
 │       ├── uav_demo_1~3.gif                  #     UAV 视觉识别
-│       └── physics_sim_1~3.gif               #     物理约束模拟
+│       ├── uav_flight_demo.gif               #     UAV 飞行演示
+│       ├── physics_sim_1~3.gif               #     物理约束模拟
+│       ├── physics_coupled_sim.gif           #     物理-AI耦合
+│       └── physics_insight.gif               #     物理-AI融合洞察
 │
 ├── 📁 backend/                               # 🐍 Python ML 框架
 │   ├── README.md                             #   后端文档
@@ -277,12 +280,21 @@ railway-ai-warning/
   <p><em>物理约束推理 1 · 物理约束推理 2 · 物理约束推理 3</em></p>
 </div>
 
+### 物理-AI 耦合模拟 & UAV 飞行演示
+
+<div align="center">
+  <img src="assets/animations/physics_coupled_sim.gif" alt="Physics-AI Coupled" width="48%">
+  <img src="assets/animations/uav_flight_demo.gif" alt="UAV Flight Demo" width="48%">
+  <p><em>物理-AI 耦合约束模拟 · 固定翼 UAV 视觉识别飞行演示</em></p>
+</div>
+
 ### 额外演示
 
 <div align="center">
-  <img src="assets/animations/uav_demo_3.gif" alt="UAV Demo 3" width="48%">
-  <img src="assets/animations/physics_insight.gif" alt="Physics Insight" width="48%">
-  <p><em>UAV 视觉识别演示 3 · 物理-AI 融合洞察</em></p>
+  <img src="assets/animations/uav_demo_3.gif" alt="UAV Demo 3" width="32%">
+  <img src="assets/animations/physics_insight.gif" alt="Physics Insight" width="32%">
+  <img src="assets/animations/data_fusion.gif" alt="Data Fusion" width="32%">
+  <p><em>UAV 视觉识别 3 · 物理-AI 融合洞察 · 多源数据融合</em></p>
 </div>
 
 ---
