@@ -22,12 +22,57 @@
 
 > **One-line pitch**: AI-empowered railway disaster prevention digital twin command center.
 
-### Key Innovations
+### 🎯 System Visualization
 
-- **MambaSwin-UNet-STA**: Novel deep learning architecture fusing Mamba state-space models, Swin Transformer, U-Net, and spatiotemporal attention
-- **LoongClaw MoE Framework**: Dynamic routing among AI/Physics/Meteorology/Railway four expert systems
-- **SCS-CN Hydrology Coupling**: Physics-constrained runoff modeling for disaster risk inference
-- **Multi-Platform Delivery**: Python ML backend, Web 3D dashboard, WeChat Mini Program
+<div align="center">
+  <img src="assets/figures/model_architecture.png" alt="LoongClaw Architecture" width="85%">
+  <p><em>LoongClaw MoE Architecture — Four Expert Systems Collaborative Inference</em></p>
+</div>
+
+---
+
+## 🔬 Key Innovations
+
+| Innovation | Description | Visual |
+|-----------|-------------|--------|
+| **MambaSwin-UNet-STA** | Novel deep learning architecture fusing Mamba SSM, Swin Transformer, U-Net, and Spatiotemporal Attention — 45M parameters, 200ms inference | <img src="assets/figures/prediction_comparison.png" width="200"> |
+| **LoongClaw MoE Framework** | Dynamic routing among AI/Physics/Meteorology/Railway four expert systems with adaptive weight distribution | <img src="assets/animations/rainfall_evolution.gif" width="200"> |
+| **3D Digital Twin** | Real-time 3D terrain-coupled precipitation nowcasting and flood simulation | <img src="assets/figures/3d_prediction.png" width="200"> |
+| **SCS-CN Hydrology** | Physics-constrained runoff modeling for disaster risk inference along railway corridors | <img src="assets/animations/flood_risk.gif" width="200"> |
+
+### 📊 Model Performance
+
+<div align="center">
+  <img src="assets/figures/training_history.png" alt="Training History" width="48%">
+  <img src="assets/figures/temporal_error.png" alt="Temporal Error" width="48%">
+  <p><em>Training convergence (left) and temporal error radar analysis (right)</em></p>
+</div>
+
+### 🌊 Flood Risk & Terrain Analysis
+
+<div align="center">
+  <img src="assets/figures/flood_risk_map.png" alt="Flood Risk Map" width="48%">
+  <img src="assets/figures/terrain_impact.png" alt="Terrain Impact Analysis" width="48%">
+  <p><em>Changsha railway corridor flood risk (left) and terrain forcing impact on precipitation (right)</em></p>
+</div>
+
+### 🎬 Dynamic Simulations
+
+<div align="center">
+  <img src="assets/animations/water_spread.gif" alt="Water Spread" width="32%">
+  <img src="assets/animations/risk_evolution.gif" alt="Risk Evolution" width="32%">
+  <img src="assets/animations/error_evolution.gif" alt="Error Evolution" width="32%">
+  <p><em>Water propagation simulation · Risk level evolution · Prediction error dynamics</em></p>
+</div>
+
+### 🏔️ 3D Terrain-Coupled Visualization
+
+<div align="center">
+  <img src="assets/figures/3d_rainfall.png" alt="3D Rainfall" width="32%">
+  <img src="assets/figures/3d_terrain_water.png" alt="3D Terrain Water" width="32%">
+  <img src="assets/figures/3d_risk.png" alt="3D Risk Distribution" width="32%">
+  <p><em>3D rainfall field · Terrain-coupled water accumulation · Risk distribution in 3D space</em></p>
+</div>
 
 ---
 
@@ -39,96 +84,63 @@ railway-ai-warning/
 ├── README.md                         # Master README (this file)
 ├── LICENSE                           # MIT License
 ├── .gitignore
+├── assets/                           # 🎨 Visual assets
+│   ├── figures/                      # Static figures (PNG)
+│   └── animations/                   # Animated demos (GIF)
 │
 ├── backend/                          # 🐍 Python ML Framework
-│   ├── README.md                     # Backend-specific documentation
-│   ├── requirements.txt              # Python dependencies
+│   ├── README.md
+│   ├── requirements.txt
 │   ├── __init__.py                   # Dragon class entry point
 │   ├── core/                         # Agent framework
-│   │   ├── agent.py                  # Task planning engine (5-phase scheduler)
+│   │   ├── agent.py                  # Task planning engine
 │   │   ├── dialog.py                 # Dialogue manager
-│   │   ├── memory.py                 # Memory system (short/long-term)
-│   │   ├── skills.py                 # Skill manager (13 built-in skills)
+│   │   ├── memory.py                 # Memory system
+│   │   ├── skills.py                 # Skill manager (13 skills)
 │   │   └── workflow.py               # Workflow engine
 │   ├── src/                          # ML source code
-│   │   ├── models/                   # Neural network architectures
-│   │   │   ├── mamba_swin_unet.py    # MambaSwin-UNet-STA main model
-│   │   │   ├── router.py             # LoongClaw dynamic router
-│   │   │   └── physics.py            # Physical constraints & hydrology
-│   │   ├── data/                     # Data processing pipeline
-│   │   │   ├── preprocess.py         # Quality control & normalization
-│   │   │   ├── features.py           # Terrain/radar/temporal features
-│   │   │   └── interpolate.py        # Missing value imputation
+│   │   ├── models/                   # MambaSwin-UNet-STA, Router, Physics
+│   │   ├── data/                     # Preprocessing, Features, Interpolation
 │   │   ├── training/train.py         # PyTorch Lightning training
-│   │   └── utils/                    # Loss functions & metrics
-│   ├── scripts/                      # Data download scripts
-│   │   ├── download_era5.py          # ERA5 reanalysis data
-│   │   └── download_dem.py           # SRTM DEM processing
+│   │   └── utils/                    # Loss functions, Metrics
+│   ├── scripts/                      # ERA5 & DEM download
 │   ├── tests/                        # Unit & integration tests
-│   ├── configs/                      # YAML configuration
-│   │   ├── project.yaml              # Project phases & settings
-│   │   └── model.yaml                # Model/training hyperparameters
+│   ├── configs/                      # project.yaml, model.yaml
 │   ├── skills/                       # Extensible skill modules
-│   ├── knowledge/                    # Domain knowledge base
-│   └── notebooks/                    # Jupyter notebooks
+│   └── knowledge/                    # Domain knowledge base
 │
 ├── web/                              # 🌐 Web Visualization Dashboard
 │   ├── index.html                    # 3D starfield entry portal
-│   ├── core.html                     # LoongClaw engine architecture
-│   ├── system.html                   # Holographic system overview
+│   ├── core.html                     # LoongClaw engine
+│   ├── system.html                   # Holographic overview
 │   ├── community.html                # Ecosystem & partnerships
-│   ├── universe.html                 # Technology universe panorama
+│   ├── universe.html                 # Technology universe
 │   ├── dashboard.html                # Real-time data cockpit
 │   ├── sky.html                      # UAV swarm management
-│   ├── scripts/
-│   │   └── collect_news_final.py     # Industry news auto-collector
-│   └── assets/                       # Static assets
-│       ├── pdf/                      # Whitepapers & proposals
-│       ├── images/                   # System screenshots
-│       └── videos/                   # Demo videos
+│   ├── scripts/                      # News auto-collector
+│   └── assets/                       # PDFs, images, videos
 │
 ├── miniprogram/                      # 📱 WeChat Mini Program
-│   ├── project.config.json           # WeChat project config
-│   ├── app.js / app.json / app.wxss  # App entry & global style
+│   ├── project.config.json
+│   ├── app.js / app.json / app.wxss
 │   ├── pages/                        # 12 business pages
-│   │   ├── launch/                   # Splash screen
-│   │   ├── home/                     # Home (core entry)
-│   │   ├── overview/                 # Project overview
-│   │   ├── painpoints/               # Industry pain points
-│   │   ├── tech/                     # 4-layer tech stack
-│   │   ├── openclaw/                 # LoongClaw engine
-│   │   ├── uav/                      # UAV platform
-│   │   ├── achievement/              # Results & validation
-│   │   ├── business/                 # Business model
-│   │   ├── team/                     # Team introduction
-│   │   ├── vision/                   # Social value & vision
-│   │   └── contact/                  # Contact & demo booking
 │   ├── components/                   # 8 reusable components
-│   └── images/                       # App icons & illustrations
+│   └── images/                       # Icons & illustrations
 │
 ├── research/                         # 🔬 Auxiliary Research Code
-│   └── convlstm/                     # ConvLSTM baseline model
-│       ├── encoder.py / decoder.py   # Seq2seq architecture
-│       ├── model.py                  # ConvLSTM cell implementation
-│       ├── main.py / predict.py      # Training & inference
-│       └── requirements.txt
+│   ├── convlstm/                     # ConvLSTM baseline model
+│   └── figures/                      # Research result figures
 │
 ├── docs/                             # 📄 Documentation
 │   ├── proposals/                    # Project proposals
-│   │   └── 萃英基金申报书.pdf
 │   ├── technical/                    # Technical documents
-│   │   └── technical_proposal.md
 │   ├── data_dict.md                  # Data dictionary
 │   ├── architecture.md               # System architecture
 │   ├── plan.md                       # Project plan
-│   ├── roadmap.md                    # Technical roadmap
-│   └── autodl_guide.md              # Cloud GPU quickstart
+│   └── roadmap.md                    # Technical roadmap
 │
 ├── data/                             # 📊 Data (gitignored)
-│   └── .gitkeep
-│
-└── .github/                          # ⚙️ GitHub
-    └── workflows/                    # CI/CD pipelines
+└── .github/                          # ⚙️ GitHub workflows
 ```
 
 ---
@@ -136,7 +148,6 @@ railway-ai-warning/
 ## 🚀 Quick Start
 
 ### Prerequisites
-
 - **Python 3.10+** with PyTorch 2.0+ (for backend)
 - **Modern browser** (Chrome/Edge/Firefox) for Web dashboard
 - **WeChat DevTools** v1.06+ (for mini program)
@@ -161,7 +172,6 @@ python tests/test_model.py
 
 ```bash
 # No build step required — pure HTML/CSS/JS
-# Open in browser:
 open web/index.html        # macOS
 start web/index.html       # Windows
 xdg-open web/index.html    # Linux
@@ -184,33 +194,46 @@ xdg-open web/index.html    # Linux
 
 | Expert | Core Model | Specialty |
 |--------|-----------|-----------|
-| 🤖 **AI Expert** | MambaSwin-UNet-STA (45M params) | End-to-end precipitation forecasting |
-| 🔬 **Physics Expert** | COTREC + WRF | Numerical weather prediction, PDE constraints |
-| 🌤️ **Meteorology Expert** | FY-4A + Doppler Radar | Multi-source data fusion, satellite retrieval |
-| 🚄 **Railway Expert** | Disaster KG + Fragility Curves | Risk assessment, infrastructure vulnerability |
+| 🤖 **AI Expert** | MambaSwin-UNet-STA (45M params) | End-to-end precipitation forecasting, spatiotemporal feature extraction |
+| 🔬 **Physics Expert** | COTREC + WRF | Numerical weather prediction, PDE physical constraints |
+| 🌤️ **Meteorology Expert** | FY-4A + Doppler Radar | Multi-source meteorological data fusion, satellite retrieval |
+| 🚄 **Railway Expert** | Disaster KG + Fragility Curves | Railway risk assessment, infrastructure vulnerability analysis |
+
+### Dynamic Router Mechanism
+
+The LoongClaw router adaptively allocates expert weights based on real-time weather context (convection intensity, stability index, system speed, precipitation intensity, terrain complexity). Each expert's prediction is weighted and fused for the final nowcast.
 
 ---
 
 ## 📊 Evaluation Metrics
 
-| Metric | Description | Target |
-|--------|-------------|--------|
-| TS (Threat Score) | Hit / (Hit + Miss + False Alarm) | > 0.50 |
-| POD (Probability of Detection) | Hit / (Hit + Miss) | > 0.80 |
-| FAR (False Alarm Rate) | False Alarm / (Hit + False Alarm) | < 0.30 |
-| CSI (Critical Success Index) | Same as TS | > 0.50 |
+| Metric | Formula | Target |
+|--------|---------|--------|
+| **TS** (Threat Score) | H / (H + M + F) | > 0.50 |
+| **POD** (Probability of Detection) | H / (H + M) | > 0.80 |
+| **FAR** (False Alarm Rate) | F / (H + F) | < 0.30 |
+| **CSI** (Critical Success Index) | H / (H + M + F) | > 0.50 |
+| **ETS** (Equitable Threat Score) | (H - H_random) / (H + M + F - H_random) | > 0.30 |
+
+*H = Hits, M = Misses, F = False Alarms*
+
+<div align="center">
+  <img src="research/figures/prediction_result.png" alt="Prediction Result" width="48%">
+  <img src="research/figures/risk_deduction_map.png" alt="Risk Deduction Map" width="48%">
+  <p><em>Real-data prediction validation (left) and railway corridor risk deduction (right)</em></p>
+</div>
 
 ---
 
 ## 🗓️ Project Roadmap
 
-| Phase | Period | Key Tasks |
-|-------|--------|-----------|
-| 📊 Data Governance | 2026.04–05 | Data cleaning, interpolation, terrain features |
-| 🧪 Model Training | 2026.05–08 | MambaSwin-UNet-STA, dynamic router, hyperparameter tuning |
-| 🔗 System Integration | 2026.08–11 | SCS-CN coupling, risk inference, end-to-end testing |
-| ✅ Validation | 2026.12–2027.01 | Case studies, field investigation, usability assessment |
-| 📝 Finalization | 2027.02–04 | Paper writing, code open-sourcing, defense preparation |
+| Phase | Period | Key Tasks | Status |
+|-------|--------|-----------|--------|
+| 📊 Data Governance | 2026.04–05 | Data cleaning, interpolation, terrain features, baseline validation | ✅ Complete |
+| 🧪 Model Training | 2026.05–08 | MambaSwin-UNet-STA, dynamic router, hyperparameter tuning, ablation | 🔄 In Progress |
+| 🔗 System Integration | 2026.08–11 | SCS-CN coupling, risk inference plugin, end-to-end testing | ⬜ Pending |
+| ✅ Validation | 2026.12–2027.01 | Storm case studies, field investigation, usability assessment | ⬜ Pending |
+| 📝 Finalization | 2027.02–04 | Paper writing, code open-sourcing, defense preparation | ⬜ Pending |
 
 ---
 
@@ -222,7 +245,9 @@ xdg-open web/index.html    # Linux
 | **University** | Lanzhou University (兰州大学) |
 | **Advisor** | Prof. Hu Shujuan (胡淑娟 教授) |
 | **Project Lead** | Peng Xiaoxi (彭小溪) |
-| **Program** | National Undergraduate Innovation Training Program |
+| **Program** | National Undergraduate Innovation Training Program · 䇹政基金 |
+
+<img src="docs/proposals/指导老师电子签.png" alt="Advisor Signature" width="200">
 
 ---
 
@@ -230,12 +255,11 @@ xdg-open web/index.html    # Linux
 
 This project is licensed under the [MIT License](LICENSE).
 
----
-
 ## 📞 Contact
 
 - 📧 Email: pxx05247258@gmail.com
 - 📍 Address: Lanzhou University, Chengguan District, Lanzhou, China
+- 🌐 GitHub: [NOBEL-Pxx/railway-ai-warning](https://github.com/NOBEL-Pxx/railway-ai-warning)
 
 ---
 
